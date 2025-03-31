@@ -2,20 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/welcomePage2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
     tools:context=".MainActivity">
 
+
     <ImageView
-        android:id="@+id/welcomeImage"
+        android:id="@+id/womenHoldingPigImg"
         android:layout_width="300dp"
         android:layout_height="300dp"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:scaleType="fitCenter"
-        android:src="@drawable/money_stack"
+        android:src="@drawable/designer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,14 +24,20 @@
 
 
     <LinearLayout
-        android:id="@+id/dotsIndicator"
+        android:id="@+id/dotsIndicator1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcomeImage">
+        app:layout_constraintTop_toBottomOf="@id/womenHoldingPigImg">
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/inactive_dot" />
 
         <View
             android:layout_width="10dp"
@@ -47,33 +54,27 @@
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:layout_marginEnd="6dp"
-            android:background="@drawable/inactive_dot" />
-
-        <View
-            android:layout_width="10dp"
-            android:layout_height="10dp"
             android:background="@drawable/inactive_dot" />
     </LinearLayout>
 
     <!-- Description Text -->
     <TextView
-        android:id="@+id/descriptionText"
+        android:id="@+id/descriptionTextWelcomePage2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="Take Control of Your\nBudgeting with Budget Piggy"
+        android:text="Keep track of your funds and\nmake budgeting easier"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dotsIndicator" />
+        app:layout_constraintTop_toBottomOf="@id/dotsIndicator1" />
 
     <!-- Next Button -->
     <Button
-        android:id="@+id/nextButton"
+        android:id="@+id/nextButton1"
         style="@style/NextButtonStyle"
         android:layout_width="140dp"
         android:layout_height="50dp"
@@ -84,6 +85,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptionTextWelcomePage2" />
+
+    <Button
+        android:id="@+id/previousButton"
+        style="@style/PreviousButtonStyle"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="239dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionTextWelcomePage2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
