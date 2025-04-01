@@ -5,7 +5,7 @@
     android:id="@+id/welcomePage2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/bg_gradient_background"
     tools:context=".MainActivity">
 
 
@@ -16,7 +16,7 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:src="@drawable/designer"
+        android:src="@drawable/pic_designer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,24 +37,24 @@
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/vec_inactive_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/active_dot" />
+            android:background="@drawable/vec_active_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/vec_inactive_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/vec_inactive_dot" />
     </LinearLayout>
 
     <!-- Description Text -->
@@ -66,6 +66,8 @@
         android:gravity="center"
         android:text="@string/onboardPage2Description"
         android:textAlignment="center"
+        android:fontFamily="@font/roboto"
+        android:textStyle="bold"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

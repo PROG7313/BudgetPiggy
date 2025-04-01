@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/bg_gradient_background"
     tools:context=".MainActivity">
 
     <ImageView
@@ -15,7 +15,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/money_stack"
+        android:src="@drawable/pic_money_stack"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,24 +36,24 @@
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/active_dot" />
+            android:background="@drawable/vec_active_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/vec_inactive_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/vec_inactive_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/vec_inactive_dot" />
     </LinearLayout>
 
     <!-- Description Text -->
@@ -64,6 +64,8 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/onboardPage1Description"
+        android:fontFamily="@font/roboto"
+        android:textStyle="bold"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="20sp"
