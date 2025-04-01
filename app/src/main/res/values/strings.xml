@@ -10,6 +10,17 @@
     <string name="rewardsPageTextConfirm">Confirm</string>
 
     <string name="create">Create Account</string>
-    <string name="alreadyHaveAccount">Already have an account? <font color='#1A8F71'>Log in</font></string>
+    <string name="alreadyHaveAccount"><font color="#707974">Already have an account? </font><font color="#769986">Log in</font></string>
+    <string name="dontHaveAccount"><font color="#707974">Don\'t have an account? </font><font color="#769986">Sign up</font></string>
     <string name="budgetPiggy">BUDGET PIGGY</string>
+    <string name="backArrow">back</string>
+    <string name="email_address">Email address</string>
+    <string name="piggy_logo">Piggy Logo</string>
+    <string name="toggle_password_visibility">Toggle Password Visibility</string>
+    <string name="login_with_github">Login with GitHub</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="login_btn">Login</string>
+    <string name="or">Or</string>
+    <string name="password">Password</string>
+    <string name="piggy_bank">Piggy Bank</string>
 </resources>

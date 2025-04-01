@@ -33,6 +33,9 @@
         <activity
             android:name=".WelcomePage"
             android:exported="true"/>
+        <activity
+            android:name=".LoginPage"
+            android:exported="true"/>
     </application>
 
 </manifest>
