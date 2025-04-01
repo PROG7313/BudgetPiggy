@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 class WelcomePage3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.welcome_page_3)
         enableEdgeToEdge()
         setContentView(R.layout.welcome_page_3)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.welcomePage3)) { v, insets ->
