@@ -23,7 +23,7 @@ class WelcomePage : AppCompatActivity() {
         val createAccountbtn = findViewById<Button>(R.id.createAccountButton)
         val loginTextView = findViewById<TextView>(R.id.loginTextView)
         createAccountbtn.setOnClickListener {
-            val intent = Intent(this, WelcomePage::class.java)
+            val intent = Intent(this, RegisterPage::class.java)
             val options = ActivityOptions.makeCustomAnimation(
                 this,
                 R.anim.fade_in,

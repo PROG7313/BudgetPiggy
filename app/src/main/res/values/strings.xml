@@ -23,4 +23,9 @@
     <string name="or">Or</string>
     <string name="password">Password</string>
     <string name="piggy_bank">Piggy Bank</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="sign_up_btn">Sign Up</string>
 </resources>

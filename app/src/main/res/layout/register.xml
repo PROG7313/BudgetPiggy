@@ -2,41 +2,38 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LoginPage"
+    android:id="@+id/RegisterPage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:clickable="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@drawable/bg_gradient_background"
-    tools:context=".LoginPage">
+    tools:context=".RegisterPage">
 
-    <!-- Back Arrow -->
+
     <ImageView
         android:id="@+id/backArrow"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/vec_main_back_arrow"
         android:contentDescription="@string/backArrow"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp" />
+        android:layout_marginStart="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Piggy Logo -->
 
-    <!-- Email EditText -->
 
-    <!-- Password EditText -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/piggy_logo"
         android:src="@drawable/pic_piggylogo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backArrow" />
 
@@ -44,7 +41,7 @@
         android:id="@+id/emailLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/email_address"
         android:textColor="@color/primaryText"
         android:textSize="15sp"
@@ -53,52 +50,135 @@
         app:layout_constraintBottom_toTopOf="@+id/emailEditText"
         app:layout_constraintStart_toStartOf="@+id/emailEditText" />
 
+
+
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="42dp"
         android:layout_marginEnd="32dp"
-        android:autofillHints="emailAddress"
         android:background="@drawable/bg_textfields"
+        android:fontFamily="@font/roboto"
+        android:autofillHints="emailAddress"
         android:hint="@string/email_address"
         android:inputType="textEmailAddress"
         android:padding="12dp"
+        android:textColor="@color/primaryText"
+        android:textColorHint="@color/primaryText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoImage" />
 
     <TextView
+        android:id="@+id/firstNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/first_name"
+        android:textColor="@color/primaryText"
+        android:textSize="15sp"
+        android:fontFamily="@font/roboto"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/nameFields"
+        app:layout_constraintStart_toStartOf="@+id/nameFields" />
+
+
+    <TextView
+        android:id="@+id/lastNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="187dp"
+        android:layout_marginBottom="4dp"
+        android:fontFamily="@font/roboto"
+        android:text="@string/last_name"
+        android:visibility="gone"
+        android:textColor="@color/primaryText"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/nameFields"
+        app:layout_constraintStart_toStartOf="@+id/nameFields" />
+
+    <LinearLayout
+        android:id="@+id/nameFields"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="32dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emailEditText">
+
+        <EditText
+            android:id="@+id/firstNameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_textfields"
+            android:fontFamily="@font/roboto"
+            android:autofillHints="givenName"
+            android:hint="@string/first_name_hint"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:textColor="@color/primaryText"
+            android:textColorHint="@color/primaryText" />
+
+        <EditText
+            android:id="@+id/lastNameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_textfields"
+            android:fontFamily="@font/roboto"
+            android:autofillHints="familyName"
+            android:hint="@string/last_name_hint"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:textColor="@color/primaryText"
+            android:textColorHint="@color/primaryText" />
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/passwordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="7dp"
-        android:fontFamily="@font/roboto"
         android:text="@string/password"
         android:textColor="@color/primaryText"
         android:textSize="15sp"
+        android:fontFamily="@font/roboto"
         android:visibility="gone"
+        android:layout_marginBottom="7dp"
         app:layout_constraintBottom_toTopOf="@+id/passwordEditText"
         app:layout_constraintStart_toStartOf="@+id/passwordEditText" />
+
+
 
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="36dp"
         android:layout_marginEnd="32dp"
-        android:autofillHints="password"
         android:background="@drawable/bg_textfields"
+        android:fontFamily="@font/roboto"
+        android:autofillHints="password"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="12dp"
+        android:textColor="@color/primaryText"
+        android:textColorHint="@color/primaryText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/nameFields" />
 
     <ImageView
         android:id="@+id/eyeIcon"
@@ -106,28 +186,25 @@
         android:layout_height="24dp"
         android:src="@drawable/vec_eye_open"
         android:contentDescription="@string/toggle_password_visibility"
+        android:layout_marginEnd="12dp"
         app:layout_constraintTop_toTopOf="@id/passwordEditText"
         app:layout_constraintBottom_toBottomOf="@id/passwordEditText"
-        app:layout_constraintEnd_toEndOf="@id/passwordEditText"
-        android:layout_marginEnd="12dp" />
+        app:layout_constraintEnd_toEndOf="@id/passwordEditText" />
 
-    <!-- LoginPage Button -->
-
-    <!-- OR Text -->
 
     <Button
-        android:id="@+id/loginButton"
+        android:id="@+id/signUpButton"
         style="@style/mainButtonsStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="53dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/login_btn"
+        android:text="@string/sign_up_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
     <TextView
         android:id="@+id/orText"
@@ -138,16 +215,11 @@
         android:fontFamily="@font/roboto"
         android:textStyle="bold"
         android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/loginButton"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/signUpButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Google Icon -->
-
-    <!-- GitHub Icon -->
-
-    <!-- Sign Up Text -->
 
     <ImageView
         android:id="@+id/googleIcon"
@@ -162,6 +234,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/githubIcon" />
 
+
     <ImageView
         android:id="@+id/githubIcon"
         android:layout_width="40dp"
@@ -174,21 +247,20 @@
         app:layout_constraintStart_toEndOf="@+id/orText"
         app:layout_constraintTop_toBottomOf="@+id/orText" />
 
+
     <TextView
-        android:id="@+id/signUpText"
+        android:id="@+id/loginRedirectText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="@string/dontHaveAccount"
+        android:text="@string/alreadyHaveAccount"
         android:textAlignment="center"
-        android:textColor="#555555"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/roboto"
+        app:layout_constraintTop_toBottomOf="@+id/githubIcon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/googleIcon" />
-
-
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
