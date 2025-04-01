@@ -24,6 +24,9 @@
         <activity
             android:name=".WelcomePage2"
             android:exported="true" />
+        <activity
+            android:name=".WelcomePage3"
+            android:exported="true" />
     </application>
 
 </manifest>
