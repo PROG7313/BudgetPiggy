@@ -8,4 +8,8 @@
     <string name="rewardsPageTextRewards">Rewards</string>
     <string name="rewardsPageTextEnterRewardsCode">Enter Reward Code</string>
     <string name="rewardsPageTextConfirm">Confirm</string>
+
+    <string name="create">Create Account</string>
+    <string name="alreadyHaveAccount">Already have an account? <font color='#1A8F71'>Log in</font></string>
+    <string name="budgetPiggy">BUDGET PIGGY</string>
 </resources>
