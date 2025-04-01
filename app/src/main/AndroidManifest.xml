@@ -13,7 +13,7 @@
         android:theme="@style/Theme.BudgetPiggy"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".OnBoarding1"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".OnBoarding2"
+            android:exported="true" />
+        <activity
+            android:name=".OnBoarding3"
+            android:exported="true" />
+        <activity
+            android:name=".OnBoarding4"
+            android:exported="true" />
+        <activity
+            android:name=".WelcomePage"
+            android:exported="true"/>
+        <activity
+            android:name=".LoginPage"
+            android:exported="true"/>
     </application>
 
 </manifest>
