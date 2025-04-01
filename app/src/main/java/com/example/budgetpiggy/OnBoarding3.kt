@@ -9,12 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class WelcomePage3 : AppCompatActivity() {
+class OnBoarding3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.welcome_page_3)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.welcomePage3)) { v, insets ->
+        setContentView(R.layout.onboard_3)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.onboard_3)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -22,7 +22,7 @@ class WelcomePage3 : AppCompatActivity() {
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage3)
         val nextButton: Button = findViewById(R.id.nextButtonWelcomePage3)
         previousButton.setOnClickListener {
-            val intent = Intent(this, WelcomePage2::class.java)
+            val intent = Intent(this, OnBoarding2::class.java)
 
             // ✅ Apply slide reverse animation
             val options = ActivityOptions.makeCustomAnimation(
@@ -34,7 +34,7 @@ class WelcomePage3 : AppCompatActivity() {
         }
 
             nextButton.setOnClickListener {
-                val nextIntent = Intent(this, WelcomePage4::class.java)
+                val nextIntent = Intent(this, OnBoarding4::class.java)
                 val nextOptions = ActivityOptions.makeCustomAnimation(
                     this,
                     R.anim.fade_in,

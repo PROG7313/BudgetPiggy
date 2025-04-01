@@ -13,7 +13,7 @@
         android:theme="@style/Theme.BudgetPiggy"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".OnBoarding1"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,14 +22,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".WelcomePage2"
+            android:name=".OnBoarding2"
             android:exported="true" />
         <activity
-            android:name=".WelcomePage3"
+            android:name=".OnBoarding3"
             android:exported="true" />
         <activity
-            android:name=".WelcomePage4"
+            android:name=".OnBoarding4"
             android:exported="true" />
+        <activity
+            android:name=".WelcomePage"
+            android:exported="true"/>
     </application>
 
 </manifest>
