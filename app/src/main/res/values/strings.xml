@@ -28,4 +28,8 @@
     <string name="first_name_hint">First Name</string>
     <string name="last_name_hint">Last Name</string>
     <string name="sign_up_btn">Sign Up</string>
+    <string name="budget_piggy_title">BUDGET PIGGY</string>
+    <string name="track_it_nbudget_it_nsave_it">Track it,\nBudget it,\nSave it.</string>
+    <string name="you_deserve_it_don_t_let_your_finances_ncontrol_you">You deserve it. Don’t let your finances\ncontrol you</string>
+    <string name="get_budgeting">Get Budgeting</string>
 </resources>
