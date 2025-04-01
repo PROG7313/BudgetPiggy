@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/welcomePage2"
+    android:id="@+id/welcomePage3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
@@ -16,7 +16,7 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:src="@drawable/designer"
+        android:src="@drawable/target"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,13 +43,13 @@
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/active_dot" />
+            android:background="@drawable/inactive_dot" />
 
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/inactive_dot" />
+            android:background="@drawable/active_dot" />
 
         <View
             android:layout_width="10dp"
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="@string/onboardPage2Description"
+        android:text="@string/onboardPage3Description"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="20sp"

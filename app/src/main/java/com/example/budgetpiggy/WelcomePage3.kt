@@ -9,31 +9,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class WelcomePage2 : AppCompatActivity() {
+class WelcomePage3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.welcome_page_2)
+        setContentView(R.layout.welcome_page_3)
         enableEdgeToEdge()
-        setContentView(R.layout.welcome_page_2)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.welcomePage2)) { v, insets ->
+        setContentView(R.layout.welcome_page_3)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.welcomePage3)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage3)
-val nextButton : Button = findViewById(R.id.nextButtonWelcomePage3)
+        val nextButton: Button = findViewById(R.id.nextButtonWelcomePage3)
         previousButton.setOnClickListener {
-            val prevIntent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, WelcomePage2::class.java)
 
             // ✅ Apply slide reverse animation
-            val prevOptions = ActivityOptions.makeCustomAnimation(
+            val options = ActivityOptions.makeCustomAnimation(
                 this,
                 R.anim.fade_in,
                 R.anim.fade_out
             )
-
-            startActivity(prevIntent, prevOptions.toBundle())
+            startActivity(intent, options.toBundle())
         }
+            /*
             nextButton.setOnClickListener {
                 val nextIntent = Intent(this, WelcomePage3::class.java)
                 val nextOptions = ActivityOptions.makeCustomAnimation(
@@ -42,7 +42,9 @@ val nextButton : Button = findViewById(R.id.nextButtonWelcomePage3)
                     R.anim.fade_out
                 )
 
-            startActivity(nextIntent, nextOptions.toBundle())
-        }
+                startActivity(nextIntent, nextOptions.toBundle())
+            }
+            */
+
     }
 }
