@@ -4,6 +4,7 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -19,6 +20,30 @@ class WelcomePage : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val createAccountbtn = findViewById<Button>(R.id.createAccountButton)
+        val loginTextView = findViewById<TextView>(R.id.loginTextView)
+        createAccountbtn.setOnClickListener {
+            val intent = Intent(this, WelcomePage::class.java)
+            val options = ActivityOptions.makeCustomAnimation(
+                this,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+
+            startActivity(intent, options.toBundle())
+        }
+
+loginTextView.setOnClickListener {
+    val intent = Intent(this, LoginPage::class.java)
+    val options = ActivityOptions.makeCustomAnimation(
+        this,
+        R.anim.fade_in,
+        R.anim.fade_out
+    )
+
+    startActivity(intent, options.toBundle())
+}
+
 
     }
 }
