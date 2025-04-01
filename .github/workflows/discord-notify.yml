@@ -1,0 +1,222 @@
+name: Discord GitHub Notifications
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    types: [opened, closed, reopened, synchronize, ready_for_review]
+  pull_request_review:
+  pull_request_review_comment:
+  create:
+  delete:
+  issue_comment:
+  issues:
+    types: [opened, closed, reopened, edited, assigned, unassigned, labeled, unlabeled]
+  status:
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send event to Discord
+        run: |
+          ROLE_ID="1356740118546874508"
+          EVENT_NAME="${{ github.event_name }}"
+          ACTOR="${{ github.actor }}"
+          REPO="${{ github.repository }}"
+          BRANCH="${{ github.ref_name }}"
+          ACTION="${{ github.event.action }}"
+          TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          case "$EVENT_NAME" in
+            push)
+              COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+              COMMIT_URL="${{ github.event.head_commit.url }}"
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"🚀 Push by $ACTOR\",
+                  \"description\": \"[$COMMIT_MESSAGE]($COMMIT_URL)\",
+                  \"color\": 3447003,
+                  \"fields\": [
+                    { \"name\": \"📂 Branch\", \"value\": \"$BRANCH\", \"inline\": true },
+                    { \"name\": \"📁 Repository\", \"value\": \"$REPO\", \"inline\": true }
+                  ],
+                  \"footer\": { \"text\": \"Push Event\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            pull_request)
+              PR_TITLE="${{ github.event.pull_request.title }}"
+              PR_URL="${{ github.event.pull_request.html_url }}"
+              PR_NUMBER="${{ github.event.pull_request.number }}"
+              PR_MERGED="${{ github.event.pull_request.merged }}"
+
+              case "$ACTION" in
+                opened)
+                  TITLE="📥 Pull Request Opened"
+                  COLOR=5814783
+                  ;;
+                closed)
+                  if [[ "$PR_MERGED" == "true" ]]; then
+                    TITLE="✅ Pull Request Merged"
+                    COLOR=3066993
+                  else
+                    TITLE="❌ Pull Request Closed"
+                    COLOR=15158332
+                  fi
+                  ;;
+                reopened)
+                  TITLE="🔁 Pull Request Reopened"
+                  COLOR=15844367
+                  ;;
+                synchronize)
+                  TITLE="♻️ Pull Request Updated"
+                  COLOR=7506394
+                  ;;
+                ready_for_review)
+                  TITLE="👀 Ready for Review"
+                  COLOR=10181046
+                  ;;
+              esac
+
+              DESCRIPTION="**[$PR_TITLE]($PR_URL)** by $ACTOR"
+
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"$TITLE\",
+                  \"description\": \"$DESCRIPTION\",
+                  \"color\": $COLOR,
+                  \"fields\": [
+                    { \"name\": \"🔢 PR #\", \"value\": \"$PR_NUMBER\", \"inline\": true },
+                    { \"name\": \"📁 Repository\", \"value\": \"$REPO\", \"inline\": true }
+                  ],
+                  \"footer\": { \"text\": \"Pull Request Event\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            pull_request_review)
+              PR_URL="${{ github.event.review.html_url }}"
+              STATE="${{ github.event.review.state }}"
+              BODY="${{ github.event.review.body }}"
+              COLOR=16753920
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"🧪 PR Review [$STATE] by $ACTOR\",
+                  \"description\": \"$BODY\",
+                  \"url\": \"$PR_URL\",
+                  \"color\": $COLOR,
+                  \"footer\": { \"text\": \"Review Event\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            pull_request_review_comment)
+              COMMENT_URL="${{ github.event.comment.html_url }}"
+              COMMENT_BODY="${{ github.event.comment.body }}"
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"💬 New PR Review Comment by $ACTOR\",
+                  \"description\": \"$COMMENT_BODY\",
+                  \"url\": \"$COMMENT_URL\",
+                  \"color\": 7419530,
+                  \"footer\": { \"text\": \"Review Comment\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            create)
+              REF_TYPE="${{ github.event.ref_type }}"
+              REF_NAME="${{ github.event.ref }}"
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"🌱 $REF_TYPE Created\",
+                  \"description\": \"\`$REF_NAME\` was created by $ACTOR\",
+                  \"color\": 5793266,
+                  \"footer\": { \"text\": \"Create Event\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            delete)
+              REF_TYPE="${{ github.event.ref_type }}"
+              REF_NAME="${{ github.event.ref }}"
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"🗑️ $REF_TYPE Deleted\",
+                  \"description\": \"\`$REF_NAME\` was deleted by $ACTOR\",
+                  \"color\": 10038562,
+                  \"footer\": { \"text\": \"Delete Event\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            issue_comment)
+              ISSUE_URL="${{ github.event.comment.html_url }}"
+              ISSUE_BODY="${{ github.event.comment.body }}"
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"💭 New Comment by $ACTOR\",
+                  \"description\": \"$ISSUE_BODY\",
+                  \"url\": \"$ISSUE_URL\",
+                  \"color\": 12370112,
+                  \"footer\": { \"text\": \"Issue Comment\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            issues)
+              ISSUE_URL="${{ github.event.issue.html_url }}"
+              ISSUE_TITLE="${{ github.event.issue.title }}"
+              COLOR=16711728
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"🐞 Issue $ACTION by $ACTOR\",
+                  \"description\": \"**[$ISSUE_TITLE]($ISSUE_URL)**\",
+                  \"color\": $COLOR,
+                  \"footer\": { \"text\": \"Issue Event\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+
+            status)
+              CONTEXT="${{ github.event.context }}"
+              STATE="${{ github.event.state }}"
+              TARGET_URL="${{ github.event.target_url }}"
+              CONTENT="{
+                \"content\": \"<@&$ROLE_ID>\",
+                \"embeds\": [{
+                  \"title\": \"📊 Status Changed\",
+                  \"description\": \"**$CONTEXT** is now **$STATE**\",
+                  \"url\": \"$TARGET_URL\",
+                  \"color\": 3447003,
+                  \"footer\": { \"text\": \"CI/CD Status\" },
+                  \"timestamp\": \"$TIMESTAMP\"
+                }]
+              }"
+              ;;
+          esac
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$CONTENT" \
+               ${{ secrets.DISCORD_WEBHOOK }}
