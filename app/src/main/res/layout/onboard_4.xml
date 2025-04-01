@@ -78,6 +78,7 @@
     <Button
         android:id="@+id/nextButtonWelcomePage4"
         style="@style/NextButtonStyle"
+        android:text="@string/finishBtn"
         android:layout_width="140dp"
         android:layout_height="50dp"
         android:layout_marginStart="239dp"
