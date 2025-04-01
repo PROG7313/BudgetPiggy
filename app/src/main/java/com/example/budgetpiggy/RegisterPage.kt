@@ -16,47 +16,42 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class LoginPage : AppCompatActivity() {
+class RegisterPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.login)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.LoginPage)) { v, insets ->
+        setContentView(R.layout.register)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.RegisterPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val loginbtn = findViewById<Button>(R.id.loginButton)
+
         val backArrow = findViewById<ImageView>(R.id.backArrow)
-        val signUpTextView = findViewById<TextView>(R.id.signUpText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val passwordLabel = findViewById<TextView>(R.id.passwordLabel)
         val emailEditText = findViewById<EditText>(R.id.emailEditText)
         val emailLabel = findViewById<TextView>(R.id.emailLabel)
+        val firstNameLabel = findViewById<TextView>(R.id.firstNameLabel)
+        val firstNameEditText = findViewById<EditText>(R.id.firstNameEditText)
+        val lastNameLabel = findViewById<TextView>(R.id.lastNameLabel)
+        val lastNameEditText = findViewById<EditText>(R.id.lastNameEditText)
         val eyeIcon = findViewById<ImageView>(R.id.eyeIcon)
-        loginbtn.setOnClickListener {
-            val intent = Intent(this, WelcomePage::class.java)
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-
-            startActivity(intent, options.toBundle())
-        }
-        signUpTextView.setOnClickListener {
-            val intent = Intent(this, RegisterPage::class.java)
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-
-            startActivity(intent, options.toBundle())
-        }
+        val loginRedirectText = findViewById<TextView>(R.id.loginRedirectText)
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
+        loginRedirectText.setOnClickListener {
+            val intent = Intent(this, LoginPage::class.java)
+
+            // ✅ Apply slide reverse animation
+            val options = ActivityOptions.makeCustomAnimation(
+                this,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+            startActivity(intent, options.toBundle())
         }
         var isPasswordVisible = false
         eyeIcon.setOnClickListener {
@@ -121,7 +116,7 @@ class LoginPage : AppCompatActivity() {
         }
         setupFloatingLabel(emailEditText, emailLabel, getString(R.string.email_address))
         setupFloatingLabel(passwordEditText, passwordLabel, getString(R.string.password))
-
-
+        setupFloatingLabel(firstNameEditText, firstNameLabel, getString(R.string.first_name))
+        setupFloatingLabel(lastNameEditText, lastNameLabel, getString(R.string.last_name))
     }
 }
