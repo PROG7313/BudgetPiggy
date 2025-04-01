@@ -38,9 +38,21 @@ class RegisterPage : AppCompatActivity() {
         val lastNameEditText = findViewById<EditText>(R.id.lastNameEditText)
         val eyeIcon = findViewById<ImageView>(R.id.eyeIcon)
         val loginRedirectText = findViewById<TextView>(R.id.loginRedirectText)
+        val signUpButton = findViewById<Button>(R.id.signUpButton)
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        }
+        signUpButton.setOnClickListener {
+            val intent = Intent(this, GettingStartedPage::class.java)
+
+            // ✅ Apply slide reverse animation
+            val options = ActivityOptions.makeCustomAnimation(
+                this,
+                R.anim.fade_in,
+                R.anim.fade_out
+            )
+            startActivity(intent, options.toBundle())
         }
         loginRedirectText.setOnClickListener {
             val intent = Intent(this, LoginPage::class.java)

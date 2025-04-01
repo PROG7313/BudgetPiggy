@@ -39,6 +39,9 @@
         <activity
             android:name=".RegisterPage"
             android:exported="true"/>
+        <activity
+            android:name=".GettingStartedPage"
+            android:exported="true"/>
     </application>
 
 </manifest>
