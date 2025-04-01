@@ -24,7 +24,7 @@ val nextButton : Button = findViewById(R.id.nextButtonWelcomePage3)
         previousButton.setOnClickListener {
             val prevIntent = Intent(this, OnBoarding1::class.java)
 
-            // ✅ Apply slide reverse animation
+
             val prevOptions = ActivityOptions.makeCustomAnimation(
                 this,
                 R.anim.fade_in,
