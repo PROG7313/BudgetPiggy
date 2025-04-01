@@ -2,21 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/welcomePage3"
+    android:id="@+id/onboard_1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient_background"
-    tools:context=".MainActivity">
-
+    tools:context=".OnBoarding1">
 
     <ImageView
-        android:id="@+id/walletImg"
+        android:id="@+id/welcomeImage"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:contentDescription="@null"
-        android:src="@drawable/pic_target"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pic_money_stack"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,26 +23,14 @@
 
 
     <LinearLayout
-        android:id="@+id/dotsIndicator1"
+        android:id="@+id/dotsIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/walletImg">
-
-        <View
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginEnd="6dp"
-            android:background="@drawable/vec_inactive_dot" />
-
-        <View
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginEnd="6dp"
-            android:background="@drawable/vec_inactive_dot" />
+        app:layout_constraintTop_toBottomOf="@id/welcomeImage">
 
         <View
             android:layout_width="10dp"
@@ -54,17 +41,29 @@
         <View
             android:layout_width="10dp"
             android:layout_height="10dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/vec_inactive_dot" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/vec_inactive_dot" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:background="@drawable/vec_inactive_dot" />
     </LinearLayout>
 
     <!-- Description Text -->
     <TextView
-        android:id="@+id/descriptionTextWelcomePage3"
+        android:id="@+id/descriptionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="@string/onboardPage3Description"
+        android:text="@string/onboardPage1Description"
         android:fontFamily="@font/roboto"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -72,11 +71,11 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dotsIndicator1" />
+        app:layout_constraintTop_toBottomOf="@id/dotsIndicator" />
 
     <!-- Next Button -->
     <Button
-        android:id="@+id/nextButtonWelcomePage3"
+        android:id="@+id/nextButton"
         style="@style/NextButtonStyle"
         android:layout_width="140dp"
         android:layout_height="50dp"
@@ -87,20 +86,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionTextWelcomePage3" />
-
-    <Button
-        android:id="@+id/previousButtonWelcomePage3"
-        style="@style/PreviousButtonStyle"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="239dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionTextWelcomePage3" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
