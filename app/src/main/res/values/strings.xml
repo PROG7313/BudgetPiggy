@@ -4,7 +4,7 @@
     <string name="onboardPage2Description">Keep track of your funds and\nmake budgeting easier</string>
     <string name="onboardPage3Description">Make your finances fun with\n the gamification features</string>
     <string name="onboardPage4Description">Visually analyse your funds and\n always stay on top</string>
-
+    <string name="finishBtn">Finish</string>
     <string name="rewardsPageTextRewards">Rewards</string>
     <string name="rewardsPageTextEnterRewardsCode">Enter Reward Code</string>
     <string name="rewardsPageTextConfirm">Confirm</string>
