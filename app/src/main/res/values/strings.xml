@@ -1,26 +1,3 @@
 <resources>
     <string name="app_name">BudgetPiggy</string>
-    <string name="onboardPage1Description">Take Control of Your\nBudgeting with Budget Piggy</string>
-    <string name="onboardPage2Description">Keep track of your funds and\nmake budgeting easier</string>
-    <string name="onboardPage3Description">Make your finances fun with\n the gamification features</string>
-    <string name="onboardPage4Description">Visually analyse your funds and\n always stay on top</string>
-    <string name="finishBtn">Finish</string>
-    <string name="rewardsPageTextRewards">Rewards</string>
-    <string name="rewardsPageTextEnterRewardsCode">Enter Reward Code</string>
-    <string name="rewardsPageTextConfirm">Confirm</string>
-
-    <string name="create">Create Account</string>
-    <string name="alreadyHaveAccount"><font color="#707974">Already have an account? </font><font color="#769986">Log in</font></string>
-    <string name="dontHaveAccount"><font color="#707974">Don\'t have an account? </font><font color="#769986">Sign up</font></string>
-    <string name="budgetPiggy">BUDGET PIGGY</string>
-    <string name="backArrow">back</string>
-    <string name="email_address">Email address</string>
-    <string name="piggy_logo">Piggy Logo</string>
-    <string name="toggle_password_visibility">Toggle Password Visibility</string>
-    <string name="login_with_github">Login with GitHub</string>
-    <string name="login_with_google">Login with Google</string>
-    <string name="login_btn">Login</string>
-    <string name="or">Or</string>
-    <string name="password">Password</string>
-    <string name="piggy_bank">Piggy Bank</string>
 </resources>
