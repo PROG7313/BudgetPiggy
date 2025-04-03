@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -40,29 +41,26 @@ class HomePage : AppCompatActivity() {
                 R.anim.fade_in,
                 R.anim.fade_out
             )
-
             startActivity(nextIntent, nextOptions.toBundle())
         }
         backArrow.setOnClickListener {
-
             onBackPressedDispatcher.onBackPressed()
         }
         navWallet.setOnClickListener {
             setActiveNavIcon(navWallet)
             // startActivity(Intent(this, WalletPage::class.java))
         }
-
         navReports.setOnClickListener {
             setActiveNavIcon(navReports)
             // startActivity(Intent(this, ReportsPage::class.java))
         }
-
         navProfile.setOnClickListener {
             setActiveNavIcon(navProfile)
             // startActivity(Intent(this, ProfilePage::class.java))
         }
         addSampleData()
     }
+
     private fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
@@ -102,11 +100,18 @@ class HomePage : AppCompatActivity() {
             row.findViewById<ProgressBar>(R.id.progressBar).apply {
                 this.progress = progress
                 this.max = max
+                setOnClickListener {
+                    Toast.makeText(
+                        this@HomePage,
+                        "$progress out of $max",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             accountList.addView(row)
         }
 
-        // Budget Remaining Items
+        // Budget Remaining Items with click action on the progress bar
         val budgetData = listOf(
             Triple("Misc", 350, 600),
             Triple("Rent", 1500, 2000),
@@ -119,6 +124,13 @@ class HomePage : AppCompatActivity() {
             row.findViewById<ProgressBar>(R.id.progressBar).apply {
                 this.progress = progress
                 this.max = max
+                setOnClickListener {
+                    Toast.makeText(
+                        this@HomePage,
+                        "$progress out of $max",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             budgetList.addView(row)
         }
