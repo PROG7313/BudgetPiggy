@@ -39,4 +39,19 @@
     <string name="transactions_history">Transactions History ➤</string>
     <string name="streaks_icon">streaks_icon</string>
     <string name="notifications">notifications</string>
+
+    <string name="back_content_description">Back</string>
+    <string name="rewards_title">Rewards</string>
+    <string name="enter_reward_code">Enter Reward Code</string>
+    <string name="reward_confirm">Confirm</string>
+    <string name="your_rewards">Your Rewards</string>
+    <string name="reward_month_goal">1 Month Goal</string>
+    <string name="reward_signed_up">All Signed Up</string>
+    <string name="reward_first_time">First Time Budget</string>
+    <string name="reward_saving_starter">Savings Starter</string>
+    <string name="reward_wonder_spender">Wonder Spender</string>
+    <string name="reward_smart_spender">Smart Spender</string>
+    <string name="reward_wasteful">Wasteful</string>
+    <string name="reward_active">7 Days Active</string>
+    <string name="reward_big_spender">Big Spender</string>
 </resources>
