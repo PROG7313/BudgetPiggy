@@ -45,6 +45,9 @@
         <activity
             android:name=".HomePage"
             android:exported="true"/>
+        <activity
+            android:name=".WalletPage"
+            android:exported="true"/>
     </application>
 
 </manifest>

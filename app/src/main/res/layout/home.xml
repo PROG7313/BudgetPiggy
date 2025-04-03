@@ -32,7 +32,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/pigicon"
-        android:src="@drawable/vec_piggy_money"
+        android:src="@drawable/pic_piggy_money"
         app:layout_constraintStart_toEndOf="@+id/backArrow"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,9 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto"
+        android:fontFamily="@font/sansation"
         android:text="@string/hi_user"
-        android:textColor="@color/primaryText"
+        android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/piggyIcon"
@@ -114,9 +114,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/sansation"
                         android:text="@string/account_balance"
-                        android:textColor="@color/primaryText"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -145,9 +145,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/sansation"
                         android:text="@string/budget_remaining"
-                        android:textColor="@color/primaryText"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -176,9 +176,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/sansation"
                         android:text="@string/transactions_history"
-                        android:textColor="@color/primaryText"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 

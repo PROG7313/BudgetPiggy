@@ -1,6 +1,6 @@
 package com.example.budgetpiggy
 
-import android.app.ActivityOptions
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -22,26 +22,12 @@ class OnBoarding4 : AppCompatActivity() {
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage4)
         val nextButton: Button = findViewById(R.id.nextButtonWelcomePage4)
         previousButton.setOnClickListener {
-            val intent = Intent(this, OnBoarding3::class.java)
 
-            // ✅ Apply slide reverse animation
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-            startActivity(intent, options.toBundle())
+            startActivity(Intent(this, OnBoarding3::class.java))
         }
 
             nextButton.setOnClickListener {
-                val nextIntent = Intent(this, WelcomePage::class.java)
-                val nextOptions = ActivityOptions.makeCustomAnimation(
-                    this,
-                    R.anim.fade_in,
-                    R.anim.fade_out
-                )
-
-                startActivity(nextIntent, nextOptions.toBundle())
+                startActivity( Intent(this, WelcomePage::class.java))
             }
 
 

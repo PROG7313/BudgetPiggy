@@ -1,11 +1,11 @@
 package com.example.budgetpiggy
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
+
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -26,7 +26,7 @@ class LoginPage : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val loginbtn = findViewById<Button>(R.id.loginButton)
+        val loginBtn = findViewById<Button>(R.id.loginButton)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
         val signUpTextView = findViewById<TextView>(R.id.signUpText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
@@ -34,29 +34,14 @@ class LoginPage : AppCompatActivity() {
         val emailEditText = findViewById<EditText>(R.id.emailEditText)
         val emailLabel = findViewById<TextView>(R.id.emailLabel)
         val eyeIcon = findViewById<ImageView>(R.id.eyeIcon)
-        loginbtn.setOnClickListener {
-            val intent = Intent(this, WelcomePage::class.java)
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-
-            startActivity(intent, options.toBundle())
+        loginBtn.setOnClickListener {
+            startActivity(Intent(this, HomePage::class.java))
         }
         signUpTextView.setOnClickListener {
-            val intent = Intent(this, RegisterPage::class.java)
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-
-            startActivity(intent, options.toBundle())
+            startActivity(Intent(this, RegisterPage::class.java))
         }
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
         var isPasswordVisible = false
         eyeIcon.setOnClickListener {

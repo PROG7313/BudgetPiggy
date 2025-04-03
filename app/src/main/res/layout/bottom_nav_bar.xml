@@ -2,9 +2,9 @@
     android:id="@+id/bottomNavBar"
     android:layout_width="match_parent"
     android:layout_height="70dp"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     android:gravity="center"
-    android:background="@color/white"
     android:paddingHorizontal="16dp">
 
     <!-- Home Icon -->
@@ -19,7 +19,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/vec_home_inactive"
-            android:contentDescription="Home" />
+            android:contentDescription="@string/home" />
     </LinearLayout>
 
     <!-- Wallet Icon -->
@@ -34,7 +34,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/vec_wallet_inactive"
-            android:contentDescription="Wallet" />
+            android:contentDescription="@string/wallet" />
     </LinearLayout>
 
     <!-- Reports Icon -->
@@ -49,7 +49,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/vec_reports_inactive"
-            android:contentDescription="Reports" />
+            android:contentDescription="@string/reports" />
     </LinearLayout>
 
     <!-- Profile Icon -->
@@ -64,6 +64,6 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/vec_profile_inactive"
-            android:contentDescription="Profile" />
+            android:contentDescription="@string/profile" />
     </LinearLayout>
 </LinearLayout>
