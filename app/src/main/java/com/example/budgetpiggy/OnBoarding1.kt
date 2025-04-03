@@ -1,6 +1,6 @@
 package com.example.budgetpiggy
 
-import android.app.ActivityOptions
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -23,14 +23,9 @@ class OnBoarding1 : AppCompatActivity() {
         val nextButton: Button = findViewById(R.id.nextButton)
 
         nextButton.setOnClickListener {
-               val intent = Intent(this, OnBoarding2::class.java)
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-            startActivity(intent, options.toBundle())
 
+            startActivity(Intent(this, OnBoarding2::class.java))
         }
+
     }
 }

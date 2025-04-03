@@ -10,9 +10,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Savings"
-        android:textColor="@color/primaryText"
-        android:fontFamily="@font/roboto" />
+        android:textColor="@color/black"
+        android:fontFamily="@font/sansation" />
 
     <ProgressBar
         android:id="@+id/progressBar"

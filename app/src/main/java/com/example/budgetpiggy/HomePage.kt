@@ -1,10 +1,9 @@
 package com.example.budgetpiggy
 
-import android.app.ActivityOptions
+
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -31,24 +30,20 @@ class HomePage : AppCompatActivity() {
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
-        setActiveNavIcon(navHome)
 
+/*
         navHome.setOnClickListener {
             setActiveNavIcon(navHome)
-            val nextIntent = Intent(this, HomePage::class.java)
-            val nextOptions = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-            startActivity(nextIntent, nextOptions.toBundle())
+            startActivity(Intent(this, HomePage::class.java))
         }
+        */
+
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
         navWallet.setOnClickListener {
             setActiveNavIcon(navWallet)
-            // startActivity(Intent(this, WalletPage::class.java))
+             startActivity(Intent(this, WalletPage::class.java))
         }
         navReports.setOnClickListener {
             setActiveNavIcon(navReports)
@@ -80,6 +75,10 @@ class HomePage : AppCompatActivity() {
             R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
             R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        setActiveNavIcon(findViewById(R.id.nav_home))
     }
 
     private fun addSampleData() {
