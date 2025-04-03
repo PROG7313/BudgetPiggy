@@ -32,4 +32,11 @@
     <string name="track_it_nbudget_it_nsave_it">Track it,\nBudget it,\nSave it.</string>
     <string name="you_deserve_it_don_t_let_your_finances_ncontrol_you">You deserve it. Don’t let your finances\ncontrol you</string>
     <string name="get_budgeting">Get Budgeting</string>
+    <string name="hi_user">Hi, User</string>
+    <string name="pigicon">pigIcon</string>
+    <string name="account_balance">Account Balance ➤</string>
+    <string name="budget_remaining">Budget Remaining ➤</string>
+    <string name="transactions_history">Transactions History ➤</string>
+    <string name="streaks_icon">streaks_icon</string>
+    <string name="notifications">notifications</string>
 </resources>

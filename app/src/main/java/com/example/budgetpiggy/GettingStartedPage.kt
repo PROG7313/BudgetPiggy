@@ -21,15 +21,22 @@ class GettingStartedPage : AppCompatActivity() {
             insets
         }
        val backArrow = findViewById<ImageView>(R.id.backArrow)
-       // val getBudgetingBtn = findViewById<Button>(R.id.getStartedButton)
+        val getBudgetingBtn = findViewById<Button>(R.id.getStartedButton)
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
-        /*
-getBudgetingBtn.setOnClickListener {
 
+getBudgetingBtn.setOnClickListener {
+    val nextIntent = Intent(this, HomePage::class.java)
+    val nextOptions = ActivityOptions.makeCustomAnimation(
+        this,
+        R.anim.fade_in,
+        R.anim.fade_out
+    )
+
+    startActivity(nextIntent, nextOptions.toBundle())
 }
-*/
+
     }
 }
