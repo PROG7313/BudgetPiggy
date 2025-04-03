@@ -4,8 +4,10 @@ package com.example.budgetpiggy
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -37,7 +39,6 @@ class WalletPage : AppCompatActivity() {
         val backArrow = findViewById<ImageView>(R.id.backArrow)
 
         val navHome = findViewById<ImageView>(R.id.nav_home)
-        val navWallet = findViewById<ImageView>(R.id.nav_wallet)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
 
@@ -46,7 +47,6 @@ class WalletPage : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
 
         }
-        setActiveNavIcon(navWallet)
         navHome.setOnClickListener {
             setActiveNavIcon(navHome)
             startActivity(Intent(this, HomePage::class.java))
@@ -65,6 +65,34 @@ class WalletPage : AppCompatActivity() {
         navProfile.setOnClickListener {
             setActiveNavIcon(navProfile)
             // startActivity(Intent(this, ProfilePage::class.java))
+        }
+        val scrollView = findViewById<ScrollView>(R.id.walletScrollView)
+        val fabWrapper = findViewById<View>(R.id.fabWrapper)
+
+        var lastScrollY = 0
+
+        scrollView.viewTreeObserver.addOnScrollChangedListener {
+            val scrollY = scrollView.scrollY
+            val isScrollingUp = scrollY < lastScrollY
+            val isAtTop = !scrollView.canScrollVertically(-1)
+            val isAtBottom = !scrollView.canScrollVertically(1)
+
+            when {
+                isScrollingUp || isAtTop || isAtBottom -> {
+                    fabWrapper.visibility = View.VISIBLE
+                    fabWrapper.animate().alpha(1f).setDuration(1).start()
+                }
+
+                else -> {
+                    fabWrapper.animate()
+                        .alpha(0f)
+                        .setDuration(1)
+                        .withEndAction { fabWrapper.visibility = View.GONE }
+                        .start()
+                }
+            }
+
+            lastScrollY = scrollY
         }
         loadAccountTypes()
         loadBudgetCategories()
@@ -99,18 +127,15 @@ class WalletPage : AppCompatActivity() {
 
     private fun loadAccountTypes() {
         val accounts = listOf(
-
             Pair("DEBIT", "R30000"),
             Pair("CHEQUE", "R30000")
+
         )
 
-        val balance = "R5,000"   // Placeholder for now
-
-
-        val balanceText = getString(R.string.account_balance_text, balance)
         accounts.forEach { (type, balance) ->
             val item = layoutInflater.inflate(R.layout.item_wallet_account_row, accountList, false)
             item.findViewById<TextView>(R.id.accountTypeText).text = type
+            val balanceText = getString(R.string.account_balance_text, balance)
             item.findViewById<TextView>(R.id.accountBalanceText).text = balanceText
             item.findViewById<ImageView>(R.id.deleteIcon).setOnClickListener {
                 showDeleteDialog {
@@ -121,41 +146,57 @@ class WalletPage : AppCompatActivity() {
             accountList.addView(item)
         }
     }
-//  Triple("Vehicle", "R4000", "Savings"),
-    private fun loadBudgetCategories() {
-        val budgets = listOf(
 
-            Triple("Home", "R20000", "Debit"),
-            Triple("Groceries", "R5000", "Cheque")
-        )
-        val amount = "R1,000"  // Replace with actual value later
-        val from = "Work Bonus"  // Will come from DB later
+    //  Triple("Vehicle", "R4000", "Savings"),
+private fun loadBudgetCategories() {
+    val budgets = listOf(
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque"),
+        Triple("Home", "R20000", "Debit"),
+        Triple("Groceries", "R5000", "Cheque")
+    )
+
+    budgets.forEach { (category, amount, from) ->
+        val item = layoutInflater.inflate(R.layout.item_wallet_budget_row, budgetList, false)
+        item.findViewById<TextView>(R.id.categoryName).text = category
         val budgetAmountText = getString(R.string.budget_amount_text, amount)
         val budgetSourceText = getString(R.string.budget_source_text, from)
-        budgets.forEach { (category, amount, from) ->
-            val item = layoutInflater.inflate(R.layout.item_wallet_budget_row, budgetList, false)
-            item.findViewById<TextView>(R.id.categoryName).text = category
-            item.findViewById<TextView>(R.id.budgetSource).text = budgetSourceText
-            item.findViewById<TextView>(R.id.budgetAmount).text = budgetAmountText
+        item.findViewById<TextView>(R.id.budgetSource).text = budgetSourceText
+        item.findViewById<TextView>(R.id.budgetAmount).text = budgetAmountText
 
-            val icon = item.findViewById<ImageView>(R.id.categoryIcon)
-            icon.setImageResource(when (category) {
-                "Vehicle" -> R.drawable.vec_car
-                "Home" -> R.drawable.vec_car
-                "Groceries" -> R.drawable.vec_car
-                else -> R.drawable.vec_wallet_inactive
-            })
+        val icon = item.findViewById<ImageView>(R.id.categoryIcon)
+        icon.setImageResource(when (category) {
+            "Vehicle" -> R.drawable.vec_car
+            "Home" -> R.drawable.vec_home_circle
+            "Groceries" -> R.drawable.vec_food_circle
+            else -> R.drawable.vec_wallet_inactive
+        })
 
-            item.findViewById<ImageView>(R.id.deleteIcon).setOnClickListener {
-                showDeleteDialog {
-                    budgetList.removeView(item)
-                    Toast.makeText(this, "$category removed", Toast.LENGTH_SHORT).show()
-                }
+        item.findViewById<ImageView>(R.id.deleteIcon).setOnClickListener {
+            showDeleteDialog {
+                budgetList.removeView(item)
+                Toast.makeText(this, "$category removed", Toast.LENGTH_SHORT).show()
             }
-
-            budgetList.addView(item)
         }
+
+        budgetList.addView(item)
     }
+}
+
 
     private fun showDeleteDialog(onConfirm: () -> Unit) {
         AlertDialog.Builder(this)
