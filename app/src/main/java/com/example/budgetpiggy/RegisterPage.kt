@@ -1,6 +1,6 @@
 package com.example.budgetpiggy
 
-import android.app.ActivityOptions
+
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -44,26 +44,11 @@ class RegisterPage : AppCompatActivity() {
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
         signUpButton.setOnClickListener {
-            val intent = Intent(this, GettingStartedPage::class.java)
-
-            // ✅ Apply slide reverse animation
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-            startActivity(intent, options.toBundle())
+            startActivity(Intent(this, GettingStartedPage::class.java))
         }
         loginRedirectText.setOnClickListener {
-            val intent = Intent(this, LoginPage::class.java)
 
-            // ✅ Apply slide reverse animation
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-            startActivity(intent, options.toBundle())
+            startActivity(Intent(this, LoginPage::class.java))
         }
         var isPasswordVisible = false
         eyeIcon.setOnClickListener {

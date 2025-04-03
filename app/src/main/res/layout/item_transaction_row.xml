@@ -9,24 +9,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Food"
-        android:fontFamily="@font/roboto"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/black"
+        android:fontFamily="@font/sansation" />
 
     <TextView
         android:id="@+id/nameText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="Steers"
-        android:fontFamily="@font/roboto"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/black"
+        android:fontFamily="@font/sansation" />
 
     <TextView
         android:id="@+id/amountText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-R250"
-        android:fontFamily="@font/roboto"
-        android:textColor="@color/primaryText" />
+        android:textColor="@color/black"
+        android:fontFamily="@font/sansation"/>
 </LinearLayout>

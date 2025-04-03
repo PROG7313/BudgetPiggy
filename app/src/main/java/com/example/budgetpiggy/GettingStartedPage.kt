@@ -1,6 +1,6 @@
 package com.example.budgetpiggy
 
-import android.app.ActivityOptions
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -24,19 +24,15 @@ class GettingStartedPage : AppCompatActivity() {
         val getBudgetingBtn = findViewById<Button>(R.id.getStartedButton)
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
 
 getBudgetingBtn.setOnClickListener {
-    val nextIntent = Intent(this, HomePage::class.java)
-    val nextOptions = ActivityOptions.makeCustomAnimation(
-        this,
-        R.anim.fade_in,
-        R.anim.fade_out
-    )
 
-    startActivity(nextIntent, nextOptions.toBundle())
+    startActivity(Intent(this, HomePage::class.java))
+}
+
+
 }
 
     }
-}
+
