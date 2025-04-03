@@ -3,10 +3,11 @@ package com.example.budgetpiggy
 
 import android.content.Intent
 import android.os.Bundle
-
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -25,18 +26,51 @@ class HomePage : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val navHome = findViewById<ImageView>(R.id.nav_home)
+
         val navWallet = findViewById<ImageView>(R.id.nav_wallet)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
 
-/*
-        navHome.setOnClickListener {
-            setActiveNavIcon(navHome)
-            startActivity(Intent(this, HomePage::class.java))
+
+        val scrollView = findViewById<ScrollView>(R.id.scrollArea)
+        val fabWrapper = findViewById<View>(R.id.fabWrapper)
+
+        var lastScrollY = 0
+
+        scrollView.viewTreeObserver.addOnScrollChangedListener {
+            val scrollY = scrollView.scrollY
+            val isScrollingUp = scrollY < lastScrollY
+            val isAtTop = !scrollView.canScrollVertically(-1)
+            val isAtBottom = !scrollView.canScrollVertically(1)
+
+            when {
+                isScrollingUp || isAtTop || isAtBottom -> {
+                    fabWrapper.visibility = View.VISIBLE
+                    fabWrapper.animate().alpha(1f).setDuration(1).start()
+                }
+
+                else -> {
+                    fabWrapper.animate()
+                        .alpha(0f)
+                        .setDuration(1)
+                        .withEndAction { fabWrapper.visibility = View.GONE }
+                        .start()
+                }
+            }
+
+            lastScrollY = scrollY
         }
-        */
+
+
+
+
+        /*
+                navHome.setOnClickListener {
+                    setActiveNavIcon(navHome)
+                    startActivity(Intent(this, HomePage::class.java))
+                }
+                */
 
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -114,7 +148,28 @@ class HomePage : AppCompatActivity() {
         val budgetData = listOf(
             Triple("Misc", 350, 600),
             Triple("Rent", 1500, 2000),
-            Triple("Fuel", 200, 400)
+            Triple("Fuel", 200, 400),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Misc", 350, 600),
+            Triple("Rent", 1500, 2000),
+            Triple("Fuel", 200, 400),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000),
+            Triple("Rent", 1500, 2000)
         )
 
         for ((label, progress, max) in budgetData) {
