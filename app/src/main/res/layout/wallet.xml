@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:id="@+id/walletPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -53,7 +52,7 @@
     <!-- Scrollable Content -->
     <ScrollView
         android:id="@+id/walletScrollView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/walletTitle"
@@ -66,7 +65,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="96dp"
+            android:gravity="top">
 
             <!-- Account Types Card -->
             <androidx.cardview.widget.CardView
@@ -168,7 +171,7 @@
         </LinearLayout>
     </ScrollView>
 
-
+    <include layout="@layout/fab_overlay" />
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"
