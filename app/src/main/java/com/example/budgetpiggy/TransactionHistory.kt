@@ -13,8 +13,8 @@ import android.widget.TextView
 
 class TransactionHistory :  AppCompatActivity(){
     private lateinit var recyclerTransactions: RecyclerView
-    private lateinit var btnSort: Button
-    private lateinit var btnFilter: Button
+    private lateinit var btnSort: ImageButton
+    private lateinit var btnFilter: ImageButton
     private lateinit var btnBack: ImageButton
     private lateinit var btnNotifications: ImageButton
 
@@ -37,8 +37,16 @@ class TransactionHistory :  AppCompatActivity(){
         // Set button actions
         btnBack.setOnClickListener { finish() }
         btnNotifications.setOnClickListener { showNotifications() }
-        btnSort.setOnClickListener { sortTransactions() }
-        btnFilter.setOnClickListener { filterTransactions() }
+
+        // Correct the OnClickListener for btnSort and btnFilter
+        btnSort.setOnClickListener {
+            sortTransactions()
+        }
+
+        btnFilter.setOnClickListener {
+            filterTransactions()
+        }
+
     }
 
     private fun getDummyTransactions(): List<TransactionEntity> {
