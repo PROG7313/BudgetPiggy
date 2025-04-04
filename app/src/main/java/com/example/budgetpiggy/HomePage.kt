@@ -21,6 +21,13 @@ class HomePage : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.home)
 
+        //update notification badge
+        // Find the top bar view (included layout)
+        val topBar = findViewById<View>(R.id.topBar)
+
+        // Set the notification count (example count is 3)
+        updateNotificationBadge(topBar, 3)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homePage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -31,6 +38,8 @@ class HomePage : AppCompatActivity() {
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
+        val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+
 
 
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
@@ -75,6 +84,11 @@ class HomePage : AppCompatActivity() {
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
+        bellIcon.setOnClickListener {
+            startActivity(Intent(this, Notification::class.java))
+        }
+
         navWallet.setOnClickListener {
             setActiveNavIcon(navWallet)
              startActivity(Intent(this, WalletPage::class.java))
