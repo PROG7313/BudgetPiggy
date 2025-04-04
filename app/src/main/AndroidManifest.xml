@@ -48,6 +48,9 @@
         <activity
             android:name=".WalletPage"
             android:exported="true"/>
+        <activity
+            android:name=".TransactionHistory"
+            android:exported="true"/>
     </application>
 
 </manifest>

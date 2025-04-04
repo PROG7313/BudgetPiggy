@@ -21,10 +21,16 @@ class HomePage : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.home)
 
+        val transactionCard = findViewById<View>(R.id.transactionCard)
+        transactionCard.setOnClickListener {
+            startActivity(Intent(this, TransactionHistory::class.java))
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homePage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+
         }
 
         val navWallet = findViewById<ImageView>(R.id.nav_wallet)
