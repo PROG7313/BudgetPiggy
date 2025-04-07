@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="12dp"
     android:backgroundTint="@android:color/transparent"
     app:cardCornerRadius="16dp"
@@ -11,65 +11,119 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/rounded_button"> <!-- same green bg -->
+        android:orientation="vertical"
+        android:background="@drawable/rounded_button"
+        android:padding="12dp">
 
-        <ImageView
-            android:id="@+id/iconImage"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="12dp"
-            android:contentDescription="@string/category_icon" />
-
+        <!-- ✅ Main Row (clickable now) -->
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:id="@+id/toggleRowArea"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="4dp">
 
-            <TextView
-                android:id="@+id/categoryText"
+            <ImageView
+                android:id="@+id/iconImage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/category_icon" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/categoryText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/groceries"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/accountText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account_cheque"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Groceries"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/dateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_2025_03_13"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:layout_gravity="end" />
+
+                <ImageView
+                    android:id="@+id/eyeIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/vec_eye_open"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="4dp"
+                    android:contentDescription="@string/eye" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Expanded Content -->
+        <LinearLayout
+            android:id="@+id/expandedContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/descriptionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/description"
                 android:textColor="@android:color/white"
-                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/accountText"
+                android:id="@+id/descriptionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account Cheque"
+                android:text="@string/store_items_method"
                 android:textColor="@android:color/white"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end">
+                android:layout_marginBottom="8dp" />
 
             <TextView
-                android:id="@+id/dateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2025/03/13"
+                android:text="@string/receipt"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:layout_gravity="end" />
+                android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/vec_eye_open"
-                android:layout_gravity="end"
+                android:id="@+id/receiptImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:src="@drawable/pic_receipt_1"
                 android:layout_marginTop="4dp"
-                android:contentDescription="@string/eye" />
+                android:contentDescription="@string/receipt_image" />
         </LinearLayout>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

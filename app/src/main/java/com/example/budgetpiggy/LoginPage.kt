@@ -35,13 +35,46 @@ class LoginPage : AppCompatActivity() {
         val emailLabel = findViewById<TextView>(R.id.emailLabel)
         val eyeIcon = findViewById<ImageView>(R.id.eyeIcon)
         loginBtn.setOnClickListener {
-            startActivity(Intent(this, HomePage::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, HomePage::class.java))
+                }.start()
+
         }
         signUpTextView.setOnClickListener {
-            startActivity(Intent(this, RegisterPage::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, RegisterPage::class.java))
+                }.start()
+
         }
         backArrow.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressedDispatcher.onBackPressed()
+                }.start()
+
         }
         var isPasswordVisible = false
         eyeIcon.setOnClickListener {

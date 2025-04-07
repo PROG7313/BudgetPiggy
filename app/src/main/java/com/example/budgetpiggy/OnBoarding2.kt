@@ -19,48 +19,35 @@ class OnBoarding2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage3)
         val nextButton : Button = findViewById(R.id.nextButtonWelcomePage3)
         previousButton.setOnClickListener {
-            it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+                view ->
 
-            // 🔸 Scale down animation (press effect)
-            it.animate()
+
+            view.animate()
                 .scaleX(0.95f)
                 .scaleY(0.95f)
-                .setDuration(100)
+                .setDuration(25)
                 .withEndAction {
-                    it.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(100)
-                        .start()
-
-                    // 🔸 Navigate to next screen after animation
-                    startActivity(Intent(this,OnBoarding1::class.java))
-                }
-                .start()
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, OnBoarding1::class.java))
+                }.start()
 
         }
             nextButton.setOnClickListener {
-                it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+                    view ->
 
-                // 🔸 Scale down animation (press effect)
-                it.animate()
+
+                view.animate()
                     .scaleX(0.95f)
                     .scaleY(0.95f)
-                    .setDuration(100)
+                    .setDuration(25)
                     .withEndAction {
-                        it.animate()
-                            .scaleX(1f)
-                            .scaleY(1f)
-                            .setDuration(100)
-                            .start()
-
-                        // 🔸 Navigate to next screen after animation
-                startActivity(Intent(this,OnBoarding3::class.java))
-                    }
-                    .start()
+                        view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                        startActivity(Intent(this, OnBoarding3::class.java))
+                    }.start()
 
         }
     }
