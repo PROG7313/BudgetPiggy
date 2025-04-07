@@ -55,4 +55,10 @@
     <string name="budget_source_text">From: %1$s</string>
     <string name="account_balance_text">Balance : %1$s</string>
     <string name="add">add</string>
+
+    <string name="transaction_history_title">Transaction History</string>
+    <string name="transaction_history_filter">Filter</string>
+    <string name="transaction_history_sort">Sort By</string>
+    <string name="transaction_list">List of Transactions</string>
+    <string name="eye">eye</string>
 </resources>

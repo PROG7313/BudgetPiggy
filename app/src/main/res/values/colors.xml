@@ -5,6 +5,7 @@
     <color name="primaryText">#707974</color>
     <color name="secondaryText">#769986</color>
     <color name="transparent">#00000000</color>
+    <color name="transactionBackground">#1ca380</color>
     <color name="cardBackground">#FFFFFF</color>
-<color name="green">#1CA380</color>
+    <color name="green">#1CA380</color>
 </resources>
