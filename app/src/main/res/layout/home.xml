@@ -118,7 +118,7 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <!-- Dynamic account rows will be added here from Kotlin -->
+
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -185,7 +185,7 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <!-- Max 5 recent transactions will be added here -->
+
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

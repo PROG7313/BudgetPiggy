@@ -3,6 +3,8 @@ package com.example.budgetpiggy
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -14,7 +16,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import org.w3c.dom.Text
+
 
 class HomePage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,13 +71,13 @@ class HomePage : AppCompatActivity() {
             lastScrollY = scrollY
         }
 
-transactionText.setOnClickListener {
-    startActivity(Intent(this, TransactionHistory::class.java))
-}
 
 
 
 
+        transactionText.setOnClickListener {
+            startActivity(Intent(this, TransactionHistory::class.java))
+        }
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -133,20 +135,30 @@ transactionText.setOnClickListener {
 
         for ((label, progress, max) in accountData) {
             val row = layoutInflater.inflate(R.layout.item_balance_row, accountList, false)
-            row.findViewById<TextView>(R.id.labelText).text = label
-            row.findViewById<ProgressBar>(R.id.progressBar).apply {
-                this.progress = progress
-                this.max = max
-                setOnClickListener {
-                    Toast.makeText(
-                        this@HomePage,
-                        "$progress out of $max",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            val labelText = row.findViewById<TextView>(R.id.labelText)
+            val progressBar = row.findViewById<ProgressBar>(R.id.progressBar)
+            val container = row.findViewById<LinearLayout>(R.id.balanceRow) // <- must exist in your XML
+
+            labelText.text = label
+            progressBar.progress = progress
+            progressBar.max = max
+
+            container.setOnClickListener {
+                val toast = Toast.makeText(
+                    this@HomePage,
+                    "$label: $progress out of $max",
+                    Toast.LENGTH_SHORT
+                )
+                toast.show()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    toast.cancel()
+                }, 600) // 🔥 Fast and smooth
             }
+
             accountList.addView(row)
         }
+
 
         // Budget Remaining Items with click action on the progress bar
         val budgetData = listOf(
@@ -178,20 +190,32 @@ transactionText.setOnClickListener {
 
         for ((label, progress, max) in budgetData) {
             val row = layoutInflater.inflate(R.layout.item_balance_row, budgetList, false)
-            row.findViewById<TextView>(R.id.labelText).text = label
-            row.findViewById<ProgressBar>(R.id.progressBar).apply {
-                this.progress = progress
-                this.max = max
-                setOnClickListener {
-                    Toast.makeText(
-                        this@HomePage,
-                        "$progress out of $max",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            val labelText = row.findViewById<TextView>(R.id.labelText)
+            val progressBar = row.findViewById<ProgressBar>(R.id.progressBar)
+            val container = row.findViewById<LinearLayout>(R.id.balanceRow)
+
+            labelText.text = label
+            progressBar.progress = progress
+            progressBar.max = max
+
+            container.setOnClickListener {
+                val toast = Toast.makeText(
+                    this@HomePage,
+                    "$label: $progress out of $max",
+                    Toast.LENGTH_SHORT
+                )
+                toast.show()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    toast.cancel()
+                }, 600) // 🔥 Fast and smooth
             }
+
             budgetList.addView(row)
         }
+
+
+
 
         // Transactions (limit 5)
         val transactions = listOf(
