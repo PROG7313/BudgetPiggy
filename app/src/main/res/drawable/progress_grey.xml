@@ -1,0 +1,19 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Grey track (background) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#D3D3D3"/> <!-- light grey -->
+        </shape>
+    </item>
+
+    <!-- Keep progress fill colored -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="4dp" />
+                <solid android:color="@color/green" /> <!-- use your app's primary color -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>
