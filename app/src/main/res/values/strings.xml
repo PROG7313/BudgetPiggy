@@ -61,4 +61,7 @@
     <string name="transaction_history_sort">Sort By</string>
     <string name="transaction_list">List of Transactions</string>
     <string name="eye">eye</string>
+    <string name="list_of_transactions">List Of Transactions</string>
+    <string name="filter">Filter</string>
+    <string name="sort_by">Sort By</string>
 </resources>

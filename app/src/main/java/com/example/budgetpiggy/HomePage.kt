@@ -14,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import org.w3c.dom.Text
 
 class HomePage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +38,7 @@ class HomePage : AppCompatActivity() {
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
-
+        val transactionText = findViewById<TextView>(R.id.transactionText)
 
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
@@ -68,15 +69,12 @@ class HomePage : AppCompatActivity() {
             lastScrollY = scrollY
         }
 
+transactionText.setOnClickListener {
+    startActivity(Intent(this, TransactionHistory::class.java))
+}
 
 
 
-        /*
-                navHome.setOnClickListener {
-                    setActiveNavIcon(navHome)
-                    startActivity(Intent(this, HomePage::class.java))
-                }
-                */
 
         backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
