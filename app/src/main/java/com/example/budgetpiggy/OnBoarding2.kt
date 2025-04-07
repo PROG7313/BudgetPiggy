@@ -22,10 +22,45 @@ class OnBoarding2 : AppCompatActivity() {
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage3)
         val nextButton : Button = findViewById(R.id.nextButtonWelcomePage3)
         previousButton.setOnClickListener {
-            startActivity(Intent(this,OnBoarding1::class.java))
+            it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+
+            // 🔸 Scale down animation (press effect)
+            it.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction {
+                    it.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(100)
+                        .start()
+
+                    // 🔸 Navigate to next screen after animation
+                    startActivity(Intent(this,OnBoarding1::class.java))
+                }
+                .start()
+
         }
             nextButton.setOnClickListener {
+                it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+
+                // 🔸 Scale down animation (press effect)
+                it.animate()
+                    .scaleX(0.95f)
+                    .scaleY(0.95f)
+                    .setDuration(100)
+                    .withEndAction {
+                        it.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start()
+
+                        // 🔸 Navigate to next screen after animation
                 startActivity(Intent(this,OnBoarding3::class.java))
+                    }
+                    .start()
 
         }
     }
