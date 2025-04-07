@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/option_category"
+        android:title="Filter by Category" />
+    <item
+        android:id="@+id/option_amount_range"
+        android:title="Filter by Amount Range" />
+</menu>

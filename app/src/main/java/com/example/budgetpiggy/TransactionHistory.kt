@@ -9,14 +9,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.PopupMenu
 
 class TransactionHistory :  AppCompatActivity(){
     private lateinit var recyclerTransactions: RecyclerView
     private lateinit var btnSort: ImageButton
     private lateinit var btnFilter: ImageButton
-    private lateinit var btnBack: ImageButton
-    private lateinit var btnNotifications: ImageButton
+    private lateinit var btnBack: ImageView
+    private lateinit var btnNotifications: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +29,7 @@ class TransactionHistory :  AppCompatActivity(){
         btnSort = findViewById(R.id.btnSort)
         btnFilter = findViewById(R.id.btnFilter)
         btnBack = findViewById(R.id.btnBack)
-        btnNotifications = findViewById(R.id.btnNotifications)
+        btnNotifications = findViewById(R.id.bellIcon)
 
         // Set up RecyclerView
         recyclerTransactions.layoutManager = LinearLayoutManager(this)
@@ -63,10 +65,42 @@ class TransactionHistory :  AppCompatActivity(){
 
     private fun sortTransactions() {
         // Handle sorting logic
+        val popup = PopupMenu(this, btnSort)
+        popup.menuInflater.inflate(R.menu.menu_sort_options, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.option_date -> {
+                    // Sort by date logic
+                    true
+                }
+                R.id.option_amount -> {
+                    // Sort by amount logic
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     private fun filterTransactions() {
         // Handle filtering logic
+        val popup = PopupMenu(this, btnFilter)
+        popup.menuInflater.inflate(R.menu.menu_filter_options, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.option_category -> {
+                    // Filter by category logic
+                    true
+                }
+                R.id.option_amount_range -> {
+                    // Filter by amount range logic
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 }
 
