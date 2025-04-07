@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.view.isVisible
 
 class TransactionHistory : AppCompatActivity() {
 
@@ -70,12 +71,34 @@ class TransactionHistory : AppCompatActivity() {
         filterText.setOnClickListener { showFilterDialog() }
 
         navHome.setOnClickListener {
+                view ->
+
             setActiveNavIcon(navHome)
-            startActivity(Intent(this, HomePage::class.java))
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, HomePage::class.java))
+                }.start()
+
+
         }
         navWallet.setOnClickListener {
+
+            view ->
             setActiveNavIcon(navWallet)
-            startActivity(Intent(this, WalletPage::class.java))
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, WalletPage::class.java))
+                }.start()
+
         }
         navReports.setOnClickListener { setActiveNavIcon(navReports) }
         navProfile.setOnClickListener { setActiveNavIcon(navProfile) }
@@ -185,15 +208,57 @@ class TransactionHistory : AppCompatActivity() {
 
     private fun renderTransactions(data: List<Map<String, Any>>) {
         transactionListLayout.removeAllViews()
+
         for (item in data) {
             val row = LayoutInflater.from(this).inflate(R.layout.transaction_item_row, transactionListLayout, false)
-            row.findViewById<ImageView>(R.id.iconImage).setImageResource(item["icon"] as Int)
-            row.findViewById<TextView>(R.id.categoryText).text = "${item["category"]} ${item["amount"]}"
-            row.findViewById<TextView>(R.id.accountText).text = "Account ${item["account"]}"
-            row.findViewById<TextView>(R.id.dateText).text = item["date"].toString()
+
+            val iconImage = row.findViewById<ImageView>(R.id.iconImage)
+            val categoryText = row.findViewById<TextView>(R.id.categoryText)
+            val accountText = row.findViewById<TextView>(R.id.accountText)
+            val dateText = row.findViewById<TextView>(R.id.dateText)
+            val eyeIcon = row.findViewById<ImageView>(R.id.eyeIcon)
+            val expandedContent = row.findViewById<LinearLayout>(R.id.expandedContent)
+            val descriptionText = row.findViewById<TextView>(R.id.descriptionText)
+            val receiptImage = row.findViewById<ImageView>(R.id.receiptImage)
+            val toggleRow = row.findViewById<View>(R.id.toggleRowArea)
+
+            iconImage.setImageResource(item["icon"] as Int)
+            categoryText.text = "${item["category"]} ${item["amount"]}"
+            accountText.text = "Account ${item["account"]}"
+            dateText.text = item["date"].toString()
+            descriptionText.text = "Baby City\n2 Items: Card Payment"
+            receiptImage.setImageResource(R.drawable.pic_receipt_1)
+
+            receiptImage.setOnClickListener {
+                showReceiptFullScreen(R.drawable.pic_receipt_1)
+            }
+
+            toggleRow.setOnClickListener {
+                val isVisible = expandedContent.isVisible
+                expandedContent.visibility = if (isVisible) View.GONE else View.VISIBLE
+                eyeIcon.setImageResource(
+                    if (isVisible) R.drawable.vec_eye_open else R.drawable.vec_eye_closed
+                )
+            }
+
             transactionListLayout.addView(row)
         }
     }
+
+
+    private fun showReceiptFullScreen(drawableRes: Int) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_receipt_preview, null)
+        val imageView = dialogView.findViewById<ImageView>(R.id.fullscreenReceiptImage)
+        imageView.setImageResource(drawableRes)
+
+        val dialog = android.app.AlertDialog.Builder(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+            .setView(dialogView)
+            .create()
+
+        imageView.setOnClickListener { dialog.dismiss() } // Tap to close
+        dialog.show()
+    }
+
 
     private fun showSortDialog() {
         val options = arrayOf("Date: Newest First", "Date: Oldest First", "Category: A-Z", "Category: Z-A")

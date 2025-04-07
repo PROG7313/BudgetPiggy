@@ -23,12 +23,34 @@ class GettingStartedPage : AppCompatActivity() {
        val backArrow = findViewById<ImageView>(R.id.backArrow)
         val getBudgetingBtn = findViewById<Button>(R.id.getStartedButton)
         backArrow.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressedDispatcher.onBackPressed()
+                }.start()
+
         }
 
 getBudgetingBtn.setOnClickListener {
+        view ->
 
-    startActivity(Intent(this, HomePage::class.java))
+
+    view.animate()
+        .scaleX(0.95f)
+        .scaleY(0.95f)
+        .setDuration(25)
+        .withEndAction {
+            view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+            startActivity(Intent(this, HomePage::class.java))
+        }.start()
+
+
 }
 
 

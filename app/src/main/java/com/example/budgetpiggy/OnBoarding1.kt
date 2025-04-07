@@ -21,7 +21,7 @@ class OnBoarding1 : AppCompatActivity() {
         }
 
         val nextButton: Button = findViewById(R.id.nextButton)
-        nextButton.isHapticFeedbackEnabled = true
+
 
         nextButton.setOnClickListener { view ->
 
@@ -29,9 +29,9 @@ class OnBoarding1 : AppCompatActivity() {
             view.animate()
                 .scaleX(0.95f)
                 .scaleY(0.95f)
-                .setDuration(100)
+                .setDuration(25)
                 .withEndAction {
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
                     startActivity(Intent(this, OnBoarding2::class.java))
                 }.start()
         }

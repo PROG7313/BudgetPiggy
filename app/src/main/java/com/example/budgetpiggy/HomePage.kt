@@ -26,7 +26,18 @@ class HomePage : AppCompatActivity() {
 
         val transactionCard = findViewById<View>(R.id.transactionCard)
         transactionCard.setOnClickListener {
-            startActivity(Intent(this, TransactionHistory::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(2)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(2).start()
+                    startActivity(Intent(this, TransactionHistory::class.java))
+                }.start()
+
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homePage)) { v, insets ->
@@ -40,7 +51,7 @@ class HomePage : AppCompatActivity() {
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
-        val transactionText = findViewById<TextView>(R.id.transactionText)
+
 
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
@@ -75,15 +86,34 @@ class HomePage : AppCompatActivity() {
 
 
 
-        transactionText.setOnClickListener {
-            startActivity(Intent(this, TransactionHistory::class.java))
-        }
+
         backArrow.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+                view ->
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressedDispatcher.onBackPressed()
+                }.start()
+
         }
         navWallet.setOnClickListener {
+                view ->
+
             setActiveNavIcon(navWallet)
-             startActivity(Intent(this, WalletPage::class.java))
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, WalletPage::class.java))
+                }.start()
+
+
         }
         navReports.setOnClickListener {
             setActiveNavIcon(navReports)

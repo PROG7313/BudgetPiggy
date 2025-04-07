@@ -22,13 +22,33 @@ class OnBoarding4 : AppCompatActivity() {
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage4)
         val nextButton: Button = findViewById(R.id.nextButtonWelcomePage4)
         previousButton.setOnClickListener {
+                view ->
 
-            startActivity(Intent(this, OnBoarding3::class.java))
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, OnBoarding3::class.java))
+                }.start()
+
         }
+        nextButton.setOnClickListener {
+                view ->
 
-            nextButton.setOnClickListener {
-                startActivity( Intent(this, WelcomePage::class.java))
-            }
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, WelcomePage::class.java))
+                }.start()
+
+        }
 
 
     }
