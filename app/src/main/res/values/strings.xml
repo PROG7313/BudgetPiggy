@@ -59,5 +59,9 @@
     <string name="transaction_history_title">Transaction History</string>
     <string name="transaction_history_filter">Filter</string>
     <string name="transaction_history_sort">Sort By</string>
+    <string name="sort_by_date">Sort By Date</string>
+    <string name="sort_by_amount">Sort By Amount</string>
+    <string name="filter_by_category">Filter by Category</string>
+    <string name="filter_by_amount">Filter by Amount</string>
     <string name="transaction_list">List of Transactions</string>
 </resources>
