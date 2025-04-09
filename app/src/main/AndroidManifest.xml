@@ -32,6 +32,6 @@
         <activity android:name=".HomePage" android:exported="true" />
         <activity android:name=".WalletPage" android:exported="true" />
         <activity android:name=".TransactionHistory" android:exported="true" />
-        
+        <activity android:name=".devtools.TestActivity" android:exported="true" />
     </application>
 </manifest>
