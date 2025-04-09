@@ -25,7 +25,12 @@ class WalletPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.wallet)
+        findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
+        findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
 
+        val greetingText = findViewById<TextView>(R.id.greetingText)
+        greetingText.visibility = View.VISIBLE
+        greetingText.text = getString(R.string.wallet)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.walletPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -41,7 +46,21 @@ class WalletPage : AppCompatActivity() {
         val navHome = findViewById<ImageView>(R.id.nav_home)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
+        val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+        bellIcon.setOnClickListener {
+                view ->
 
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, Notification::class.java))
+                }.start()
+
+        }
 
         backArrow.setOnClickListener {
                 view ->
