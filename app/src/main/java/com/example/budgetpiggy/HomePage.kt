@@ -24,21 +24,23 @@ class HomePage : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.home)
 
-        val transactionCard = findViewById<View>(R.id.transactionCard)
-        transactionCard.setOnClickListener {
-                view ->
+// Update notification badge
+val topBar = findViewById<View>(R.id.topBar)
+updateNotificationBadge(topBar, 3)
 
+// Handle transaction card click
+val transactionCard = findViewById<View>(R.id.transactionCard)
+transactionCard.setOnClickListener { view ->
+    view.animate()
+        .scaleX(0.95f)
+        .scaleY(0.95f)
+        .setDuration(2)
+        .withEndAction {
+            view.animate().scaleX(1f).scaleY(1f).setDuration(2).start()
+            startActivity(Intent(this, TransactionHistory::class.java))
+        }.start()
+}
 
-            view.animate()
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .setDuration(2)
-                .withEndAction {
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(2).start()
-                    startActivity(Intent(this, TransactionHistory::class.java))
-                }.start()
-
-        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.homePage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -51,6 +53,8 @@ class HomePage : AppCompatActivity() {
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
+        val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+
 
 
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
@@ -100,6 +104,11 @@ class HomePage : AppCompatActivity() {
                 }.start()
 
         }
+
+        bellIcon.setOnClickListener {
+            startActivity(Intent(this, Notification::class.java))
+        }
+
         navWallet.setOnClickListener {
                 view ->
 
