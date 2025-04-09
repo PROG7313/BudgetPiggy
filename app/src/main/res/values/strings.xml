@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BudgetPiggy</string>
     <string name="onboardPage1Description">Take Control of Your\nBudgeting with Budget Piggy</string>
@@ -56,6 +57,10 @@
     <string name="account_balance_text">Balance : %1$s</string>
     <string name="add">add</string>
 
+    <!-- Notification-System strings -->
+    <string name="notifications_1">Notifications</string>
+
+    <!-- Transaction History (comain branch) -->
     <string name="transaction_history_title">Transaction History</string>
     <string name="transaction_history_filter">Filter</string>
     <string name="transaction_history_sort">Sort By</string>

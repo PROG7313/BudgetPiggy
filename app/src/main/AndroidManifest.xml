@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -13,45 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BudgetPiggy"
         tools:targetApi="31">
-        <activity
-            android:name=".OnBoarding1"
-            android:exported="true">
+        
+        <activity android:name=".Notification" android:exported="false" />
+        <activity android:name=".OnBoarding1" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".OnBoarding2"
-            android:exported="true" />
-        <activity
-            android:name=".OnBoarding3"
-            android:exported="true" />
-        <activity
-            android:name=".OnBoarding4"
-            android:exported="true" />
-        <activity
-            android:name=".WelcomePage"
-            android:exported="true"/>
-        <activity
-            android:name=".LoginPage"
-            android:exported="true"/>
-        <activity
-            android:name=".RegisterPage"
-            android:exported="true"/>
-        <activity
-            android:name=".GettingStartedPage"
-            android:exported="true"/>
-        <activity
-            android:name=".HomePage"
-            android:exported="true"/>
-        <activity
-            android:name=".WalletPage"
-            android:exported="true"/>
-        <activity
-            android:name=".TransactionHistory"
-            android:exported="true"/>
+        <activity android:name=".OnBoarding2" android:exported="true" />
+        <activity android:name=".OnBoarding3" android:exported="true" />
+        <activity android:name=".OnBoarding4" android:exported="true" />
+        <activity android:name=".WelcomePage" android:exported="true" />
+        <activity android:name=".LoginPage" android:exported="true" />
+        <activity android:name=".RegisterPage" android:exported="true" />
+        <activity android:name=".GettingStartedPage" android:exported="true" />
+        <activity android:name=".HomePage" android:exported="true" />
+        <activity android:name=".WalletPage" android:exported="true" />
+        <activity android:name=".TransactionHistory" android:exported="true" />
+        
     </application>
-
 </manifest>

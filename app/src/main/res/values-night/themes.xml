@@ -8,10 +8,12 @@
     <style name="Theme.BudgetPiggy" parent="Base.Theme.BudgetPiggy" />
     <!-- ✅ Ensure Dark Mode Uses the Same Button Style -->
     <style name="NextButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/rounded_button</item>
-        <item name="android:textColor">#FFFFFF</item>
+
+
         <item name="android:fontFamily">@font/roboto</item>
         <item name="android:textStyle">normal</item>
+        <item name="android:background">@drawable/rounded_button</item>
+        <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">20sp</item>
         <item name="android:fontWeight">400</item>
         <item name="android:textAllCaps">false</item>
