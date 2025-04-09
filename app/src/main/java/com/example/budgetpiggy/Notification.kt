@@ -1,4 +1,5 @@
 package com.example.budgetpiggy
+import android.content.Intent
 import android.view.View
 
 import android.os.Bundle
@@ -41,6 +42,47 @@ class Notification : AppCompatActivity() {
         }
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
+        val navWallet = findViewById<ImageView>(R.id.nav_wallet)
+        val navReports = findViewById<ImageView>(R.id.nav_reports)
+        val navProfile = findViewById<ImageView>(R.id.nav_profile)
+        val navHome = findViewById<ImageView>(R.id.nav_home)
+
+        navHome.setOnClickListener {
+                view ->
+
+            setActiveNavIcon(navHome)
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, HomePage::class.java))
+                }.start()
+        }
+        navWallet.setOnClickListener {
+                view ->
+
+            setActiveNavIcon(navWallet)
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, WalletPage::class.java))
+                }.start()
+
+
+        }
+        navReports.setOnClickListener {
+            setActiveNavIcon(navReports)
+            // startActivity(Intent(this, ReportsPage::class.java))
+        }
+        navProfile.setOnClickListener {
+            setActiveNavIcon(navProfile)
+            // startActivity(Intent(this, ProfilePage::class.java))
+        }
 
         var lastScrollY = 0
 
@@ -96,4 +138,25 @@ class Notification : AppCompatActivity() {
             notifyList.addView(notifItem)
         }
     }
+    private fun setActiveNavIcon(activeIcon: ImageView) {
+        val navIcons = listOf(
+            R.id.nav_home to R.drawable.vec_home_inactive,
+            R.id.nav_wallet to R.drawable.vec_wallet_inactive,
+            R.id.nav_reports to R.drawable.vec_reports_inactive,
+            R.id.nav_profile to R.drawable.vec_profile_inactive
+        )
+
+        for ((id, inactiveDrawable) in navIcons) {
+            val icon = findViewById<ImageView>(id)
+            icon.setImageResource(inactiveDrawable)
+        }
+
+        when (activeIcon.id) {
+            R.id.nav_home -> activeIcon.setImageResource(R.drawable.vec_home_active)
+            R.id.nav_wallet -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
+            R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
+            R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
+        }
+    }
+
 }

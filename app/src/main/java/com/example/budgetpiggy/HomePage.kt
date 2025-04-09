@@ -23,7 +23,12 @@ class HomePage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.home)
+        findViewById<ImageView>(R.id.piggyIcon).visibility = View.VISIBLE
+        findViewById<ImageView>(R.id.streakIcon).visibility = View.VISIBLE
 
+        val greetingText = findViewById<TextView>(R.id.greetingText)
+        greetingText.visibility = View.VISIBLE
+        greetingText.text = getString(R.string.greeting)
 // Update notification badge
 val topBar = findViewById<View>(R.id.topBar)
 updateNotificationBadge(topBar, 3)
