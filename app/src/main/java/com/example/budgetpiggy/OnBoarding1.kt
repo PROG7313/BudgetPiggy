@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.budgetpiggy.devtools.TestActivity
 
 class OnBoarding1 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +34,7 @@ class OnBoarding1 : AppCompatActivity() {
                 .withEndAction {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
                     startActivity(Intent(this, OnBoarding2::class.java))
+                   // startActivity(Intent(this, TestActivity::class.java))
                 }.start()
         }
 

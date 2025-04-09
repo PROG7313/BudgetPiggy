@@ -21,10 +21,18 @@ import androidx.core.view.WindowInsetsCompat
 class HomePage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContentView(R.layout.home)
+        //TestRoomDatabase.runTest(this)
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.VISIBLE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.VISIBLE
+
+
+
+
+
+
 
         val greetingText = findViewById<TextView>(R.id.greetingText)
         greetingText.visibility = View.VISIBLE
