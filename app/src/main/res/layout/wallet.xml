@@ -84,7 +84,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="@color/cardBackground">
 
                     <TextView
                         android:text="@string/account_types"
@@ -132,7 +133,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="@color/cardBackground">
 
                     <TextView
                         android:text="@string/budget_categories"
@@ -175,7 +177,7 @@
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

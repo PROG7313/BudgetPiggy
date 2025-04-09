@@ -22,11 +22,33 @@ class WelcomePage : AppCompatActivity() {
         val createAccountBtn = findViewById<Button>(R.id.createAccountButton)
         val loginTextView = findViewById<TextView>(R.id.loginTextView)
         createAccountBtn.setOnClickListener {
-            startActivity(Intent(this, RegisterPage::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, RegisterPage::class.java))
+                }.start()
+
         }
 
 loginTextView.setOnClickListener {
-    startActivity(Intent(this, LoginPage::class.java))
+        view ->
+
+
+    view.animate()
+        .scaleX(0.95f)
+        .scaleY(0.95f)
+        .setDuration(25)
+        .withEndAction {
+            view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+            startActivity(Intent(this, LoginPage::class.java))
+        }.start()
+
 }
 
 

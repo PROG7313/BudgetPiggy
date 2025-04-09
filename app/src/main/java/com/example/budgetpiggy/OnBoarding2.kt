@@ -19,13 +19,35 @@ class OnBoarding2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage3)
         val nextButton : Button = findViewById(R.id.nextButtonWelcomePage3)
         previousButton.setOnClickListener {
-            startActivity(Intent(this,OnBoarding1::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, OnBoarding1::class.java))
+                }.start()
+
         }
             nextButton.setOnClickListener {
-                startActivity(Intent(this,OnBoarding3::class.java))
+                    view ->
+
+
+                view.animate()
+                    .scaleX(0.95f)
+                    .scaleY(0.95f)
+                    .setDuration(25)
+                    .withEndAction {
+                        view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                        startActivity(Intent(this, OnBoarding3::class.java))
+                    }.start()
 
         }
     }

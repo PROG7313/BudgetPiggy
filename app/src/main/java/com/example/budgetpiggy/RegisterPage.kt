@@ -40,16 +40,49 @@ class RegisterPage : AppCompatActivity() {
         val loginRedirectText = findViewById<TextView>(R.id.loginRedirectText)
         val signUpButton = findViewById<Button>(R.id.signUpButton)
         backArrow.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressedDispatcher.onBackPressed()
+                }.start()
+
+        //    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
         signUpButton.setOnClickListener {
-            startActivity(Intent(this, GettingStartedPage::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, GettingStartedPage::class.java))
+                }.start()
+
         }
         loginRedirectText.setOnClickListener {
+                view ->
 
-            startActivity(Intent(this, LoginPage::class.java))
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, LoginPage::class.java))
+                }.start()
+
         }
+
         var isPasswordVisible = false
         eyeIcon.setOnClickListener {
             isPasswordVisible = !isPasswordVisible

@@ -21,35 +21,33 @@ class OnBoarding3 : AppCompatActivity() {
         }
         val previousButton: Button = findViewById(R.id.previousButtonWelcomePage3)
         val nextButton: Button = findViewById(R.id.nextButtonWelcomePage3)
-        /*
         previousButton.setOnClickListener {
-            val intent = Intent(this, OnBoarding2::class.java)
+                view ->
 
-            // ✅ Apply slide reverse animation
-            val options = ActivityOptions.makeCustomAnimation(
-                this,
-                R.anim.fade_in,
-                R.anim.fade_out
-            )
-            startActivity(intent, options.toBundle())
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, OnBoarding2::class.java))
+                }.start()
+
         }
-
-            nextButton.setOnClickListener {
-                val nextIntent = Intent(this, OnBoarding4::class.java)
-                val nextOptions = ActivityOptions.makeCustomAnimation(
-                    this,
-                    R.anim.fade_in,
-                    R.anim.fade_out
-                )
-
-                startActivity(nextIntent, nextOptions.toBundle())
-            }
-*/
         nextButton.setOnClickListener {
-            startActivity(Intent(this, OnBoarding4::class.java))
-        }
-        previousButton.setOnClickListener {
-            startActivity(Intent(this,OnBoarding2::class.java))
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, OnBoarding4::class.java))
+                }.start()
+
         }
     }
 }

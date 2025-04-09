@@ -39,7 +39,6 @@
             android:paddingEnd="16dp"
             android:paddingBottom="96dp">
 
-
             <!-- Account Balance Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/accountBalanceCard"
@@ -54,7 +53,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="@color/cardBackground">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -81,7 +81,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="@color/cardBackground">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -100,6 +101,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="4dp">
 
@@ -108,9 +111,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:background="@color/cardBackground">
 
                     <TextView
+                        android:id="@+id/transactionText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -123,7 +128,6 @@
         </LinearLayout>
     </ScrollView>
 
-
     <!-- 🔘 Floating Action Button -->
     <include layout="@layout/fab_overlay" />
 
@@ -131,7 +135,7 @@
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

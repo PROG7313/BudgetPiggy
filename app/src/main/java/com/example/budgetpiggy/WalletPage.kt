@@ -44,12 +44,34 @@ class WalletPage : AppCompatActivity() {
 
 
         backArrow.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+                view ->
+
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressedDispatcher.onBackPressed()
+                }.start()
+
 
         }
         navHome.setOnClickListener {
+                view ->
+
             setActiveNavIcon(navHome)
-            startActivity(Intent(this, HomePage::class.java))
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, HomePage::class.java))
+                }.start()
+
+
         }
         /*
         navWallet.setOnClickListener {

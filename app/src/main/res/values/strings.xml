@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BudgetPiggy</string>
     <string name="onboardPage1Description">Take Control of Your\nBudgeting with Budget Piggy</string>
@@ -55,5 +56,27 @@
     <string name="budget_source_text">From: %1$s</string>
     <string name="account_balance_text">Balance : %1$s</string>
     <string name="add">add</string>
+
+    <!-- Notification-System strings -->
     <string name="notifications_1">Notifications</string>
+
+    <!-- Transaction History (comain branch) -->
+    <string name="transaction_history_title">Transaction History</string>
+    <string name="transaction_history_filter">Filter</string>
+    <string name="transaction_history_sort">Sort By</string>
+    <string name="transaction_list">List of Transactions</string>
+    <string name="eye">eye</string>
+    <string name="list_of_transactions">List Of Transactions</string>
+    <string name="filter">Filter</string>
+    <string name="sort_by">Sort By</string>
+    <string name="store_items_method">Store, Items, Method</string>
+    <string name="description">Description</string>
+    <string name="receipt_image">Receipt Image</string>
+    <string name="receipt">Receipt</string>
+    <string name="_2025_03_13">2025/03/13</string>
+    <string name="account_cheque">Account Cheque</string>
+    <string name="groceries">Groceries</string>
+    <string name="tap_to_change">Tap to change</string>
+    <string name="end_date_2025_04_07">End Date: 2025/04/07</string>
+    <string name="receipt_fullscreen_preview">Receipt Fullscreen Preview</string>
 </resources>
