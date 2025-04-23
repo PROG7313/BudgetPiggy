@@ -164,6 +164,9 @@ transactionCard.setOnClickListener { view ->
         }
         navProfile.setOnClickListener {
             setActiveNavIcon(navProfile)
+            //testing about us page
+            startActivity(Intent(this, AboutUsPage::class.java))
+
             // startActivity(Intent(this, ProfilePage::class.java))
         }
         addSampleData()
@@ -293,7 +296,7 @@ transactionCard.setOnClickListener { view ->
         // Transactions (limit 5)
         val transactions = listOf(
             Triple("Food", "Steers", "-R250"),
-            Triple("Fuel", "Engen", "-R800"),
+            Triple("Fuel", "BP", "-R800"),
             Triple("Salary", "Monthly", "+R10000")
         )
 

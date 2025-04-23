@@ -114,6 +114,8 @@ pageTitle.text = getString(R.string.wallet)
         }
         navProfile.setOnClickListener {
             setActiveNavIcon(navProfile)
+            //just for now it goes to about us page
+            startActivity(Intent(this, AboutUsPage::class.java))
             // startActivity(Intent(this, ProfilePage::class.java))
         }
         val scrollView = findViewById<ScrollView>(R.id.walletScrollView)
