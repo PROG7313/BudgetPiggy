@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp">
@@ -54,6 +55,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="gone"
+
         android:layout_marginStart="10dp"
         app:layout_constraintStart_toEndOf="@id/backArrow"
         app:layout_constraintTop_toTopOf="@id/backArrow"
@@ -105,6 +107,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="4dp"
+
         android:clipChildren="false"
         android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -113,6 +116,7 @@
 
         <ImageView
             android:id="@+id/bellIcon"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -122,6 +126,7 @@
             android:src="@drawable/vec_bell"
             tools:ignore="TouchTargetSizeCheck" />
 
+
         <TextView
             android:id="@+id/notificationBadge"
             android:layout_width="18dp"
@@ -129,13 +134,17 @@
             android:layout_gravity="top|end"
             android:background="@drawable/badge_circle"
             android:gravity="center"
+
             android:text="1"
+
             android:textColor="@android:color/white"
             android:textSize="10sp"
             android:textStyle="bold"
             android:translationX="-1dp"
             android:translationY="2dp"
+
             android:visibility="visible" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -11,7 +11,9 @@
     android:clickable="true"
     tools:context=".HomePage">
 
+
     <!-- Top Bar -->
+
     <include
         android:id="@+id/topBar"
         layout="@layout/layout_top_bar"
@@ -60,7 +62,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Account Balance"
+
+                        android:text="@string/account_balance"
+
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -88,7 +92,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Budget Remaining"
+
+                        android:text="@string/budget_remaining"
+
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -119,7 +125,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Transaction History>"
+
+                        android:text="@string/transactions_history"
+
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />

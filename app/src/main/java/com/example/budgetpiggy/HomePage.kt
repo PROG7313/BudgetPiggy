@@ -20,21 +20,46 @@ import androidx.core.view.WindowInsetsCompat
 class HomePage : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContentView(R.layout.home)
+        //TestRoomDatabase.runTest(this)
+        findViewById<ImageView>(R.id.piggyIcon).visibility = View.VISIBLE
+        findViewById<ImageView>(R.id.streakIcon).visibility = View.VISIBLE
 
-        val streakBadge = findViewById<TextView>(R.id.streakBadge)
 
-// Example: Get today's streak value (replace this with your actual logic)
-        val streak = StreakTracker.updateStreak(this)
+//  Handle streak badge display
+val streakBadge = findViewById<TextView>(R.id.streakBadge)
+val streak = StreakTracker.updateStreak(this)
+if (streak > 0) {
+    streakBadge.visibility = View.VISIBLE
+    streakBadge.text = streak.toString()
+} else {
+    streakBadge.visibility = View.GONE
+}
 
-// Dynamically update the flame badge
-        if (streak > 0) {
-            streakBadge.visibility = View.VISIBLE
-            streakBadge.text = streak.toString()
-        } else {
-            streakBadge.visibility = View.GONE
-        }
+//  Update greeting text
+val greetingText = findViewById<TextView>(R.id.greetingText)
+greetingText.visibility = View.VISIBLE
+greetingText.text = getString(R.string.greeting)
+
+//  Update notification badge
+val topBar = findViewById<View>(R.id.topBar)
+updateNotificationBadge(topBar, 3) // Replace 3 with your actual unread count logic
+
+//  Handle transaction card click
+val transactionCard = findViewById<View>(R.id.transactionCard)
+transactionCard.setOnClickListener { view ->
+    view.animate()
+        .scaleX(0.95f)
+        .scaleY(0.95f)
+        .setDuration(2)
+        .withEndAction {
+            view.animate().scaleX(1f).scaleY(1f).setDuration(2).start()
+            startActivity(Intent(this, TransactionHistory::class.java))
+        }.start()
+}
+
 
 
 // Handle transaction card click

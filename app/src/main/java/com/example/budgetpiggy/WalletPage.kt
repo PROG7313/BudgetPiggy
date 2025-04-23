@@ -25,24 +25,21 @@ class WalletPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.wallet)
-        val bellIcon = findViewById<ImageView>(R.id.bellIcon)
-        bellIcon.setOnClickListener {
-            startActivity(Intent(this, Notification::class.java))
-        }
+val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+bellIcon.setOnClickListener {
+    startActivity(Intent(this, Notification::class.java))
+}
 
+// Hide unnecessary icons for Wallet view
+findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
+findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
+findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
-        // Hide unnecessary icons for Wallet view
-        findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
-        findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
-        findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
+// Show and set the title to "Wallet"
+val pageTitle = findViewById<TextView>(R.id.pageTitle)
+pageTitle.visibility = View.VISIBLE
+pageTitle.text = getString(R.string.wallet)
 
-
-        // Show and set the title to "Wallet"
-        val pageTitle = findViewById<TextView>(R.id.pageTitle)
-        pageTitle.visibility = View.VISIBLE
-        pageTitle.text = getString(R.string.wallet)
-
-        // Apply window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.walletPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -58,7 +55,21 @@ class WalletPage : BaseActivity() {
         val navHome = findViewById<ImageView>(R.id.nav_home)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
+        val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+        bellIcon.setOnClickListener {
+                view ->
 
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, Notification::class.java))
+                }.start()
+
+        }
 
         backArrow.setOnClickListener {
                 view ->

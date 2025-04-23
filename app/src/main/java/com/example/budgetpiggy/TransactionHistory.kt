@@ -28,12 +28,32 @@ class TransactionHistory : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.transaction_history)
+        findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
+        findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
+
+        val greetingText = findViewById<TextView>(R.id.greetingText)
+        greetingText.visibility = View.VISIBLE
+        greetingText.text = getString(R.string.transaction_history)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.transactionHistoryPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+        bellIcon.setOnClickListener {
+                view ->
 
+
+            view.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(25)
+                .withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, Notification::class.java))
+                }.start()
+
+        }
         transactionListLayout = findViewById(R.id.transactionList)
         val navHome = findViewById<ImageView>(R.id.nav_home)
         val navWallet = findViewById<ImageView>(R.id.nav_wallet)
@@ -41,7 +61,7 @@ class TransactionHistory : BaseActivity() {
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val sortByText = findViewById<TextView>(R.id.sortByText)
         val filterText = findViewById<TextView>(R.id.filterText)
-
+        val backArrow = findViewById<ImageView>(R.id.backArrow)
         val categories = List(30) { listOf("Groceries", "Clothing", "Motor", "Charity", "Home", "Gift")[it % 6] }
         val amounts = List(30) { listOf("R5000", "R5000", "R500", "R1000", "R2000", "R5000")[it % 6] }
         val accountTypes = List(30) { listOf("Cheque", "Cheque", "Cheque", "Savings", "Cheque", "Cheque")[it % 6] }
@@ -69,7 +89,19 @@ class TransactionHistory : BaseActivity() {
 
         sortByText.setOnClickListener { showSortDialog() }
         filterText.setOnClickListener { showFilterDialog() }
+backArrow.setOnClickListener {
+        view ->
 
+
+    view.animate()
+        .scaleX(0.95f)
+        .scaleY(0.95f)
+        .setDuration(25)
+        .withEndAction {
+            view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+            onBackPressedDispatcher.onBackPressed()
+        }.start()
+}
         navHome.setOnClickListener {
                 view ->
 
