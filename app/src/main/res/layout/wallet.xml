@@ -11,8 +11,8 @@
     android:clickable="true"
     tools:context=".WalletPage">
 
-    <!-- Back & Bell Icons -->
 
+    <!-- Included Top Bar -->
 
     <include
         android:id="@+id/topBar"
@@ -20,7 +20,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <!-- Page Title -->
 
@@ -31,8 +34,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
+
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -44,17 +50,16 @@
             android:paddingStart="16dp"
             android:paddingTop="24dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="96dp"
-            android:gravity="top">
+            android:paddingBottom="96dp">
 
-            <!-- Account Types Card -->
+            <!--  Account Types Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/accountCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="24dp"
-                >
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -64,14 +69,14 @@
                     android:background="@color/cardBackground">
 
                     <TextView
-                        android:text="@string/account_types"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
-                        android:fontFamily="@font/sansation"
-                        android:layout_marginBottom="12dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"/>
+                        android:text="@string/account_types"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="@font/sansation" />
 
                     <LinearLayout
                         android:id="@+id/accountList"
@@ -79,7 +84,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
 
-                    <!-- Add Account Button (Optional) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -92,7 +96,6 @@
                             android:layout_height="24dp"
                             android:src="@drawable/vec_small_plus"
                             android:contentDescription="@string/add_account" />
-
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -113,14 +116,14 @@
                     android:background="@color/cardBackground">
 
                     <TextView
-                        android:text="@string/budget_categories"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
-                        android:fontFamily="@font/sansation"
-                        android:layout_marginBottom="12dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:text="@string/budget_categories"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp"
+                        android:fontFamily="@font/sansation" />
 
                     <LinearLayout
                         android:id="@+id/budgetList"
@@ -128,7 +131,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
 
-                    <!-- Add Category -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -141,21 +143,23 @@
                             android:layout_height="24dp"
                             android:src="@drawable/vec_small_plus"
                             android:contentDescription="@string/add_category" />
-
-
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
     </ScrollView>
 
+    <!--  Floating Action Button -->
     <include layout="@layout/fab_overlay" />
+
+    <!-- Bottom Navigation -->
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

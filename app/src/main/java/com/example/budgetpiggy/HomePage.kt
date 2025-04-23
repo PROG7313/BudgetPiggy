@@ -13,12 +13,11 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 
-class HomePage : AppCompatActivity() {
+class HomePage : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,17 +28,39 @@ class HomePage : AppCompatActivity() {
         findViewById<ImageView>(R.id.streakIcon).visibility = View.VISIBLE
 
 
+//  Handle streak badge display
+val streakBadge = findViewById<TextView>(R.id.streakBadge)
+val streak = StreakTracker.updateStreak(this)
+if (streak > 0) {
+    streakBadge.visibility = View.VISIBLE
+    streakBadge.text = streak.toString()
+} else {
+    streakBadge.visibility = View.GONE
+}
 
+//  Update greeting text
+val greetingText = findViewById<TextView>(R.id.greetingText)
+greetingText.visibility = View.VISIBLE
+greetingText.text = getString(R.string.greeting)
 
-
-
-
-        val greetingText = findViewById<TextView>(R.id.greetingText)
-        greetingText.visibility = View.VISIBLE
-        greetingText.text = getString(R.string.greeting)
-// Update notification badge
+//  Update notification badge
 val topBar = findViewById<View>(R.id.topBar)
-updateNotificationBadge(topBar, 3)
+updateNotificationBadge(topBar, 3) // Replace 3 with your actual unread count logic
+
+//  Handle transaction card click
+val transactionCard = findViewById<View>(R.id.transactionCard)
+transactionCard.setOnClickListener { view ->
+    view.animate()
+        .scaleX(0.95f)
+        .scaleY(0.95f)
+        .setDuration(2)
+        .withEndAction {
+            view.animate().scaleX(1f).scaleY(1f).setDuration(2).start()
+            startActivity(Intent(this, TransactionHistory::class.java))
+        }.start()
+}
+
+
 
 // Handle transaction card click
 val transactionCard = findViewById<View>(R.id.transactionCard)
