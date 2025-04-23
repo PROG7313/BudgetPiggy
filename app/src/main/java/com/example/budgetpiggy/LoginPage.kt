@@ -44,7 +44,7 @@ class LoginPage : AppCompatActivity() {
                 .setDuration(25)
                 .withEndAction {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
-                    startActivity(Intent(this, HomePage::class.java))
+                    startActivity(Intent(this, AboutUsPage::class.java))
                 }.start()
 
         }

@@ -25,8 +25,8 @@ class WalletPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.wallet)
-val bellIcon = findViewById<ImageView>(R.id.bellIcon)
-bellIcon.setOnClickListener {
+        val bellIcons = findViewById<ImageView>(R.id.bellIcon)
+bellIcons.setOnClickListener {
     startActivity(Intent(this, Notification::class.java))
 }
 

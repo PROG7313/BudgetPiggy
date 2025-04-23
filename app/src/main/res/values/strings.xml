@@ -61,10 +61,6 @@
     <string name="notifications_1">Notifications</string>
 
 
-    <!-- Notification-System strings -->
-    <string name="notifications_1">Notifications</string>
-
-
     <!-- Transaction History (comain branch) -->
     <string name="transaction_history_title">Transaction History</string>
     <string name="transaction_history_filter">Filter</string>
