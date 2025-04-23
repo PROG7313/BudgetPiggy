@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class Notification : AppCompatActivity() {
+class Notification : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -24,7 +24,7 @@ class Notification : AppCompatActivity() {
         pageTitle.visibility = View.VISIBLE
         pageTitle.text = getString(R.string.notifications_1)
 
-        // Fixes system bars (safe area padding)
+        // system bars (safe area padding)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainLayout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)

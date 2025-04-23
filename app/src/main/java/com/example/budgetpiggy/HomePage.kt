@@ -13,20 +13,29 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 
-class HomePage : AppCompatActivity() {
+class HomePage : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.home)
 
-// Update notification badge
-val topBar = findViewById<View>(R.id.topBar)
-updateNotificationBadge(topBar, 3)
+        val streakBadge = findViewById<TextView>(R.id.streakBadge)
+
+// Example: Get today's streak value (replace this with your actual logic)
+        val streak = StreakTracker.updateStreak(this)
+
+// Dynamically update the flame badge
+        if (streak > 0) {
+            streakBadge.visibility = View.VISIBLE
+            streakBadge.text = streak.toString()
+        } else {
+            streakBadge.visibility = View.GONE
+        }
+
 
 // Handle transaction card click
 val transactionCard = findViewById<View>(R.id.transactionCard)

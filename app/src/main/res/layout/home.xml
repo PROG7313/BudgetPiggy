@@ -11,7 +11,7 @@
     android:clickable="true"
     tools:context=".HomePage">
 
-    <!-- ✅ Include Your Top Bar -->
+    <!-- Top Bar -->
     <include
         android:id="@+id/topBar"
         layout="@layout/layout_top_bar"

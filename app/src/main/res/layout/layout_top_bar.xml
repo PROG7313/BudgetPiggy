@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp">
@@ -53,31 +54,57 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="gone"
+        android:layout_marginStart="10dp"
         app:layout_constraintStart_toEndOf="@id/backArrow"
+        app:layout_constraintTop_toTopOf="@id/backArrow"
+        app:layout_constraintBottom_toBottomOf="@id/backArrow" />
+
+
+    <!--  Streak Icon with Badge -->
+    <FrameLayout
+        android:id="@+id/streakWrapper"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="4dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintEnd_toStartOf="@id/bellWrapper"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="10dp"/>
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- Streak Icon -->
+        <ImageView
+            android:id="@+id/streakIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:contentDescription="Streak Icon"
+            android:focusable="true"
+            android:src="@drawable/vec_streak"
+            tools:ignore="TouchTargetSizeCheck" />
 
-    <!-- Bell + Notification Badge -->
+        <TextView
+            android:id="@+id/streakBadge"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="top|end"
+            android:background="@drawable/badge_circle"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:translationX="-1dp"
+            android:translationY="2dp"
+            android:visibility="gone" />
+    </FrameLayout>
 
-    <ImageView
-        android:id="@+id/streakIcon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="164dp"
-        android:src="@drawable/vec_streak"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/greetingText"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
+    <!--  Bell Icon with Badge -->
     <FrameLayout
         android:id="@+id/bellWrapper"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="4dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,10 +113,14 @@
 
         <ImageView
             android:id="@+id/bellIcon"
-            android:layout_width="38dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
             android:contentDescription="Notifications"
-            android:src="@drawable/vec_bell" />
+            android:focusable="true"
+            android:src="@drawable/vec_bell"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/notificationBadge"
@@ -98,13 +129,13 @@
             android:layout_gravity="top|end"
             android:background="@drawable/badge_circle"
             android:gravity="center"
-            android:text="0"
+            android:text="1"
             android:textColor="@android:color/white"
             android:textSize="10sp"
             android:textStyle="bold"
             android:translationX="-1dp"
             android:translationY="2dp"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
