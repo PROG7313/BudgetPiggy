@@ -60,6 +60,11 @@
     <!-- Notification-System strings -->
     <string name="notifications_1">Notifications</string>
 
+
+    <!-- Notification-System strings -->
+    <string name="notifications_1">Notifications</string>
+
+
     <!-- Transaction History (comain branch) -->
     <string name="transaction_history_title">Transaction History</string>
     <string name="transaction_history_filter">Filter</string>
@@ -79,6 +84,6 @@
     <string name="tap_to_change">Tap to change</string>
     <string name="end_date_2025_04_07">End Date: 2025/04/07</string>
     <string name="receipt_fullscreen_preview">Receipt Fullscreen Preview</string>
-    <string name="greeting">Hi, Kyle</string>
+
 
 </resources>

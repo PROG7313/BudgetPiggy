@@ -8,7 +8,9 @@
     android:background="@drawable/bg_gradient_background"
     tools:context=".Notification">
 
-    <!-- 🔝 Included Top Bar -->
+
+    <!--  Top Bar -->
+
     <include
         android:id="@+id/topBar"
         layout="@layout/layout_top_bar"
@@ -16,7 +18,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 📨 ScrollView for Notifications -->
+
+    <!-- ScrollView for Notifications -->
+
     <ScrollView
         android:id="@+id/scrollArea"
         android:layout_width="match_parent"
@@ -38,7 +42,9 @@
             android:paddingBottom="96dp" />
     </ScrollView>
 
-    <!-- ➕ Floating Action Button -->
+
+    <!-- Floating Action Button -->
+
     <FrameLayout
         android:id="@+id/fabWrapper"
         android:layout_width="66dp"
@@ -60,7 +66,9 @@
             android:focusable="true" />
     </FrameLayout>
 
-    <!-- 🧭 Bottom Navigation -->
+
+    <!--  Bottom Navigation -->
+
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"

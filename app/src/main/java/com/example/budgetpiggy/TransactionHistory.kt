@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.view.isVisible
 
-class TransactionHistory : AppCompatActivity() {
+class TransactionHistory : BaseActivity() {
 
     private lateinit var transactionListLayout: LinearLayout
     private lateinit var transactions: MutableList<Map<String, Any>>

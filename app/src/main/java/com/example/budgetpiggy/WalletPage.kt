@@ -16,7 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 
-class WalletPage : AppCompatActivity() {
+class WalletPage : BaseActivity() {
 
     private lateinit var accountList: LinearLayout
     private lateinit var budgetList: LinearLayout
@@ -25,12 +25,21 @@ class WalletPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.wallet)
-        findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
-        findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
+val bellIcon = findViewById<ImageView>(R.id.bellIcon)
+bellIcon.setOnClickListener {
+    startActivity(Intent(this, Notification::class.java))
+}
 
-        val greetingText = findViewById<TextView>(R.id.greetingText)
-        greetingText.visibility = View.VISIBLE
-        greetingText.text = getString(R.string.wallet)
+// Hide unnecessary icons for Wallet view
+findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
+findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
+findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
+
+// Show and set the title to "Wallet"
+val pageTitle = findViewById<TextView>(R.id.pageTitle)
+pageTitle.visibility = View.VISIBLE
+pageTitle.text = getString(R.string.wallet)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.walletPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
