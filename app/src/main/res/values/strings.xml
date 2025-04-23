@@ -81,4 +81,15 @@
     <string name="receipt_fullscreen_preview">Receipt Fullscreen Preview</string>
     <string name="greeting">Hi, Kyle</string>
 
+    <!-- About Us -->
+    <string name="About_Us">About Us</string>
+    <string name="About_Us_Text">We created this budgeting app to help you stay on top of your finances, track your spending, and achieve your savings goals with ease. Our mission is to make budgeting simple, effective, and visually engaging for everyone.</string>
+    <string name="About_Team">Our Team</string>
+    <string name="About_Team_Text">We’re a small team of passionate developers and finance enthusiasts dedicated to building tools that empower users to take control of their money.</string>
+    <string name="profile_1_name">Kyle</string>
+    <string name="profile_1_field">Developer</string>
+    <string name="profile_2_name">Derik</string>
+    <string name="profile_2_field">Developer</string>
+    <string name="profile_3_name">Markus</string>
+    <string name="profile_3_field">Developer</string>
 </resources>
