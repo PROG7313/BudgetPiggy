@@ -139,9 +139,10 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:contentDescription="@string/profile"
-                        android:src="@drawable/pic_designer"
-                        android:background="@drawable/bg_rounded_button"
-                        android:scaleType="centerCrop" />
+                        android:src="@drawable/kyle_profile"
+                        android:background="@drawable/bg_circle_mask"
+                        android:scaleType="centerCrop"
+                        android:clipToOutline="true"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -173,9 +174,10 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:contentDescription="@string/profile"
-                        android:src="@drawable/pic_designer"
-                        android:background="@drawable/bg_rounded_button"
-                        android:scaleType="centerCrop" />
+                        android:src="@drawable/derik_profile"
+                        android:background="@drawable/bg_circle_mask"
+                        android:scaleType="centerCrop"
+                        android:clipToOutline="true"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -207,9 +209,10 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:contentDescription="@string/profile"
-                        android:src="@drawable/pic_designer"
-                        android:background="@drawable/bg_rounded_button"
-                        android:scaleType="centerCrop" />
+                        android:src="@drawable/markus_profile"
+                        android:background="@drawable/bg_circle_mask"
+                        android:scaleType="centerCrop"
+                        android:clipToOutline="true"/>
 
                     <TextView
                         android:layout_width="wrap_content"
