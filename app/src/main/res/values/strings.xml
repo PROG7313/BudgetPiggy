@@ -109,4 +109,5 @@
     <string name="categories">Categories</string>
     <string name="category_amount">Category: Amount</string>
     <string name="to_category">To Category</string>
+    <string name="prev">Prev</string>
 </resources>

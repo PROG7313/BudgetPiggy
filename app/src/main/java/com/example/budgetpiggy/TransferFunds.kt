@@ -15,131 +15,108 @@ class TransferFunds : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.transfer_funds)
+        findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
+        findViewById<TextView>(R.id.greetingText).visibility = View.GONE
+        findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
 
-        // Handle window insets
+        val pageTitle = findViewById<TextView>(R.id.pageTitle)
+        pageTitle.visibility = View.VISIBLE
+        pageTitle.text = getString(R.string.transfer_funds)
+
+        // 1) Edge-to-edge insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.transferFundsPage)) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
-        listOf(R.id.greetingText, R.id.piggyIcon, R.id.streakBadge).forEach {
-            findViewById<View>(it)?.visibility = View.GONE
-        }
-        // Top Bar
-        findViewById<ImageView>(R.id.backArrow)?.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-        findViewById<ImageView>(R.id.bellIcon)?.setOnClickListener {
-            startActivity(Intent(this, Notification::class.java))
-        }
 
-        // Bottom Navigation
+
+        // 3) Top bar
+        findViewById<ImageView>(R.id.backArrow)
+            ?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        findViewById<ImageView>(R.id.bellIcon)
+            ?.setOnClickListener { startActivity(Intent(this, Notification::class.java)) }
+
+        // 4) Bottom nav
         setupBottomNav()
 
-        // Toggle Buttons
+        // 5) Main toggle
         val btnTransfer = findViewById<Button>(R.id.btnTransferFunds)
-        val btnMakeTxn  = findViewById<Button>(R.id.btnMakeTransaction)
+        val btnTxn      = findViewById<Button>(R.id.btnMakeTransaction)
         btnTransfer.setOnClickListener {
-            setToggleButtons(btnTransfer, btnMakeTxn)
+            setToggleButtons(btnTransfer, btnTxn)
         }
-        btnMakeTxn.setOnClickListener {
-            setToggleButtons(btnMakeTxn, btnTransfer)
-            // navigate to Transaction screen
-          //  startActivity(Intent(this, TransactionActivity::class.java))
+        btnTxn.setOnClickListener {
+            setToggleButtons(btnTxn, btnTransfer)
+             startActivity(Intent(this, TransactionActivity::class.java))
         }
 
-        // Amount Input → show system keyboard
+        // 6) Amount → system keyboard
         val amountInput = findViewById<EditText>(R.id.amountInput)
-        amountInput.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
+        amountInput.setOnFocusChangeListener { v, has ->
+            if (has) {
                 (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
                     .showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
             }
         }
 
-        // Account Spinners
-        val spinnerFrom = findViewById<Spinner>(R.id.spinnerFromAccount)
-        val spinnerTo   = findViewById<Spinner>(R.id.spinnerToAccount)
-        val accounts    = listOf("Savings", "Debit", "Cheque")
-        spinnerFrom.adapter = ArrayAdapter(this,
-            android.R.layout.simple_spinner_dropdown_item, accounts)
-        spinnerTo  .adapter = ArrayAdapter(this,
-            android.R.layout.simple_spinner_dropdown_item, accounts)
+        // 7) Sub-mode selector
+        val btnModeAccount  = findViewById<Button>(R.id.btnModeAccount)
+        val btnModeCategory = findViewById<Button>(R.id.btnModeCategory)
+        val groupAccToAcc   = findViewById<LinearLayout>(R.id.groupAccountToAccount)
+        val groupAccToCat   = findViewById<LinearLayout>(R.id.groupAccountToCategory)
 
-        // Category pickers (scrollable + highlight)
-        val catFrom = findViewById<LinearLayout>(R.id.categoryFromList)
-        val catTo   = findViewById<LinearLayout>(R.id.categoryToList)
-        fun fillCats(container: LinearLayout) {
-            container.removeAllViews()
-            val icons = listOf(
-                R.drawable.vec_car,
-                R.drawable.vec_food_circle,
-                R.drawable.vec_gift_circle
-            )
-            icons.forEach { resId ->
-                val iv = ImageView(this).apply {
-                    setImageResource(resId)
-                    val pad = (8 * resources.displayMetrics.density).toInt()
-                    setPadding(pad,pad,pad,pad)
-                    setOnClickListener {
-                        // clear previous
-                        for (i in 0 until container.childCount) {
-                            container.getChildAt(i).background = null
-                        }
-                        // highlight this
-                        setBackgroundResource(R.drawable.bg_selected_category)
-                    }
-                }
-                container.addView(iv)
-            }
+        btnModeAccount.setOnClickListener {
+            setToggleButtons(btnModeAccount, btnModeCategory)
+            groupAccToAcc.visibility = View.VISIBLE
+            groupAccToCat.visibility = View.GONE
         }
-        fillCats(catFrom)
-        fillCats(catTo)
+        btnModeCategory.setOnClickListener {
+            setToggleButtons(btnModeCategory, btnModeAccount)
+            groupAccToAcc.visibility = View.GONE
+            groupAccToCat.visibility = View.VISIBLE
+        }
 
-        // Confirm button
+        // 8) Populate spinners
+        val accounts = listOf("Savings", "Debit", "Cheque")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, accounts)
+
+        findViewById<Spinner>(R.id.spinnerFromAccountAcc).adapter = adapter
+        findViewById<Spinner>(R.id.spinnerToAccountAcc).adapter   = adapter
+        findViewById<Spinner>(R.id.spinnerFromAccountCat).adapter = adapter
+
+        // 9) Populate categories list for Account→Category
+        val catContainer = findViewById<LinearLayout>(R.id.categoryToList)
+        fun fillCategories(container: LinearLayout) {
+            container.removeAllViews()
+            listOf(R.drawable.vec_car, R.drawable.vec_food_circle, R.drawable.vec_gift_circle)
+                .forEach { resId ->
+                    val iv = ImageView(this).apply {
+                        setImageResource(resId)
+                        val pad = (8 * resources.displayMetrics.density).toInt()
+                        setPadding(pad, pad, pad, pad)
+                        setOnClickListener {
+                            // deselect
+                            for (i in 0 until container.childCount) {
+                                container.getChildAt(i).background = null
+                            }
+                            // select
+                            background = resources.getDrawable(R.drawable.bg_selected_category, null)
+                        }
+                    }
+                    container.addView(iv)
+                }
+        }
+        fillCategories(catContainer)
+
+        // 10) Confirm
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
-            // TODO: read fields and perform transfer
             Toast.makeText(this, "Transfer Confirmed!", Toast.LENGTH_SHORT).show()
         }
 
-        // Start with Transfer active
-        setToggleButtons(btnTransfer, btnMakeTxn)
-    }
-    private fun setActiveNavIcon(activeIcon: ImageView) {
-        val navIcons = listOf(
-            R.id.nav_home to R.drawable.vec_home_inactive,
-            R.id.nav_wallet to R.drawable.vec_wallet_inactive,
-            R.id.nav_reports to R.drawable.vec_reports_inactive,
-            R.id.nav_profile to R.drawable.vec_profile_inactive
-        )
-
-        for ((id, inactiveDrawable) in navIcons) {
-            val icon = findViewById<ImageView>(id)
-            icon.setImageResource(inactiveDrawable)
-        }
-
-        when (activeIcon.id) {
-            R.id.nav_home -> activeIcon.setImageResource(R.drawable.vec_home_active)
-            R.id.nav_wallet -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
-            R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
-            R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
-        }
-    }
-    private fun setupBottomNav() {
-        val navMap = mapOf(
-            R.id.nav_home    to HomePage::class.java,
-            R.id.nav_wallet  to WalletPage::class.java,
-            R.id.nav_reports to ReportsPage::class.java,
-            //R.id.nav_profile to ProfilePage::class.java
-        )
-        navMap.forEach { (id, cls) ->
-            findViewById<ImageView>(id)?.setOnClickListener { icon ->
-                setActiveNavIcon(icon as ImageView)
-                startActivity(Intent(this, cls))
-            }
-        }
-        // Highlight Wallet icon by default
-      //  findViewById<ImageView>(R.id.nav_wallet)?.let { setActiveNavIcon(it) }
+        // 11) Defaults
+        btnTransfer.performClick()    // main mode
+        btnModeAccount.performClick() // sub-mode
     }
 
     private fun setToggleButtons(active: Button, inactive: Button) {
@@ -147,5 +124,39 @@ class TransferFunds : BaseActivity() {
         active.setTextColor(resources.getColor(android.R.color.white, null))
         inactive.background = resources.getDrawable(R.drawable.bg_toggle_inactive, null)
         inactive.setTextColor(resources.getColor(R.color.black, null))
+    }
+
+    private fun setupBottomNav() {
+        val navMap = mapOf(
+            R.id.nav_home    to HomePage::class.java,
+            R.id.nav_wallet  to WalletPage::class.java,
+            R.id.nav_reports to ReportsPage::class.java
+            // R.id.nav_profile to ProfilePage::class.java
+        )
+        navMap.forEach { (id, cls) ->
+            findViewById<ImageView>(id)?.setOnClickListener { icon ->
+                setActiveNavIcon(icon as ImageView)
+                startActivity(Intent(this, cls))
+            }
+        }
+
+    }
+
+    private fun setActiveNavIcon(activeIcon: ImageView) {
+        val nav = listOf(
+            R.id.nav_home    to R.drawable.vec_home_inactive,
+            R.id.nav_wallet  to R.drawable.vec_wallet_inactive,
+            R.id.nav_reports to R.drawable.vec_reports_inactive,
+            R.id.nav_profile to R.drawable.vec_profile_inactive
+        )
+        nav.forEach { (id, drawable) ->
+            findViewById<ImageView>(id).setImageResource(drawable)
+        }
+        when (activeIcon.id) {
+            R.id.nav_home    -> activeIcon.setImageResource(R.drawable.vec_home_active)
+            R.id.nav_wallet  -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
+            R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
+            R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
+        }
     }
 }
