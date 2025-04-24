@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.media3.common.ktx)
     val room_version = "2.7.0" // Use the most recent stable compatible version with KSP
 
     implementation("androidx.room:room-runtime:$room_version")

@@ -6,11 +6,18 @@ import com.example.budgetpiggy.data.entities.AccountEntity
 @Dao
 interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAccount(account: AccountEntity)
+    suspend fun insert(account: AccountEntity)
+
+    @Query("SELECT * FROM accounts WHERE accountId = :id")
+    suspend fun getById(id: String): AccountEntity?
 
     @Query("SELECT * FROM accounts WHERE userId = :userId")
-    suspend fun getAccountsByUser(userId: String): List<AccountEntity>
+    suspend fun getByUserId(userId: String): List<AccountEntity>
+
+    @Update
+    suspend fun update(account: AccountEntity)
 
     @Delete
-    suspend fun deleteAccount(account: AccountEntity)
+    suspend fun delete(account: AccountEntity)
 }
+

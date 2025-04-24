@@ -12,11 +12,22 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
+import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.data.entities.UserEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class RegisterPage : AppCompatActivity() {
+    @OptIn(UnstableApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,20 +65,56 @@ class RegisterPage : AppCompatActivity() {
 
         //    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
-        signUpButton.setOnClickListener {
-                view ->
-
-
+        signUpButton.setOnClickListener { view ->
             view.animate()
                 .scaleX(0.95f)
                 .scaleY(0.95f)
                 .setDuration(25)
                 .withEndAction {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
-                    startActivity(Intent(this, GettingStartedPage::class.java))
-                }.start()
 
+                    val firstName = firstNameEditText.text.toString().trim()
+                    val lastName = lastNameEditText.text.toString().trim()
+                    val email = emailEditText.text.toString().trim()
+                    val password = passwordEditText.text.toString()
+
+                    if (firstName.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
+                        Log.e("REGISTER", "❌ One or more fields are empty.")
+                        return@withEndAction
+                    }
+
+                    val userId = UUID.randomUUID().toString()
+                    val user = UserEntity(
+                        userId = userId,
+                        firstName = firstName,
+                        lastName = lastName,
+                        email = email,
+                        authProvider = "email_password",
+                        profilePictureUrl = null,
+                        profilePictureLocalPath = null,
+                        currency = "ZAR",
+                        passwordHash = password
+                    )
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val db = AppDatabase.getDatabase(this@RegisterPage)
+                            db.userDao().insert(user)
+                            Log.d("REGISTER", " User inserted successfully: $user")
+
+                            withContext(Dispatchers.Main) {
+                                // Redirect to LoginPage after successful registration
+                                startActivity(Intent(this@RegisterPage, LoginPage::class.java))
+                                finish()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("REGISTER", " Insert failed", e)
+                        }
+                    }
+                }.start()
         }
+
+
         loginRedirectText.setOnClickListener {
                 view ->
 

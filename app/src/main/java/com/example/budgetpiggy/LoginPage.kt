@@ -11,10 +11,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.budgetpiggy.data.database.AppDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,20 +40,36 @@ class LoginPage : AppCompatActivity() {
         val emailEditText = findViewById<EditText>(R.id.emailEditText)
         val emailLabel = findViewById<TextView>(R.id.emailLabel)
         val eyeIcon = findViewById<ImageView>(R.id.eyeIcon)
-        loginBtn.setOnClickListener {
-                view ->
+        loginBtn.setOnClickListener { view ->
+            view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25).withEndAction {
+                view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
 
+                val email = emailEditText.text.toString().trim()
+                val password = passwordEditText.text.toString()
 
-            view.animate()
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .setDuration(25)
-                .withEndAction {
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
-                    startActivity(Intent(this, AboutUsPage::class.java))
-                }.start()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val db = AppDatabase.getDatabase(this@LoginPage)
+                    val user = db.userDao().getUserByEmail(email)
 
+                    withContext(Dispatchers.Main) {
+                        if (user != null && user.passwordHash == password) {
+                            // ✅ Save user ID for session
+                            val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
+                            sharedPref.edit().putString("logged_in_user_id", user.userId).apply()
+
+                            // Login successful
+                            startActivity(Intent(this@LoginPage, HomePage::class.java)) // 🔁 use HomePage now
+                            finish()
+                        } else {
+                            // Show login error
+                            Toast.makeText(this@LoginPage, "Invalid email or password", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }.start()
         }
+
+
         signUpTextView.setOnClickListener {
                 view ->
 

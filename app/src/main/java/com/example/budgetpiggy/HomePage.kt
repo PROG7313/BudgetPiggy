@@ -15,6 +15,12 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.example.budgetpiggy.data.database.AppDatabase
+
 
 
 class HomePage : BaseActivity() {
@@ -22,6 +28,23 @@ class HomePage : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.home)
+        val greetingText = findViewById<TextView>(R.id.greetingText)
+
+        val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val userId = sharedPref.getString("logged_in_user_id", null)
+
+        if (userId != null) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val db = AppDatabase.getDatabase(this@HomePage)
+                val user = db.userDao().getById(userId)
+
+                withContext(Dispatchers.Main) {
+                    if (user != null) {
+                        greetingText.text = "Hi, ${user.firstName}"
+                    }
+                }
+            }
+        }
 
         val streakBadge = findViewById<TextView>(R.id.streakBadge)
 
