@@ -29,9 +29,10 @@ class AccountPage : BaseActivity() {
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
 // Show and set the title to "Wallet"
-        val pageTitle = findViewById<TextView>(R.id.pageTitle)
-        pageTitle.visibility = View.VISIBLE
-        pageTitle.text = getString(R.string.account)
+        findViewById<TextView>(R.id.pageTitle).apply {
+            visibility = View.VISIBLE
+            text = getString(R.string.account)
+        }
 
 
 
@@ -85,6 +86,8 @@ class AccountPage : BaseActivity() {
             // Already in AccountPage
             setActiveNavIcon(v as ImageView)
         }
+
+
     }
 
     override fun onResume() {

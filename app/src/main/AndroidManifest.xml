@@ -71,6 +71,12 @@
         <activity
             android:name=".TransactionActivity"
             android:exported="true" />
+        <activity
+            android:name=".AddAccountPage"
+            android:exported="true" />
+        <activity
+            android:name=".AddCategoryPage"
+            android:exported="true" />
     </application>
 
 </manifest>

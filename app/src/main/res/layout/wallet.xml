@@ -20,12 +20,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <!-- Page Title -->
+
 
 
     <!-- Scrollable Content -->
@@ -92,6 +91,7 @@
                         android:layout_marginTop="12dp">
 
                         <ImageView
+                            android:id="@+id/addAccountPlus"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/vec_small_plus"
@@ -139,6 +139,7 @@
                         android:layout_marginTop="12dp">
 
                         <ImageView
+                            android:id="@+id/addCategoryPlus"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/vec_small_plus"
