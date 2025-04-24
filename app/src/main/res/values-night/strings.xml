@@ -1,4 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">BudgetPiggy</string>
+    <string name="onboardPage1Description">Take Control of Your\nBudgeting with Budget Piggy</string>
+    <string name="onboardPage2Description">Keep track of your funds and\nmake budgeting easier</string>
+    <string name="onboardPage3Description">Make your finances fun with\n the gamification features</string>
+    <string name="onboardPage4Description">Visually analyse your funds and\n always stay on top</string>
+    <string name="finishBtn">Finish</string>
+    <string name="rewardsPageTextRewards">Rewards</string>
+    <string name="rewardsPageTextEnterRewardsCode">Enter Reward Code</string>
+    <string name="rewardsPageTextConfirm">Confirm</string>
+
+    <string name="create">Create Account</string>
+    <string name="alreadyHaveAccount"><font color="#707974">Already have an account? </font><font color="#769986">Log in</font></string>
+    <string name="dontHaveAccount"><font color="#707974">Don\'t have an account? </font><font color="#769986">Sign up</font></string>
+    <string name="budgetPiggy">BUDGET PIGGY</string>
+    <string name="backArrow">back</string>
+    <string name="email_address">Email address</string>
+    <string name="piggy_logo">Piggy Logo</string>
+    <string name="toggle_password_visibility">Toggle Password Visibility</string>
+    <string name="login_with_github">Login with GitHub</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="login_btn">Login</string>
+    <string name="or">Or</string>
+    <string name="password">Password</string>
+    <string name="piggy_bank">Piggy Bank</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="sign_up_btn">Sign Up</string>
+    <string name="budget_piggy_title">BUDGET PIGGY</string>
+    <string name="track_it_nbudget_it_nsave_it">Track it,\nBudget it,\nSave it.</string>
+    <string name="you_deserve_it_don_t_let_your_finances_ncontrol_you">You deserve it. Don’t let your finances\ncontrol you</string>
+    <string name="get_budgeting">Get Budgeting</string>
+    <string name="hi_user">Hi, User</string>
+    <string name="pigicon">pigIcon</string>
+    <string name="account_balance">Account Balance ➤</string>
+    <string name="budget_remaining">Budget Remaining ➤</string>
+    <string name="transactions_history">Transactions History ➤</string>
+    <string name="streaks_icon">streaks_icon</string>
+    <string name="notifications">notifications</string>
+    <string name="bell_icon">bell</string>
+    <string name="wallet">Wallet</string>
+    <string name="account_types">Account Types</string>
+    <string name="add_account">Add Account</string>
+    <string name="budget_categories">Budget Categories</string>
+    <string name="reports">Reports</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="delete_category">Delete Category</string>
+    <string name="category_icon">Category Icon</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="add_category">Add Category</string>
+    <string name="budget_amount_text">Budget : %1$s</string>
+    <string name="budget_source_text">From: %1$s</string>
+    <string name="account_balance_text">Balance : %1$s</string>
+    <string name="add">add</string>
+    <string name="transaction_history">Transactions History</string>
+    <!-- Notification-System strings -->
+    <string name="notifications_1">Notifications</string>
+
+
+    <!-- Transaction History (comain branch) -->
+    <string name="transaction_history_title">Transaction History</string>
+    <string name="transaction_history_filter">Filter</string>
+    <string name="transaction_history_sort">Sort By</string>
+    <string name="transaction_list">List of Transactions</string>
+    <string name="eye">eye</string>
+    <string name="list_of_transactions">List Of Transactions</string>
+    <string name="filter">Filter</string>
+    <string name="sort_by">Sort By</string>
+    <string name="store_items_method">Store, Items, Method</string>
+    <string name="description">Description</string>
+    <string name="receipt_image">Receipt Image</string>
+    <string name="receipt">Receipt</string>
+    <string name="_2025_03_13">2025/03/13</string>
+    <string name="account_cheque">Account Cheque</string>
+    <string name="groceries">Groceries</string>
+    <string name="tap_to_change">Tap to change</string>
+    <string name="end_date_2025_04_07">End Date: 2025/04/07</string>
+    <string name="receipt_fullscreen_preview">Receipt Fullscreen Preview</string>
+
+
+    <!-- About Us -->
+    <string name="About_Us">About Us</string>
+    <string name="About_Us_Text">We created this budgeting app to help you stay on top of your finances, track your spending, and achieve your savings goals with ease. Our mission is to make budgeting simple, effective, and visually engaging for everyone.</string>
+    <string name="About_Team">Our Team</string>
+    <string name="About_Team_Text">We’re a small team of passionate developers and finance enthusiasts dedicated to building tools that empower users to take control of their money.</string>
+    <string name="profile_1_name">Kyle</string>
+    <string name="profile_1_field">Developer</string>
+    <string name="profile_2_name">Derik</string>
+    <string name="profile_2_field">Developer</string>
+    <string name="profile_3_name">Markus</string>
+    <string name="profile_3_field">Developer</string>
+    <string name="confirm">Confirm</string>
+    <string name="from_category">From Category</string>
+    <string name="to_account">To Account</string>
+    <string name="from_account">From Account</string>
     <string name="zar">ZAR</string>
+    <string name="_0_00">0.00</string>
+    <string name="make_transaction">Make Transaction</string>
+    <string name="transfer_funds">Transfer Funds</string>
+    <string name="select_date_range">Select Date Range</string>
+    <string name="total_balance">Total Balance</string>
+    <string name="balance_trend">Balance Trend</string>
+    <string name="earnings_this_month">Earnings this month</string>
+    <string name="spent_this_month">Spent this month</string>
+    <string name="categories">Categories</string>
+    <string name="category_amount">Category: Amount</string>
+    <string name="to_category">To Category</string>
+    <string name="prev">Prev</string>
 </resources>
