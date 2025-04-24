@@ -166,12 +166,12 @@ class HomePage : BaseActivity() {
         }
         navProfile.setOnClickListener {
             setActiveNavIcon(navProfile)
-            // startActivity(Intent(this, ProfilePage::class.java))
+             startActivity(Intent(this, AccountPage::class.java))
         }
         addSampleData()
     }
 
-    private fun setActiveNavIcon(activeIcon: ImageView) {
+    override fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
             R.id.nav_wallet to R.drawable.vec_wallet_inactive,

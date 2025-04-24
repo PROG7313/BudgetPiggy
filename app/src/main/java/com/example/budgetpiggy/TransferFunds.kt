@@ -142,7 +142,7 @@ class TransferFunds : BaseActivity() {
 
     }
 
-    private fun setActiveNavIcon(activeIcon: ImageView) {
+    override fun setActiveNavIcon(activeIcon: ImageView) {
         val nav = listOf(
             R.id.nav_home    to R.drawable.vec_home_inactive,
             R.id.nav_wallet  to R.drawable.vec_wallet_inactive,

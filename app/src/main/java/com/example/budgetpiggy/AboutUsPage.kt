@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,9 +23,16 @@ class AboutUsPage : BaseActivity() {
             insets
         }
 
-        // Set visibility for top icons (if applicable)
-        findViewById<ImageView>(R.id.piggyIcon).visibility = View.VISIBLE
-        findViewById<ImageView>(R.id.streakIcon).visibility = View.VISIBLE
+
+        // Hide unnecessary icons for Wallet view
+        findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
+        findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
+        findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
+
+// Show and set the title to "Wallet"
+        val pageTitle = findViewById<TextView>(R.id.pageTitle)
+        pageTitle.visibility = View.VISIBLE
+        pageTitle.text = getString(R.string.about)
 
         // Set up back arrow navigation
         val backArrow = findViewById<ImageView>(R.id.backArrow)
@@ -85,24 +93,5 @@ class AboutUsPage : BaseActivity() {
 
     }
 
-    private fun setActiveNavIcon(activeIcon: ImageView) {
-        val navIcons = listOf(
-            R.id.nav_home to R.drawable.vec_home_inactive,
-            R.id.nav_wallet to R.drawable.vec_wallet_inactive,
-            R.id.nav_reports to R.drawable.vec_reports_inactive,
-            R.id.nav_profile to R.drawable.vec_profile_inactive
-        )
 
-        for ((id, inactiveDrawable) in navIcons) {
-            val icon = findViewById<ImageView>(id)
-            icon.setImageResource(inactiveDrawable)
-        }
-
-        when (activeIcon.id) {
-            R.id.nav_home -> activeIcon.setImageResource(R.drawable.vec_home_active)
-            R.id.nav_wallet -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
-            R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
-            R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
-        }
-    }
 }
