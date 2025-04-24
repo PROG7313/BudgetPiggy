@@ -19,9 +19,11 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<CategoryEntity>
 
+
     @Update
     suspend fun update(category: CategoryEntity)
 
     @Delete
     suspend fun delete(category: CategoryEntity)
+
 }

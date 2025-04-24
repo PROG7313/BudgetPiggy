@@ -32,7 +32,8 @@
         <activity android:name=".HomePage" android:exported="true" />
         <activity android:name=".WalletPage" android:exported="true" />
         <activity android:name=".TransactionHistory" android:exported="true" />
-        <activity android:name=".devtools.TestActivity" android:exported="true" />
         <activity android:name=".AboutUsPage" android:exported="true" />
+        <activity android:name=".ReportsPage" android:exported="true" />
+        <activity android:name=".TransferFunds" android:exported="true" />
     </application>
 </manifest>

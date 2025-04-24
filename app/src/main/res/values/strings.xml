@@ -93,4 +93,20 @@
     <string name="profile_2_field">Developer</string>
     <string name="profile_3_name">Markus</string>
     <string name="profile_3_field">Developer</string>
+    <string name="confirm">Confirm</string>
+    <string name="from_category">From Category</string>
+    <string name="to_account">To Account</string>
+    <string name="from_account">From Account</string>
+    <string name="zar">ZAR</string>
+    <string name="_0_00">0.00</string>
+    <string name="make_transaction">Make Transaction</string>
+    <string name="transfer_funds">Transfer Funds</string>
+    <string name="select_date_range">Select Date Range</string>
+    <string name="total_balance">Total Balance</string>
+    <string name="balance_trend">Balance Trend</string>
+    <string name="earnings_this_month">Earnings this month</string>
+    <string name="spent_this_month">Spent this month</string>
+    <string name="categories">Categories</string>
+    <string name="category_amount">Category: Amount</string>
+    <string name="to_category">To Category</string>
 </resources>

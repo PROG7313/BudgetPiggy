@@ -48,4 +48,17 @@
         <item name="android:fontFamily">@font/roboto</item>
 
     </style>
+    <style name="ToggleActive">
+        <item name="android:background">@drawable/bg_toggle_active</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="ToggleInactive">
+        <item name="android:background">@drawable/bg_toggle_inactive</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="Label">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>
