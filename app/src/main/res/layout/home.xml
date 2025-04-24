@@ -136,10 +136,10 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 🔘 Floating Action Button -->
+    <!--  Floating Action Button -->
     <include layout="@layout/fab_overlay" />
 
-    <!-- 📱 Bottom Navigation -->
+    <!--  Bottom Navigation -->
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"

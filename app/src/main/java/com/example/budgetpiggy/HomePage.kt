@@ -48,7 +48,7 @@ class HomePage : BaseActivity() {
 
         val streakBadge = findViewById<TextView>(R.id.streakBadge)
 
-// Example: Get today's streak value (replace this with your actual logic)
+
         val streak = StreakTracker.updateStreak(this)
 
 // Dynamically update the flame badge
@@ -120,6 +120,10 @@ class HomePage : BaseActivity() {
 
 
 
+        val fabPlus = findViewById<ImageView>(R.id.fabPlus)
+        fabPlus?.setOnClickListener {
+            startActivity(Intent(this, TransferFunds::class.java))
+        }
 
 
 
@@ -158,7 +162,7 @@ class HomePage : BaseActivity() {
         }
         navReports.setOnClickListener {
             setActiveNavIcon(navReports)
-            // startActivity(Intent(this, ReportsPage::class.java))
+             startActivity(Intent(this, ReportsPage::class.java))
         }
         navProfile.setOnClickListener {
             setActiveNavIcon(navProfile)

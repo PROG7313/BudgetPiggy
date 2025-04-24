@@ -6,5 +6,7 @@
     <color name="secondaryText">#769986</color>
     <color name="transparent">#00000000</color>
     <color name="cardBackground">#FFFFFF</color>
+    <color name="divider">#DDDDDD</color>
     <color name="green">#1CA380</color>
+    <color name="keypadBackground">#F5F5F5</color>
 </resources>

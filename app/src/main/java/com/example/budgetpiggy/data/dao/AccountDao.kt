@@ -14,10 +14,25 @@ interface AccountDao {
     @Query("SELECT * FROM accounts WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<AccountEntity>
 
+    @Query("SELECT accountName, balance FROM accounts WHERE userId = :userId")
+    suspend fun getBalancesForUser(userId: String): List<AccountBalanceView>
+
+
     @Update
     suspend fun update(account: AccountEntity)
 
     @Delete
     suspend fun delete(account: AccountEntity)
+
+
+
+
+
+    data class AccountBalanceView(
+        val accountName: String,
+        val balance: Double
+    )
+
+
 }
 

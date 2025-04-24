@@ -7,5 +7,8 @@
     <color name="transparent">#00000000</color>
     <color name="transactionBackground">#1ca380</color>
     <color name="cardBackground">#FFFFFF</color>
+    <color name="divider">#DDDDDD</color>
     <color name="green">#1CA380</color>
+    <color name="blue">#008080</color>
+    <color name="keypadBackground">#F5F5F5</color>
 </resources>
