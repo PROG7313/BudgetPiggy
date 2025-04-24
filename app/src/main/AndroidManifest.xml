@@ -35,5 +35,6 @@
         <activity android:name=".AboutUsPage" android:exported="true" />
         <activity android:name=".ReportsPage" android:exported="true" />
         <activity android:name=".TransferFunds" android:exported="true" />
+        <activity android:name=".TransactionActivity" android:exported="true" />
     </application>
 </manifest>
