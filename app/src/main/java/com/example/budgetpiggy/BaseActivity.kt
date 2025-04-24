@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 open class BaseActivity : AppCompatActivity() {
 
 
+
     protected open fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(
             R.id.nav_home    to R.drawable.vec_home_inactive,

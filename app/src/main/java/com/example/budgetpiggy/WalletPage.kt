@@ -69,7 +69,16 @@ class WalletPage : BaseActivity() {
 
         // Bottom nav wiring
         setupBottomNav()
+        val addAccount = findViewById<ImageView>(R.id.addAccountPlus)
+        val addCategory = findViewById<ImageView>(R.id.addCategoryPlus)
 
+        addAccount.setOnClickListener {
+            startActivity(Intent(this, AddAccountPage::class.java))
+        }
+        addCategory.setOnClickListener {
+
+            startActivity(Intent(this, AddCategoryPage::class.java))
+        }
         // Scroll behavior for FAB
         val scrollView  = findViewById<ScrollView>(R.id.walletScrollView)
         val fabWrapper  = findViewById<View>(R.id.fabWrapper)
@@ -140,7 +149,7 @@ class WalletPage : BaseActivity() {
         val data = listOf(
             "Home" to "R20000" to "Debit",
             "Groceries" to "R5000" to "Cheque",
-            // … repeat as needed …
+
         )
         data.forEach { (pair, from) ->
             val (category, amount) = pair

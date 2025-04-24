@@ -2,6 +2,7 @@ package com.example.budgetpiggy
 
 
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -86,7 +87,6 @@ class HomePage : BaseActivity() {
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
         val bellIcon = findViewById<ImageView>(R.id.bellIcon)
-
 
 
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
