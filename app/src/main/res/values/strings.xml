@@ -110,4 +110,16 @@
     <string name="category_amount">Category: Amount</string>
     <string name="to_category">To Category</string>
     <string name="prev">Prev</string>
+    <string name="profile_avatar">avatar</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="account">Account\n</string>
+    <string name="account_management">Account Management\n</string>
+    <string name="manage_accounts">Manage Accounts\n</string>
+    <string name="rewards">Rewards</string>
+    <string name="more">More</string>
+    <string name="choose_currency">Choose Currency</string>
+    <string name="about">About</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="help">Help</string>
+    <string name="log_out">Log Out</string>
 </resources>
