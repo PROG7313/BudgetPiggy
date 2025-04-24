@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.budgetpiggy.devtools.TestActivity
 
 class OnBoarding1 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
