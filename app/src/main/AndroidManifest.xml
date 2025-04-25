@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,68 +15,82 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BudgetPiggy"
         tools:targetApi="31">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
-            android:name=".AccountPage"
+            android:name=".ui.settings.AccountPage"
             android:exported="false" />
         <activity
-            android:name=".Notification"
+            android:name=".ui.home.Notification"
             android:exported="false" />
         <activity
-            android:name=".OnBoarding1"
+            android:name=".ui.core.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".OnBoarding2"
+            android:name=".ui.onboarding.OnBoarding1"
             android:exported="true" />
         <activity
-            android:name=".OnBoarding3"
+            android:name=".ui.onboarding.OnBoarding2"
             android:exported="true" />
         <activity
-            android:name=".OnBoarding4"
+            android:name=".ui.onboarding.OnBoarding3"
             android:exported="true" />
         <activity
-            android:name=".WelcomePage"
+            android:name=".ui.onboarding.OnBoarding4"
             android:exported="true" />
         <activity
-            android:name=".LoginPage"
+            android:name=".ui.auth.WelcomePage"
             android:exported="true" />
         <activity
-            android:name=".RegisterPage"
+            android:name=".ui.auth.LoginPage"
             android:exported="true" />
         <activity
-            android:name=".GettingStartedPage"
+            android:name=".ui.auth.RegisterPage"
             android:exported="true" />
         <activity
-            android:name=".HomePage"
+            android:name=".ui.auth.GettingStartedPage"
             android:exported="true" />
         <activity
-            android:name=".WalletPage"
+            android:name=".ui.home.HomePage"
             android:exported="true" />
         <activity
-            android:name=".TransactionHistory"
+            android:name=".ui.wallet.WalletPage"
             android:exported="true" />
         <activity
-            android:name=".AboutUsPage"
+            android:name=".ui.transaction.TransactionHistory"
             android:exported="true" />
         <activity
-            android:name=".ReportsPage"
+            android:name=".ui.settings.AboutUsPage"
             android:exported="true" />
         <activity
-            android:name=".TransferFunds"
+            android:name=".ui.reports.ReportsPage"
             android:exported="true" />
         <activity
-            android:name=".TransactionActivity"
+            android:name=".ui.transaction.TransferFunds"
             android:exported="true" />
         <activity
-            android:name=".AddAccountPage"
+            android:name=".ui.transaction.TransactionActivity"
             android:exported="true" />
         <activity
-            android:name=".AddCategoryPage"
+            android:name=".ui.wallet.AddAccountPage"
+            android:exported="true" />
+        <activity
+            android:name=".ui.category.AddCategoryPage"
+            android:exported="true" />
+        <activity
+            android:name=".ui.settings.ChangeCurrency"
             android:exported="true" />
     </application>
 

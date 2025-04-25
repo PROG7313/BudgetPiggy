@@ -59,7 +59,7 @@
                     android:text="MAKE TRANSACTION"/>
             </LinearLayout>
 
-
+            <!-- 2) Amount input -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,7 +95,33 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- 3) Income/Expense Toggle -->
+            <LinearLayout
+                android:id="@+id/incomeExpenseToggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_horizontal">
 
+                <Button
+                    android:id="@+id/btnIncome"
+                    style="@style/ToggleActive"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="INCOME" />
+
+                <Button
+                    android:id="@+id/btnExpense"
+                    style="@style/ToggleInactive"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="EXPENSE" />
+            </LinearLayout>
+
+            <!-- 4) Account-type toggles (dynamically populated) -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,40 +129,21 @@
                 app:cardElevation="2dp"
                 android:layout_marginBottom="16dp">
 
-                <LinearLayout
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:fillViewport="true"
                     android:padding="16dp">
 
-                    <Button
-                        android:id="@+id/btnTypeSavings"
-                        style="@style/ToggleActive"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:id="@+id/accountToggleContainer"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@android:color/black"
-                        android:text="SAVINGS"/>
-
-                    <Button
-                        android:id="@+id/btnTypeDebit"
-                        style="@style/ToggleInactive"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="DEBIT"/>
-
-                    <Button
-                        android:id="@+id/btnTypeCheque"
-                        style="@style/ToggleInactive"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="CHEQUE"/>
-                </LinearLayout>
+                        android:orientation="horizontal"/>
+                </HorizontalScrollView>
             </androidx.cardview.widget.CardView>
 
-            <!-- 4) Description -->
+            <!-- 5) Description -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -155,15 +162,15 @@
                     android:background="@null"/>
             </androidx.cardview.widget.CardView>
 
-            <!-- 5) Transaction Date label -->
+            <!-- 6) Transaction Date label -->
             <TextView
+                style="@style/Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Label"
                 android:text="Transaction Date"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- 6) Date picker -->
+            <!-- 7) Date picker -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -209,25 +216,24 @@
                         android:minHeight="48dp"
                         android:paddingVertical="12dp" />
 
-
                     <ImageView
                         android:id="@+id/dateNext"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_arrow_right"
-                        android:contentDescription="Next"/>
+                        android:contentDescription="@string/next"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 7) From Category label -->
+            <!-- 8) From Category label -->
             <TextView
+                style="@style/Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Label"
                 android:text="From Category"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- 8) From Category icons -->
+            <!-- 9) From Category icons (dynamically populated) -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -249,7 +255,7 @@
                 </HorizontalScrollView>
             </androidx.cardview.widget.CardView>
 
-            <!-- 9) Add Receipt (no white card) -->
+            <!-- 10) Add Receipt -->
             <Button
                 android:id="@+id/btnAddReceipt"
                 android:layout_width="match_parent"
@@ -273,7 +279,6 @@
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintBottom_toTopOf="@id/bottomNav"/>
 
     <!-- Bottom Nav -->

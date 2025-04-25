@@ -9,7 +9,7 @@
     android:background="@drawable/bg_gradient_background"
     android:focusableInTouchMode="true"
     android:clickable="true"
-    tools:context=".WalletPage">
+    tools:context=".ui.wallet.WalletPage">
 
 
     <!-- Included Top Bar -->

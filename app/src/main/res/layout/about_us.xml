@@ -9,7 +9,7 @@
     android:background="@drawable/bg_gradient_background"
     android:focusableInTouchMode="true"
     android:clickable="true"
-    tools:context=".AboutUsPage">
+    tools:context=".ui.settings.AboutUsPage">
 
     <!-- ✅ Top Bar -->
     <include
