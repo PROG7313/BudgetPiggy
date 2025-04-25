@@ -11,7 +11,7 @@ interface UserDao {
 
     @Query("SELECT * FROM users")
     suspend fun getAll(): List<UserEntity>
-    @Query("SELECT * FROM users WHERE email = :email")
+    @Query("SELECT * FROM users WHERE LOWER(email) = LOWER(:email)")
     suspend fun getUserByEmail(email: String): UserEntity?
 
     @Update

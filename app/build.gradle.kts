@@ -43,6 +43,12 @@ dependencies {
     val room_version = "2.7.0" // Use the most recent stable compatible version with KSP
     implementation("com.github.PhilJay:MPAndroidChart:3.1.0")
     implementation("androidx.room:room-runtime:$room_version")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.moshi:moshi:1.14.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("org.bouncycastle:bcprov-jdk15to18:1.70")
+
     ksp("androidx.room:room-compiler:$room_version")
 
     implementation(libs.androidx.core.ktx)

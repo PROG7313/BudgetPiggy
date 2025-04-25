@@ -23,9 +23,10 @@ import com.example.budgetpiggy.data.entities.*
         RewardCodeEntity::class,
         NotificationEntity::class,
         SavingsGoalEntity::class,
-        StreakEntity::class
+        StreakEntity::class,
+        RateEntity::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -42,22 +43,27 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun notificationDao(): NotificationDao
     abstract fun savingsGoalDao(): SavingsGoalDao
     abstract fun streakDao(): StreakDao
-
+    abstract fun rateDao(): RateDao
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
+            //  DEV-ONLY: Wipe the old DB before building your Room instance
+          //  context.applicationContext.deleteDatabase("budget_piggy_db")
+
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "budget_piggy_db"
                 )
-                    .fallbackToDestructiveMigration() // ✅ Add this to fix the error
-                    .build().also { INSTANCE = it }
+                  //  .fallbackToDestructiveMigration() // keeps your schema version at 3
+                    .build()
+                    .also { INSTANCE = it }
             }
         }
     }
+
 }
 

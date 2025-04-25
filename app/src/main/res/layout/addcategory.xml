@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Scrollable content -->
+    <!-- Scrollable form -->
     <ScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
@@ -33,10 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="96dp">
+            android:padding="16dp">
 
             <!-- 1) Budget Amount -->
             <androidx.cardview.widget.CardView
@@ -58,8 +55,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:minHeight="48dp"
-                        android:paddingVertical="12dp"
                         android:hint="0.00"
                         android:textSize="24sp"
                         android:inputType="numberDecimal"
@@ -112,11 +107,40 @@
                         android:src="@drawable/ic_add"
                         android:background="@null"
                         android:contentDescription="Add icon"
-                        android:tint="@color/black"/>
+                        app:tint="@color/black"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 3) Category Type -->
+            <!-- 3) Built-in Icons -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick an Icon"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:id="@+id/builtInIconContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"/>
+                </HorizontalScrollView>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 4) Category Type (free‐form) -->
             <TextView
                 style="@style/Label"
                 android:layout_width="wrap_content"
@@ -135,13 +159,13 @@
                     android:id="@+id/categoryTypeInput"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:padding="12dp"
                     android:hint="Enter Category type"
                     android:background="@null"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:padding="12dp"/>
             </androidx.cardview.widget.CardView>
 
-            <!-- 4) Link to Account -->
+            <!-- 5) Link to Account -->
             <TextView
                 style="@style/Label"
                 android:layout_width="wrap_content"
@@ -187,4 +211,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

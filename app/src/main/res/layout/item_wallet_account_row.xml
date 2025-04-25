@@ -10,22 +10,22 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/sansation"
         android:textStyle="bold"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:text="Savings" />
 
     <TextView
         android:id="@+id/accountBalanceText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/sansation"
-        android:textColor="@color/black" />
+        android:text="ZAR 2,000.00"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/sansation" />
 
     <ImageView
         android:id="@+id/deleteIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="8dp"
         android:src="@drawable/vec_bin"
         android:contentDescription="@string/delete_account" />
 </LinearLayout>
