@@ -9,7 +9,7 @@
     android:background="@drawable/bg_gradient_background"
     android:focusableInTouchMode="true"
     android:clickable="true"
-    tools:context=".AccountPage">
+    tools:context=".ui.settings.AccountPage">
 
     <!-- Top Bar -->
     <include
@@ -252,6 +252,7 @@
 
                     <!-- Item A -->
                     <LinearLayout
+                        android:id="@+id/currency"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -277,6 +278,7 @@
 
                     <!-- Item B -->
                     <LinearLayout
+                        android:id="@+id/about"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -352,6 +354,7 @@
 
                     <!-- Item E -->
                     <LinearLayout
+                        android:id="@+id/logout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"

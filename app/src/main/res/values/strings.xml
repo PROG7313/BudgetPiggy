@@ -123,5 +123,8 @@
     <string name="help">Help</string>
     <string name="log_out">Log Out</string>
     <string name="addAccountPlus">addAccountPlus</string>
+    <string name="change_currency">Change Currency</string>
+    <string name="see_more">See More</string>
+    <string name="next">Next</string>
 
 </resources>

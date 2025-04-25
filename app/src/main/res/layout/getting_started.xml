@@ -9,7 +9,7 @@
     android:focusableInTouchMode="true"
     android:clickable="true"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".GettingStartedPage">
+    tools:context=".ui.auth.GettingStartedPage">
 
     <!-- Back Arrow -->
     <ImageView

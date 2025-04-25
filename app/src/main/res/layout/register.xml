@@ -9,7 +9,7 @@
     android:focusableInTouchMode="true"
     android:clickable="true"
     android:background="@drawable/bg_gradient_background"
-    tools:context=".RegisterPage">
+    tools:context=".ui.auth.RegisterPage">
 
 
     <ImageView
