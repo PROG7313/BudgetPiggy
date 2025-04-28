@@ -9,13 +9,20 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.R
+import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.ui.core.SplashActivity
 import com.example.budgetpiggy.ui.home.HomePage
-import com.example.budgetpiggy.ui.home.Notification
+import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
+import com.example.budgetpiggy.utils.SessionManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.w3c.dom.Text
 
 class AccountPage : BaseActivity() {
 
@@ -35,6 +42,16 @@ class AccountPage : BaseActivity() {
         findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
+        val tvUserName = findViewById<TextView>(R.id.tvUserName)
+        val userId = SessionManager.getUserId(this) ?: return
+        userId?.let { id ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                val user = AppDatabase.getDatabase(this@AccountPage).userDao().getById(id)
+                withContext(Dispatchers.Main) {
+                    tvUserName.text = "${user?.firstName}"
+                }
+            }
+        }
 
 // Show and set the title to "Wallet"
         findViewById<TextView>(R.id.pageTitle).apply {
@@ -83,6 +100,7 @@ class AccountPage : BaseActivity() {
         }
         logoutButton.setOnClickListener {
             // clear the saved session
+
             getSharedPreferences("app_prefs", MODE_PRIVATE)
                 .edit()
                 .remove("logged_in_user_id")

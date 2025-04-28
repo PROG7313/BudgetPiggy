@@ -21,6 +21,7 @@ import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.utils.PasswordUtils
+import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,8 +58,8 @@ class LoginPage : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         if (user?.passwordHash?.let { PasswordUtils.verifyPassword(password, it) } == true) {
 
-                            val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
-                            sharedPref.edit().putString("logged_in_user_id", user.userId).apply()
+                            SessionManager.saveUserId(this@LoginPage, user.userId)
+
 
                             // Login successful
                             val intent = Intent(this@LoginPage, HomePage::class.java).apply {

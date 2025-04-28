@@ -14,10 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.settings.AccountPage
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
-import com.example.budgetpiggy.ui.home.Notification
+import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.utils.SessionManager
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.*
@@ -133,8 +134,7 @@ class ReportsPage : BaseActivity() {
     }
 
     private fun loadAllCharts() {
-        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val userId = prefs.getString("logged_in_user_id", null) ?: return
+        val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
             val (balances, categories, txList, user, rateMap) = withContext(Dispatchers.IO) {

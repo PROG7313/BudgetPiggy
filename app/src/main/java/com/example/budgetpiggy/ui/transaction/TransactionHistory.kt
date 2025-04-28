@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
 import com.example.budgetpiggy.ui.settings.AccountPage
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
-import com.example.budgetpiggy.ui.home.Notification
+import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
@@ -92,7 +92,7 @@ class TransactionHistory : BaseActivity() {
         findViewById<TextView>(R.id.filterText).setOnClickListener { showFilterDialog() }
 
         lifecycleScope.launch {
-            val userId = getSharedPreferences("app_prefs", MODE_PRIVATE)
+            val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
                 .getString("logged_in_user_id", null) ?: return@launch
 
             val db = AppDatabase.getDatabase(this@TransactionHistory)
