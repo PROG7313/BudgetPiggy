@@ -19,7 +19,7 @@
 
     <!-- Clear All button -->
     <TextView
-        android:id="@+id/clearAll"
+        android:id="@+id/clear_All"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -41,7 +41,7 @@
         android:contentDescription="@string/notification_icon_desc"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintTop_toBottomOf="@id/clearAll">
+        app:layout_constraintTop_toBottomOf="@id/clear_All">
 
         <LinearLayout
             android:id="@+id/notificationList"

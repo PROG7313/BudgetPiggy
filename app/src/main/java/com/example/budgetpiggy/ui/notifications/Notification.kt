@@ -68,7 +68,7 @@ class Notification : BaseActivity() {
         val notifyList = findViewById<LinearLayout>(R.id.notificationList)
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
-        val clearAll   = findViewById<TextView>(R.id.clearAll)
+        val clearAll   = findViewById<TextView>(R.id.clear_All)
 
         // Back navigation
         backArrow.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -102,10 +102,10 @@ class Notification : BaseActivity() {
 
         // Observe real notifications from ViewModel
         viewModel.notifications.observe(this) { list ->
-            // 1) Clear out old cards
+            // Clear out old cards
             notifyList.removeAllViews()
 
-            // 2) Inflate a card for each notification
+            //  Inflate a card for each notification
             list.forEach { notif: NotificationEntity ->
                 val card = layoutInflater.inflate(
                     R.layout.item_notification_card,
@@ -113,20 +113,20 @@ class Notification : BaseActivity() {
                     false
                 )
 
-                // 1) look up the icon view as an ImageView
+                //  look up the icon view as an ImageView
                 val iconView = card.findViewById<ImageView>(R.id.notificationIcon)
 
-// 2) load using the real property, notif.iconUrl
+                //  load using the real property, notif.iconUrl
                 Glide.with(this)
                     .load(notif.iconUrl)
                     .placeholder(R.drawable.pic_piggy_money)
                     .into(iconView)
 
 
-                // b) Message text
+                //  Message text
                 card.findViewById<TextView>(R.id.notificationMessage).text = notif.message
 
-                // c) Reward code if present
+                //  Reward code if present
                 val codeView = card.findViewById<TextView>(R.id.notificationCode)
                 if (notif.rewardCodeId != null) {
                     codeView.apply {
@@ -153,10 +153,10 @@ class Notification : BaseActivity() {
                     codeView.visibility = View.GONE
                 }
 
-                // d) Dim if already read
+                //  Dim if already read
                 card.alpha = if (notif.isRead) 0.6f else 1f
 
-                // e) Mark-as-read on tap
+                //  Mark-as-read on tap
                 card.setOnClickListener {
                     viewModel.markAsRead(notif.notificationId)
                 }
@@ -164,19 +164,19 @@ class Notification : BaseActivity() {
                 notifyList.addView(card)
             }
 
-            // 3) Update top-bar badge (show count of unread)
+            //  Update top-bar badge (show count of unread)
             val unreadCount = list.count { !it.isRead }
             updateNotificationBadgeGlobally(topBar, unreadCount)
         }
 
-        // “Clear all” button
+        // Clear all button
         clearAll.setOnClickListener {
             viewModel.clearAll()
         }
     }
 
     override fun setActiveNavIcon(activeIcon: ImageView) {
-        // Your existing nav‐icon logic…
+
         val navIcons = listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
             R.id.nav_wallet to R.drawable.vec_wallet_inactive,
