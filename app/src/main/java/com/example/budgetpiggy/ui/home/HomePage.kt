@@ -21,6 +21,7 @@ import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.transaction.TransactionHistory
 import com.example.budgetpiggy.ui.transaction.TransferFunds
 import com.example.budgetpiggy.ui.wallet.WalletPage
+import com.example.budgetpiggy.utils.SessionManager
 import com.example.budgetpiggy.utils.StreakTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +34,7 @@ import java.text.NumberFormat
 import java.util.*
 
 class HomePage : BaseActivity() {
-    private lateinit var greetingText: TextView
+
     private lateinit var streakBadge: TextView
     private lateinit var accountBalanceList: LinearLayout
     private lateinit var budgetRemainingList: LinearLayout
@@ -45,15 +46,15 @@ class HomePage : BaseActivity() {
         setContentView(R.layout.home)
 
         // Bind views
-        greetingText          = findViewById(R.id.greetingText)
+        val greetingText = findViewById<TextView>(R.id.greetingText)
         streakBadge           = findViewById(R.id.streakBadge)
         accountBalanceList    = findViewById(R.id.accountBalanceList)
         budgetRemainingList   = findViewById(R.id.budgetRemainingList)
         transactionList       = findViewById(R.id.transactionList)
 
         // Greet user
-        val prefs  = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val userId = prefs.getString("logged_in_user_id", null)
+
+        val userId = SessionManager.getUserId(this) ?: return
         userId?.let { id ->
             lifecycleScope.launch(Dispatchers.IO) {
                 val user = AppDatabase.getDatabase(this@HomePage).userDao().getById(id)

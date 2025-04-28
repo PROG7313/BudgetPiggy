@@ -156,20 +156,8 @@ class RegisterPage : AppCompatActivity() {
                         return@withEndAction
                     }
 
-                    // create and save user
-                    val newUserId = UUID.randomUUID().toString()
-                    val user = UserEntity(
-                        userId = newUserId,
-                        firstName = first,
-                        lastName = last,
-                        email = email,
-                        authProvider = "email_password",
-                        profilePictureUrl = null,
-                        profilePictureLocalPath = null,
-                        currency = "ZAR",
-                        passwordHash = PasswordUtils.hashPassword(pwd)
 
-                    )
+
 
                     lifecycleScope.launch(Dispatchers.IO) {
                         val userDao = AppDatabase.getDatabase(this@RegisterPage).userDao()
@@ -196,9 +184,9 @@ class RegisterPage : AppCompatActivity() {
                             profilePictureUrl = null,
                             profilePictureLocalPath = null,
                             currency = "ZAR",
-                            passwordHash = pwd
-                        )
+                            passwordHash = PasswordUtils.hashPassword(pwd)
 
+                        )
                         userDao.insert(user)
 
                         // only welcome once
