@@ -15,8 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.data.entities.NotificationEntity
 import com.example.budgetpiggy.data.entities.UserEntity
 import com.example.budgetpiggy.utils.PasswordUtils
+import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -154,20 +156,8 @@ class RegisterPage : AppCompatActivity() {
                         return@withEndAction
                     }
 
-                    // create and save user
-                    val newUserId = UUID.randomUUID().toString()
-                    val user = UserEntity(
-                        userId = newUserId,
-                        firstName = first,
-                        lastName = last,
-                        email = email,
-                        authProvider = "email_password",
-                        profilePictureUrl = null,
-                        profilePictureLocalPath = null,
-                        currency = "ZAR",
-                        passwordHash = PasswordUtils.hashPassword(pwd)
 
-                    )
+
 
                     lifecycleScope.launch(Dispatchers.IO) {
                         val userDao = AppDatabase.getDatabase(this@RegisterPage).userDao()
@@ -194,15 +184,39 @@ class RegisterPage : AppCompatActivity() {
                             profilePictureUrl = null,
                             profilePictureLocalPath = null,
                             currency = "ZAR",
-                            passwordHash = pwd
-                        )
+                            passwordHash = PasswordUtils.hashPassword(pwd)
 
+                        )
                         userDao.insert(user)
 
-                        // save logged_in_user_id
-                        getSharedPreferences("app_prefs", MODE_PRIVATE).edit()
-                            .putString("logged_in_user_id", newUserId)
-                            .apply()
+                        // only welcome once
+                        val prefs = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
+                        if (!prefs.getBoolean("hasWelcomed", false)) {
+                            // build your welcome notification
+                            val welcome = NotificationEntity(
+                                notificationId = UUID.randomUUID().toString(),
+                                userId         = newUserId,
+                                message        = "🎉 Welcome to Budget Piggy!",
+                                timestamp      = System.currentTimeMillis(),
+                                isRead         = false,
+                                iconUrl        = null,
+                                rewardCodeId   = null
+                            )
+                            // insert it
+                            AppDatabase.getDatabase(this@RegisterPage)
+                                .notificationDao()
+                                .insert(welcome)
+
+                            // don’t do it again
+                            prefs.edit()
+                                .putBoolean("hasWelcomed", true)
+                                .apply()
+                        }
+
+
+
+                        // persist the logged in user id to the shared preferences
+                        SessionManager.saveUserId(this@RegisterPage, newUserId)
 
                         withContext(Dispatchers.Main) {
                             val intent = Intent(this@RegisterPage, HomePage::class.java).apply {

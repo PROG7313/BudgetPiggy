@@ -28,7 +28,7 @@
             android:name=".ui.settings.AccountPage"
             android:exported="false" />
         <activity
-            android:name=".ui.home.Notification"
+            android:name=".ui.notifications.Notification"
             android:exported="false" />
         <activity
             android:name=".ui.core.SplashActivity"

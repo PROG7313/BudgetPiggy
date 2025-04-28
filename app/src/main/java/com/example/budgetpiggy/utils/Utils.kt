@@ -7,6 +7,7 @@ import com.example.budgetpiggy.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import androidx.core.content.edit
 
 fun updateNotificationBadge(view: View, count: Int) {
     val badge = view.findViewById<TextView>(R.id.notificationBadge)
@@ -46,4 +47,22 @@ object StreakTracker {
 
         return streak
     }
+}
+
+object SessionManager {
+    private const val PREFS_NAME  = "app_piggy_prefs"
+    private const val KEY_USER_ID = "logged_in_user_id"
+
+    /** Call this once you’ve verified credentials (e.g. in RegisterPage or LoginPage). */
+    fun saveUserId(context: Context, userId: String) {
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit { putString(KEY_USER_ID, userId) }
+    }
+
+    /** Anywhere you need the current user ID. */
+    fun getUserId(context: Context): String? =
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_USER_ID, null)
 }

@@ -11,11 +11,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
-import com.example.budgetpiggy.ui.home.Notification
+import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -94,8 +95,7 @@ class ChangeCurrency : BaseActivity() {
         btnSave       = findViewById(R.id.btnSaveCurrency)
 
         // load current user ID from prefs
-        val prefs  = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val userId = prefs.getString("logged_in_user_id", null)
+        val userId = SessionManager.getUserId(this) ?: return
         if (userId == null) {
             tvCurrent.text = "—"
             Toast.makeText(this, "No logged-in user!", Toast.LENGTH_SHORT).show()
