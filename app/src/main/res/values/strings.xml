@@ -126,5 +126,7 @@
     <string name="change_currency">Change Currency</string>
     <string name="see_more">See More</string>
     <string name="next">Next</string>
+    <string name="notification_icon_desc">Notification icon</string>
+    <string name="clear_all">Clear All</string>
 
 </resources>

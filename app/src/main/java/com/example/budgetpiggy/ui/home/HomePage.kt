@@ -16,6 +16,7 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.entities.CategoryEntity
 import com.example.budgetpiggy.data.entities.TransactionEntity
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.transaction.TransactionHistory
 import com.example.budgetpiggy.ui.transaction.TransferFunds

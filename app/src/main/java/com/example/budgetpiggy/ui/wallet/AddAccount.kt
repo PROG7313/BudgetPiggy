@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.settings.AccountPage
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
-import com.example.budgetpiggy.ui.home.Notification
+import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.AccountEntity
