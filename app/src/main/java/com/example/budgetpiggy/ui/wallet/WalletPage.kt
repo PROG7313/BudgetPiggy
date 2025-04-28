@@ -137,7 +137,7 @@ class WalletPage : BaseActivity() {
     private fun loadAccountTypes() {
         accountList.removeAllViews()
 
-        val userId = SessionManager.getUserId(this) ?: return
+        val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", "")!!
 
         lifecycleScope.launch {
             val (balances, user, rateMap) = withContext(Dispatchers.IO) {

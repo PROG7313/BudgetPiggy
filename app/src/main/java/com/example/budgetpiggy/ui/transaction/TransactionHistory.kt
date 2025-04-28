@@ -92,7 +92,7 @@ class TransactionHistory : BaseActivity() {
         findViewById<TextView>(R.id.filterText).setOnClickListener { showFilterDialog() }
 
         lifecycleScope.launch {
-            val userId = getSharedPreferences("app_prefs", MODE_PRIVATE)
+            val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
                 .getString("logged_in_user_id", null) ?: return@launch
 
             val db = AppDatabase.getDatabase(this@TransactionHistory)

@@ -105,7 +105,7 @@ class AddAccountPage : BaseActivity() {
             }
 
             // get userId from prefs
-            val userId = SessionManager.getUserId(this)
+            val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", "")
             if (userId == null) {
                 Toast.makeText(this, "No logged-in user!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener

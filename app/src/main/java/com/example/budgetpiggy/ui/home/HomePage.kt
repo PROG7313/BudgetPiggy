@@ -150,8 +150,7 @@ class HomePage : BaseActivity() {
     }
 
     private fun loadHomeData() {
-        val prefs  = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val userId = prefs.getString("logged_in_user_id", null) ?: return
+        val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
             // Fetch everything from Room + rates

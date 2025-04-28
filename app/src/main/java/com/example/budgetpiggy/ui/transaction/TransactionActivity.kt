@@ -81,7 +81,7 @@ class TransactionActivity : BaseActivity() {
 
             val tx = TransactionEntity(
                 transactionId = UUID.randomUUID().toString(),
-                userId = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("logged_in_user_id", "")!!,
+                userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", "")!!,
                 accountId = pendingAccountId!!,
                 categoryId = pendingCategoryId,
                 amount = if (isExpense) -amt.absoluteValue else amt.absoluteValue,
@@ -175,7 +175,7 @@ class TransactionActivity : BaseActivity() {
     private fun setupDynamicAccounts() {
         val acctContainer = findViewById<LinearLayout>(R.id.accountToggleContainer)
         lifecycleScope.launch {
-            val userId = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("logged_in_user_id", null) ?: return@launch
+            val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", null) ?: return@launch
             val accts = withContext(Dispatchers.IO) {
                 AppDatabase.getDatabase(this@TransactionActivity).accountDao().getByUserId(userId)
             }
@@ -209,7 +209,7 @@ class TransactionActivity : BaseActivity() {
     private fun setupDynamicCategories() {
         val catContainer = findViewById<LinearLayout>(R.id.fromCategoryList)
         lifecycleScope.launch {
-            val userId = getSharedPreferences("app_prefs", MODE_PRIVATE).getString("logged_in_user_id", null)
+            val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", null)
                 ?: return@launch
             val cats = withContext(Dispatchers.IO) {
                 AppDatabase.getDatabase(this@TransactionActivity).categoryDao().getByUserId(userId)

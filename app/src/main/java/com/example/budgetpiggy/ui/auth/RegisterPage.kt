@@ -214,7 +214,7 @@ class RegisterPage : AppCompatActivity() {
                         }
 
 
-                        // save logged_in_user_id
+
                         // persist the logged in user id to the shared preferences
                         SessionManager.saveUserId(this@RegisterPage, newUserId)
 

@@ -22,11 +22,7 @@ import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
 import kotlin.collections.forEach
-import androidx.activity.viewModels
 import com.example.budgetpiggy.data.repository.NotificationRepository
-import com.example.budgetpiggy.ui.notifications.NotificationViewModel
-import com.example.budgetpiggy.ui.notifications.NotificationViewModelFactory
-
 
 
 class Notification : BaseActivity() {
@@ -60,7 +56,7 @@ class Notification : BaseActivity() {
         }
 
         // Handle window insets
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainLayout)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.NotificationPage)) { v, insets ->
             val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(sysBars.left, sysBars.top, sysBars.right, sysBars.bottom)
             insets

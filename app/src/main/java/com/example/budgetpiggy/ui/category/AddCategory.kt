@@ -21,6 +21,7 @@ import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.CategoryEntity
 import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,8 +99,7 @@ class AddCategoryPage : BaseActivity() {
         }
 
         // load accounts
-        val prefs  = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        val userId = prefs.getString("logged_in_user_id", null) ?: run {
+        val userId = SessionManager.getUserId(this) ?: run {
             Toast.makeText(this,"No logged-in user!",Toast.LENGTH_SHORT).show()
             finish()
             return
