@@ -74,11 +74,6 @@
                             android:textStyle="bold"/>
 
                         <!-- draw arrow just for decoration -->
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_arrow_drop_down"
-                            android:contentDescription="Current currency icon"/>
                     </LinearLayout>
 
                     <!-- Choose Currency Label -->
