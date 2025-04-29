@@ -3,6 +3,7 @@ package com.example.budgetpiggy.ui.wallet
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.edit
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,6 +20,8 @@ import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.AccountEntity
+import com.example.budgetpiggy.data.entities.NotificationEntity
+import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -112,10 +115,9 @@ class AddAccountPage : BaseActivity() {
 
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    val dao = AppDatabase
-                        .getDatabase(this@AddAccountPage)
-                        .accountDao()
+                    val db = AppDatabase.getDatabase(this@AddAccountPage)
 
+                    // Insert account
                     val account = AccountEntity(
                         accountId   = UUID.randomUUID().toString(),
                         userId      = userId,
@@ -124,14 +126,21 @@ class AddAccountPage : BaseActivity() {
                         type        = type,
                         createdAt   = System.currentTimeMillis()
                     )
-                    dao.insert(account)
+                    db.accountDao().insert(account)
+
+                    //  Unlock reward + auto notification (only once)
+                    val rewardRepo = RewardRepository(
+                        rewardDao = db.rewardDao(),
+                        codeDao   = db.rewardCodeDao(),
+                        notifDao  = db.notificationDao()
+                    )
+                    rewardRepo.unlockCode(userId, "FIRSTACC2025")
                 }
 
-                // back on main thread
-                Toast.makeText(this@AddAccountPage,
-                    "Account Created!", Toast.LENGTH_SHORT).show()
-                finish()  // returns to WalletPage
+                Toast.makeText(this@AddAccountPage, "Account Created!", Toast.LENGTH_SHORT).show()
+                finish()
             }
+
         }
 
         // Back arrow
