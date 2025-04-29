@@ -2,14 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/accountManagementPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient_background"
     android:focusableInTouchMode="true"
-    android:clickable="true"
-    tools:context=".ui.settings.AccountManagement">
+    android:clickable="true">
 
     <!-- Top Bar -->
     <include
@@ -59,60 +57,83 @@
                 android:background="@drawable/vec_profile_active"
                 android:contentDescription="@string/account_manage_profile" />
 
-            <!-- Input Fields (Initially Not Editable) -->
+            <!-- First Name -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="First Name"
+                android:layout_marginBottom="4dp"/>
             <EditText
                 android:id="@+id/firstNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/account_name_hint"
-                android:text="@string/account_management_name"
-                android:drawableEnd="@drawable/icon_edit"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
-                android:focusable="false"
-                android:clickable="false"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                android:inputType="textPersonName" />
 
+            <!-- Last Name -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last Name"
+                android:layout_marginBottom="4dp"/>
             <EditText
                 android:id="@+id/lastNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/account_surname_hint"
-                android:text="@string/account_management_surname"
-                android:drawableEnd="@drawable/icon_edit"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
-                android:focusable="false"
-                android:clickable="false"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                android:inputType="textPersonName" />
 
+            <!-- Email Address -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email Address"
+                android:layout_marginBottom="4dp"/>
             <EditText
                 android:id="@+id/emailEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/account_email_hint"
-                android:text="@string/email_address"
-                android:drawableEnd="@drawable/icon_edit"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
-                android:focusable="false"
-                android:clickable="false"
                 android:layout_marginBottom="12dp"
                 android:inputType="textEmailAddress" />
 
+            <!-- Password -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:layout_marginBottom="4dp"/>
             <EditText
                 android:id="@+id/passwordEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/account_password_hint"
-                android:text="@string/password"
-                android:drawableEnd="@drawable/icon_edit"
+                android:hint="••••••••"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
-                android:focusable="false"
-                android:clickable="false"
-                android:inputType="textPassword"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="24dp"
+                android:inputType="textPassword" />
+
+            <!-- Save Changes Button -->
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Changes"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/green"
+                android:layout_marginBottom="12dp"/>
 
             <!-- Delete Account Button -->
             <Button
@@ -120,20 +141,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/delete_account"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white"
                 android:backgroundTint="#EF4444"
                 android:layout_marginTop="12dp" />
 
         </LinearLayout>
     </ScrollView>
 
-
     <!-- Bottom Navigation -->
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
