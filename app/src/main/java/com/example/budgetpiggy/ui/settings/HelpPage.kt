@@ -28,7 +28,16 @@ class HelpPage : BaseActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
+        findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
+        findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
+
+        // Show and set the title to "Wallet"
+        findViewById<TextView>(R.id.pageTitle).apply {
+            visibility = View.VISIBLE
+            text = getString(R.string.help_title)
+        }
         val helpContainer = findViewById<LinearLayout>(R.id.helpContainer)
         val inflater = LayoutInflater.from(this)
 
