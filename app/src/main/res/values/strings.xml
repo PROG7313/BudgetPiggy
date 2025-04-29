@@ -158,4 +158,8 @@
     <string name="account_email_hint">Enter new email</string>
     <string name="account_password_hint">Change password</string>
 
+    <string name="reward_icon">Reward Icon</string>
+    <string name="enter_reward_code">Enter Reward Code</string>
+    <string name="confirm_reward_code">Confirm</string>
+    <string name="RewardsTitle">Rewards</string>
 </resources>

@@ -99,6 +99,9 @@
             android:exported="true"/>
         <activity android:name=".ui.settings.AccountManagement"
             android:exported="true"/>
+        <activity
+            android:name=".ui.rewards.RewardsActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
