@@ -113,7 +113,7 @@ class AccountManagement : BaseActivity() {
         }
         findViewById<ImageView>(R.id.nav_profile).setOnClickListener { v ->
             setActiveNavIcon(v as ImageView)
-            startActivity(Intent(this, AccountManagement::class.java))
+            startActivity(Intent(this, AccountPage::class.java))
         }
 
         // Bind views
