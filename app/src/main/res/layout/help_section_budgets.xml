@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_gradient_background"
+    android:background="@drawable/bg_help_button"
     android:padding="12dp"
     android:layout_marginBottom="16dp">
 
@@ -21,7 +21,6 @@
             android:layout_weight="1"
             android:text="@string/help_budgets"
             android:textSize="18sp"
-            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:textColor="@color/black"/>
 
