@@ -2,6 +2,7 @@ package com.example.budgetpiggy.ui.settings
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.dao.UserDao
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.UserEntity
+import com.example.budgetpiggy.ui.auth.LoginPage
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
@@ -33,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import androidx.core.content.edit
 
 class AccountManagement : BaseActivity() {
 
@@ -145,10 +148,10 @@ class AccountManagement : BaseActivity() {
             }
         }
 
-        // ➋ Tapping the circle → choose or take photo
+        //  Tapping the circle → choose or take photo
         profileImage.setOnClickListener { showProfileImageChooser() }
 
-        // ➌ Save updates
+        //  Save updates
         saveButton.setOnClickListener {
             val newFirst = firstNameEditText.text.toString().trim()
             val newLast  = lastNameEditText.text.toString().trim()
@@ -188,8 +191,16 @@ class AccountManagement : BaseActivity() {
                 .setMessage("This action cannot be undone. Are you sure?")
                 .setPositiveButton("Delete") { _, _ ->
                     lifecycleScope.launch(Dispatchers.IO) {
+                        //  remove user from database
                         userDao.delete(currentUser)
+
+                        //  clear all saved prefs so login state is reset
+                        val prefs = getSharedPreferences("app_piggy_prefs", Context.MODE_PRIVATE)
+                        prefs.edit { clear() }
+
+                        //  return to login (or simply close everything)
                         withContext(Dispatchers.Main) {
+                            startActivity(Intent(this@AccountManagement, LoginPage::class.java))
                             finishAffinity()
                         }
                     }
@@ -197,6 +208,7 @@ class AccountManagement : BaseActivity() {
                 .setNegativeButton("Cancel", null)
                 .show()
         }
+
     }
 
     // Show camera/gallery chooser
