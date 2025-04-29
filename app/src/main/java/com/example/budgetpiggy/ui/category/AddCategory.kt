@@ -1,6 +1,7 @@
 package com.example.budgetpiggy.ui.category
 
 import android.app.Activity
+import androidx.core.content.edit
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -20,6 +21,8 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.CategoryEntity
+import com.example.budgetpiggy.data.entities.NotificationEntity
+import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
@@ -194,16 +197,29 @@ class AddCategoryPage : BaseActivity() {
             )
 
             lifecycleScope.launch(Dispatchers.IO) {
-                AppDatabase.getDatabase(this@AddCategoryPage)
-                    .categoryDao().insert(cat)
+                val db = AppDatabase.getDatabase(this@AddCategoryPage)
+
+                // 1. Insert category
+                db.categoryDao().insert(cat)
+
+                // 2. Try unlock reward (built-in method handles checks + notification)
+                val rewardRepo = RewardRepository(
+                    rewardDao = db.rewardDao(),
+                    codeDao   = db.rewardCodeDao(),
+                    notifDao  = db.notificationDao()
+                )
+                rewardRepo.unlockCode(userId, "FIRSTCAT2025")
+
+                // 3. Finish on UI thread
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AddCategoryPage,
-                        "Category added!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddCategoryPage, "Category added!", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
+
         }
-    }
+            }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
