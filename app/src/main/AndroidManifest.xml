@@ -97,6 +97,8 @@
         <activity
             android:name=".ui.settings.SendFeedbackPage"
             android:exported="true"/>
+        <activity android:name=".ui.settings.AccountManagement"
+            android:exported="true"/>
     </application>
 
 </manifest>
