@@ -26,6 +26,7 @@ import com.example.budgetpiggy.data.repository.NotificationRepository
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.settings.AccountPage
+import com.example.budgetpiggy.ui.transaction.TransactionActivity
 import com.example.budgetpiggy.ui.transaction.TransferFunds
 
 
@@ -121,7 +122,7 @@ class Notification : BaseActivity() {
 
         setupFabScrollBehavior(scrollView, fabWrapper)
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
-            startActivity(Intent(this, TransferFunds::class.java))
+            startActivity(Intent(this, TransactionActivity::class.java))
         }
         // Initialize badge to zero
         updateNotificationBadgeGlobally(topBar, 0)

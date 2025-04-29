@@ -15,7 +15,8 @@ data class AccountEntity(
     @PrimaryKey val accountId: String,
     val userId: String,
     val accountName: String,
-    val balance: Double,
+    var balance: Double,         // remaining
+    var initialBalance: Double,  // total
     val type: String,
     val createdAt: Long
 )

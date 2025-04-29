@@ -62,14 +62,26 @@ class TransferFunds : BaseActivity() {
 
         //  Main toggle
         val btnTransfer = findViewById<Button>(R.id.btnTransferFunds)
-        val btnTxn      = findViewById<Button>(R.id.btnMakeTransaction)
-        btnTransfer.setOnClickListener {
-            setToggleButtons(btnTransfer, btnTxn)
-        }
+        val btnTxn = findViewById<Button>(R.id.btnMakeTransaction)
+
+        var navigating = false // guard to prevent double tap
+
         btnTxn.setOnClickListener {
-            setToggleButtons(btnTxn, btnTransfer)
-             startActivity(Intent(this, TransactionActivity::class.java))
+            if (navigating) return@setOnClickListener
+            navigating = true
+            it.isEnabled = false
+
+            startActivity(Intent(this, TransactionActivity::class.java))
+
+
+            it.postDelayed({
+                navigating = false
+                it.isEnabled = true
+            }, 1000)
         }
+
+
+
 
         // Amount → system keyboard
         val amountInput = findViewById<EditText>(R.id.amountInput)
@@ -222,38 +234,47 @@ class TransferFunds : BaseActivity() {
                         return@launch
                     }
 
-                    accountDao.updateBalance(fromAccount.accountId, fromAccount.balance - amount)
-                    accountDao.updateBalance(toAccount.accountId, toAccount.balance + amount)
+
+                    val change = amount // already guaranteed > 0
+
+                    val fromNewBal = fromAccount.balance - change
+                    accountDao.updateBalance(fromAccount.accountId, fromNewBal)
+
+
+                    val toNewBal   = toAccount.balance + change
+                    val toNewTotal = toAccount.initialBalance + change
+
+                    accountDao.updateBalance(toAccount.accountId, toNewBal)
+                    accountDao.updateInitialBalance(toAccount.accountId, toNewTotal)
+
 
                     transactionDao.insert(
                         TransactionEntity(
                             transactionId = UUID.randomUUID().toString(),
-                            userId = userId,
-                            accountId = fromAccount.accountId,
-                            categoryId = null,
-                            amount = -amount,
-                            description = "Transfer to ${toAccount.accountName}",
-                            date = now,
-                            receiptImageUrl = null,
+                            userId        = userId,
+                            accountId     = fromAccount.accountId,
+                            categoryId    = null,
+                            amount        = -change,
+                            description   = "Transfer to ${toAccount.accountName}",
+                            date          = now,
+                            receiptImageUrl  = null,
                             receiptLocalPath = null
                         )
                     )
-
                     transactionDao.insert(
                         TransactionEntity(
                             transactionId = UUID.randomUUID().toString(),
-                            userId = userId,
-                            accountId = toAccount.accountId,
-                            categoryId = null,
-                            amount = amount,
-                            description = "Transfer from ${fromAccount.accountName}",
-                            date = now,
-                            receiptImageUrl = null,
+                            userId        = userId,
+                            accountId     = toAccount.accountId,
+                            categoryId    = null,
+                            amount        = change,
+                            description   = "Transfer from ${fromAccount.accountName}",
+                            date          = now,
+                            receiptImageUrl  = null,
                             receiptLocalPath = null
                         )
                     )
                 } else {
-                    // --- Account → Category ---
                     val fromAccount = selectedAccountForCategoryId?.let { accountDao.getById(it) }
                     val category = selectedCategoryId?.let { categoryDao.getById(it) }
 

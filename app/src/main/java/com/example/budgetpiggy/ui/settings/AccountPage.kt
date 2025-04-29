@@ -100,7 +100,11 @@ class AccountPage : BaseActivity() {
         val rewards = findViewById<LinearLayout>(R.id.Rewards)
         val feedback = findViewById<LinearLayout>(R.id.feedback)
         val transactionHistory = findViewById<LinearLayout>(R.id.TransactionHistory)
+        val manageAccounts = findViewById<LinearLayout>(R.id.ManageAccounts)
 
+        manageAccounts.setOnClickListener{
+            startActivity(Intent(this, WalletPage::class.java))
+        }
         transactionHistory.setOnClickListener{
             startActivity(Intent(this, TransactionHistory::class.java))
         }

@@ -59,7 +59,7 @@
                     android:text="Make Transaction"/>
             </LinearLayout>
 
-            <!-- 2.2) Amount Input -->
+            <!--  Amount Input -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

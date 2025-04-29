@@ -64,7 +64,14 @@ class TransactionHistory : BaseActivity() {
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
+        val scrollView = findViewById<ScrollView>(R.id.scrollArea)
+        val fabWrapper = findViewById<View>(R.id.fabWrapper)
+        // FAB behavior
+        setupFabScrollBehavior(scrollView, fabWrapper)
 
+        findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
+            startActivity(Intent(this, TransactionActivity::class.java))
+        }
         findViewById<ImageView>(R.id.bellIcon).setOnClickListener {
             startActivity(Intent(this, Notification::class.java))
         }

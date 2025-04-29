@@ -18,6 +18,7 @@ import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.ui.transaction.TransactionActivity
 import com.example.budgetpiggy.ui.transaction.TransferFunds
 import com.example.budgetpiggy.utils.CurrencyManager
 import com.example.budgetpiggy.utils.SessionManager
@@ -54,7 +55,7 @@ class ReportsPage : BaseActivity() {
 
 
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
-            startActivity(Intent(this, TransferFunds::class.java))
+            startActivity(Intent(this, TransactionActivity::class.java))
         }
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
