@@ -142,11 +142,22 @@
     <string name="help_budgets_info1">Tap the budget icon on the bottom navigation bar to get redirected to the page where you have the option to either add Budget Categories or Account types</string>
     <string name="help_budgets_info2">Tap the Budget Categories to set daily, weekly, or monthly limits on specific categories. You’ll get notified when you’re nearing or exceeding your limit.</string>
     <string name="help_budgets_info3">Thereafter, fill in the required fields including; amount, category name, icon, type and account. Then you have created your very own budget category.</string>
+
     <!-- Send Feedback Page -->
     <string name="send_feedback_title">How did we do?</string>
     <string name="send_feedback_description">Care to share more about it?</string>
     <string name="send_feedback_publish">Publish Feedback</string>
     <string name="send_feedback_appreciation">Your review will be greatly appreciated!</string>
+
+    <!-- Account Management Page -->
+    <string name="account_manage_profile">Profile Picture</string>
+    <string name="account_management_name">Name</string>
+    <string name="account_management_surname">Surname</string>
+    <string name="account_name_hint">Enter new first name</string>
+    <string name="account_surname_hint">Enter new first surname</string>
+    <string name="account_email_hint">Enter new email</string>
+    <string name="account_password_hint">Change password</string>
+
     <string name="reward_icon">Reward Icon</string>
     <string name="enter_reward_code">Enter Reward Code</string>
     <string name="confirm_reward_code">Confirm</string>
