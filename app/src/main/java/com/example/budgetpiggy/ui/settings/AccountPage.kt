@@ -17,6 +17,7 @@ import com.example.budgetpiggy.ui.core.SplashActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.ui.transaction.TransactionHistory
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
@@ -95,10 +96,17 @@ class AccountPage : BaseActivity() {
         val logoutButton = findViewById<LinearLayout>(R.id.logout)
         val aboutMe = findViewById<LinearLayout>(R.id.about)
         val help = findViewById<LinearLayout>(R.id.help)
+        val accountManage = findViewById<LinearLayout>(R.id.AccountManagement)
         val rewards = findViewById<LinearLayout>(R.id.Rewards)
-
         val feedback = findViewById<LinearLayout>(R.id.feedback)
+        val transactionHistory = findViewById<LinearLayout>(R.id.TransactionHistory)
 
+        transactionHistory.setOnClickListener{
+            startActivity(Intent(this, TransactionHistory::class.java))
+        }
+        accountManage.setOnClickListener{
+            startActivity(Intent(this, AccountManagement::class.java))
+        }
         rewards.setOnClickListener{
             startActivity(Intent(this, RewardsActivity::class.java))
         }
@@ -106,7 +114,6 @@ class AccountPage : BaseActivity() {
         feedback.setOnClickListener{
             startActivity(Intent(this, SendFeedbackPage::class.java))
         }
-
 
         help.setOnClickListener{
             startActivity(Intent(this, HelpPage::class.java))
