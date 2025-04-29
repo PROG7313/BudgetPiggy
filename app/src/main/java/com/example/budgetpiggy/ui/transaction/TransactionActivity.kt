@@ -92,13 +92,49 @@ class TransactionActivity : BaseActivity() {
             )
 
             lifecycleScope.launch(Dispatchers.IO) {
-                AppDatabase.getDatabase(this@TransactionActivity).transactionDao().insert(tx)
+                val db = AppDatabase.getDatabase(this@TransactionActivity)
+
+                if (isExpense && pendingCategoryId != null) {
+
+                    val category = db.categoryDao().getById(pendingCategoryId!!)
+                    if (category == null) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@TransactionActivity,
+                                "Category not found.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return@launch
+                    }
+
+                    if (category.budgetAmount < amt.absoluteValue) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@TransactionActivity,
+                                "You don't have enough budget in this category.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return@launch
+                    }
+
+
+                    // Subtract from allocated budget
+                    db.categoryDao().subtractFromBudget(pendingCategoryId!!, amt.absoluteValue)
+                }
+
+                db.transactionDao().insert(tx)
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@TransactionActivity, "Saved!", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
+
+
         }
+
     }
 
     private fun setupIncomeExpenseToggle() {
