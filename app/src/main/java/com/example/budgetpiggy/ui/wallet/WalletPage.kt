@@ -2,7 +2,6 @@ package com.example.budgetpiggy.ui.wallet
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -18,16 +17,15 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.ui.category.AddCategoryPage
 import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.utils.CurrencyManager
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 import java.text.NumberFormat
 import java.util.Currency
+import androidx.core.net.toUri
+import com.example.budgetpiggy.ui.transaction.TransferFunds
 
 class WalletPage : BaseActivity() {
 
@@ -38,6 +36,7 @@ class WalletPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.wallet)
+
 
         // Edge‐to‐edge insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.walletPage)) { v, insets ->
@@ -56,7 +55,14 @@ class WalletPage : BaseActivity() {
             visibility = View.VISIBLE
             text = getString(R.string.wallet)
         }
+        val scrollView = findViewById<ScrollView>(R.id.walletScrollView)
+        val fabWrapper = findViewById<View>(R.id.fabWrapper)
+        // FAB behavior
+        setupFabScrollBehavior(scrollView, fabWrapper)
 
+        findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
+            startActivity(Intent(this, TransferFunds::class.java))
+        }
         // Bind lists
         accountList = findViewById(R.id.accountList)
         budgetList  = findViewById(R.id.budgetList)
@@ -147,17 +153,9 @@ class WalletPage : BaseActivity() {
                 val balList = dao.getBalancesForUser(userId)
                 val usr     = uDao.getById(userId)!!
 
-                // fetch ZAR→X rates
-                val json = URL("https://api.exchangerate-api.com/v4/latest/ZAR")
-                    .openConnection().run {
-                        connect()
-                        BufferedReader(InputStreamReader(inputStream)).use { it.readText() }
-                    }
-                val ratesObj = JSONObject(json).getJSONObject("rates")
-                val map = ratesObj.keys().asSequence()
-                    .associateWith { ratesObj.getDouble(it) }
+                val rateMap = CurrencyManager.getRateMap(this@WalletPage, "ZAR")
 
-                Triple(balList, usr, map)
+                Triple(balList, usr, rateMap)
             }
 
             val nf = NumberFormat.getCurrencyInstance().apply {
@@ -211,17 +209,9 @@ class WalletPage : BaseActivity() {
                 val list = cDao.getByUserId(userId)
                 val usr  = uDao.getById(userId)!!
 
-                // fetch ZAR→X rates
-                val json = URL("https://api.exchangerate-api.com/v4/latest/ZAR")
-                    .openConnection().run {
-                        connect()
-                        BufferedReader(InputStreamReader(inputStream)).use { it.readText() }
-                    }
-                val ratesObj = JSONObject(json).getJSONObject("rates")
-                val map = ratesObj.keys().asSequence()
-                    .associateWith { ratesObj.getDouble(it) }
+                val rateMap = CurrencyManager.getRateMap(this@WalletPage, "ZAR")
 
-                Triple(list, usr, map)
+                Triple(list, usr, rateMap)
             }
 
             val nf = NumberFormat.getCurrencyInstance().apply {
@@ -243,7 +233,7 @@ class WalletPage : BaseActivity() {
                 val iconImage = item.findViewById<ImageView>(R.id.categoryIcon)
 
                 if (cat.iconLocalPath != null) {
-                    val fileUri = Uri.parse(cat.iconLocalPath)
+                    val fileUri = cat.iconLocalPath.toUri()
                     iconImage.setImageURI(fileUri)
                 } else {
                     val resName = cat.iconName ?: "vec_filter"

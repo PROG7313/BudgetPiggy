@@ -18,6 +18,8 @@ import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.ui.transaction.TransferFunds
+import com.example.budgetpiggy.utils.CurrencyManager
 import com.example.budgetpiggy.utils.SessionManager
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
@@ -26,10 +28,6 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,6 +52,10 @@ class ReportsPage : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.reports)
 
+
+        findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
+            startActivity(Intent(this, TransferFunds::class.java))
+        }
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
@@ -62,7 +64,10 @@ class ReportsPage : BaseActivity() {
             visibility = View.VISIBLE
             text = getString(R.string.reports)
         }
+        val scrollView = findViewById<ScrollView>(R.id.reportsScroll)
+        val fabWrapper = findViewById<View>(R.id.fabWrapper)
 
+        setupFabScrollBehavior(scrollView, fabWrapper)
         listOf(
             R.id.nav_home to HomePage::class.java,
             R.id.nav_wallet to WalletPage::class.java,
@@ -151,18 +156,11 @@ class ReportsPage : BaseActivity() {
                 allCategoryNames = catList.map { it.categoryName }
                 lastSelectedCategories = allCategoryNames.toMutableList()
 
-                val json = URL("https://api.exchangerate-api.com/v4/latest/ZAR")
-                    .openConnection().run {
-                        connect()
-                        BufferedReader(InputStreamReader(inputStream)).use { it.readText() }
-                    }
-                val ratesObj = JSONObject(json).getJSONObject("rates")
-                val rateMap = ratesObj.keys().asSequence()
-                    .associateWith { ratesObj.getDouble(it) }
+                val rateMap = CurrencyManager.getRateMap(this@ReportsPage, "ZAR")
 
                 val user = db.userDao().getById(userId)!!
 
-                Quadruple(balList, catList, filteredTx, user, rateMap)
+                Quintuple(balList, catList, filteredTx, user, rateMap)
             }
 
             val userCurrency = Currency.getInstance(user.currency)
@@ -173,19 +171,30 @@ class ReportsPage : BaseActivity() {
                 PieEntry((it.balance * zarToUserRate).toFloat(), it.accountName)
             })
 
-            val earningMap = txList.filter { it.amount > 0 }
-                .groupBy { it.accountId }
-                .mapNotNull { (acc, txs) ->
-                    val name = balances.find { it.accountName == acc }?.accountName
-                    name?.let { PieEntry(txs.sumOf { it.amount * zarToUserRate }.toFloat(), it) }
+            val earningMap = txList.filter { tx -> tx.amount > 0 }
+                .groupBy { tx -> tx.accountId }
+                .mapNotNull { (accountId, transactions) ->
+                    val name = balances.find { balance -> balance.accountName == accountId }?.accountName
+                    name?.let { accountName ->
+                        PieEntry(
+                            transactions.sumOf { transaction -> transaction.amount * zarToUserRate }.toFloat(),
+                            accountName
+                        )
+                    }
                 }
             setupPie(earningsChart, earningMap)
 
-            val spendingMap = txList.filter { it.amount < 0 }
-                .groupBy { it.categoryId }
-                .mapNotNull { (catId, txs) ->
-                    val name = categories.find { it.categoryId == catId }?.categoryName
-                    name?.let { PieEntry(txs.sumOf { it.amount.absoluteValue * zarToUserRate }.toFloat(), it) }
+
+            val spendingMap = txList.filter { tx -> tx.amount < 0 }
+                .groupBy { tx -> tx.categoryId }
+                .mapNotNull { (categoryId, transactions) ->
+                    val name = categories.find { category -> category.categoryId == categoryId }?.categoryName
+                    name?.let { categoryName ->
+                        PieEntry(
+                            transactions.sumOf { transaction -> transaction.amount.absoluteValue * zarToUserRate }.toFloat(),
+                            categoryName
+                        )
+                    }
                 }
             setupPie(spendingChart, spendingMap)
 
@@ -296,5 +305,7 @@ class ReportsPage : BaseActivity() {
         }
     }
 
-    private data class Quadruple<A, B, C, D, E>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E)
+    private data class Quintuple<A, B, C, D, E>(
+        val first: A, val second: B, val third: C, val fourth: D, val fifth: E
+    )
 }

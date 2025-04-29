@@ -13,23 +13,19 @@ import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.settings.AccountPage
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.R
-import com.example.budgetpiggy.data.entities.CategoryEntity
-import com.example.budgetpiggy.data.entities.TransactionEntity
+
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.transaction.TransactionHistory
 import com.example.budgetpiggy.ui.transaction.TransferFunds
 import com.example.budgetpiggy.ui.wallet.WalletPage
+import com.example.budgetpiggy.utils.CurrencyManager
 import com.example.budgetpiggy.utils.SessionManager
 import com.example.budgetpiggy.utils.StreakTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 import java.text.NumberFormat
 import java.util.*
 
@@ -55,7 +51,7 @@ class HomePage : BaseActivity() {
         // Greet user
 
         val userId = SessionManager.getUserId(this) ?: return
-        userId?.let { id ->
+        userId.let { id ->
             lifecycleScope.launch(Dispatchers.IO) {
                 val user = AppDatabase.getDatabase(this@HomePage).userDao().getById(id)
                 withContext(Dispatchers.Main) {
@@ -116,9 +112,11 @@ class HomePage : BaseActivity() {
             setActiveNavIcon(v as ImageView)
             startActivity(Intent(this, AccountPage::class.java))
         }
-
+        val scrollView = findViewById<ScrollView>(R.id.scrollArea)
+        val fabWrapper = findViewById<View>(R.id.fabWrapper)
         // FAB behavior
-        setupFabScrollBehavior()
+        setupFabScrollBehavior(scrollView, fabWrapper)
+
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
             startActivity(Intent(this, TransferFunds::class.java))
         }
@@ -130,61 +128,37 @@ class HomePage : BaseActivity() {
         loadHomeData()
     }
 
-    private fun setupFabScrollBehavior() {
-        val scrollView = findViewById<ScrollView>(R.id.scrollArea)
-        val fabWrapper = findViewById<View>(R.id.fabWrapper)
-        var lastY = 0
-        scrollView.viewTreeObserver.addOnScrollChangedListener {
-            val y = scrollView.scrollY
-            val show = y < lastY || !scrollView.canScrollVertically(-1) || !scrollView.canScrollVertically(1)
-            if (show) {
-                fabWrapper.visibility = View.VISIBLE
-                fabWrapper.alpha = 1f
-            } else {
-                fabWrapper.animate().alpha(0f).setDuration(150)
-                    .withEndAction { fabWrapper.visibility = View.GONE }
-                    .start()
-            }
-            lastY = y
-        }
-    }
+
 
     private fun loadHomeData() {
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // Fetch everything from Room + rates
+            // Fetch everything from Room + cached/fresh rates
             val (data, categoryMap) = withContext(Dispatchers.IO) {
-                val db     = AppDatabase.getDatabase(this@HomePage)
-                val aDao   = db.accountDao()
-                val cDao   = db.categoryDao()
-                val tDao   = db.transactionDao()
-                val uDao   = db.userDao()
+                val db       = AppDatabase.getDatabase(this@HomePage)
+                val aDao     = db.accountDao()
+                val cDao     = db.categoryDao()
+                val tDao     = db.transactionDao()
+                val uDao     = db.userDao()
 
-                val balList = aDao.getBalancesForUser(userId)
-                val catList = cDao.getByUserId(userId)
-                val txList  = tDao.getByUserId(userId)
+                val balList  = aDao.getBalancesForUser(userId)
+                val catList  = cDao.getByUserId(userId)
+                val txList   = tDao.getByUserId(userId)
                     .sortedByDescending { it.date }
                     .take(5)
-                val usr     = uDao.getById(userId)!!
+                val usr      = uDao.getById(userId)!!
 
                 // Map categoryId -> categoryName
                 val categoryMap = catList.associate { it.categoryId to it.categoryName }
 
-                // Fetch rates
-                val json = URL("https://api.exchangerate-api.com/v4/latest/ZAR")
-                    .openConnection().run {
-                        connect()
-                        BufferedReader(InputStreamReader(inputStream)).use { it.readText() }
-                    }
-                val ratesObj = JSONObject(json).getJSONObject("rates")
-                val rateMap = ratesObj.keys().asSequence()
-                    .associateWith { ratesObj.getDouble(it) }
+                // Get currency rates (online → fetch & cache; offline → load last‐saved)
 
+                val rateMap = CurrencyManager.getRateMap(this@HomePage, "ZAR")
                 (Quintuple(balList, catList, txList, usr, rateMap) to categoryMap)
             }
 
-            // Unpack
+            // Unpack data
             val (balances, categories, transactions, user, rateMap) = data
             val nf = NumberFormat.getCurrencyInstance().apply {
                 currency = Currency.getInstance(user.currency)
@@ -197,8 +171,8 @@ class HomePage : BaseActivity() {
                 val row = layoutInflater.inflate(R.layout.item_balance_row, accountBalanceList, false)
                 row.findViewById<TextView>(R.id.labelText).text = acct.accountName
                 val pb = row.findViewById<ProgressBar>(R.id.progressBar)
-                val convertedBalance = acct.balance * (rateMap[user.currency] ?: 1.0)
-                pb.max = convertedBalance.toInt().coerceAtLeast(1)
+                val convertedBalance = converted.coerceAtLeast(1.0)
+                pb.max = convertedBalance.toInt()
                 pb.progress = convertedBalance.toInt()
 
                 row.findViewById<LinearLayout>(R.id.balanceRow).setOnClickListener {
@@ -212,15 +186,14 @@ class HomePage : BaseActivity() {
 
             // Render budget remaining
             budgetRemainingList.removeAllViews()
-            categories.forEach { cat: CategoryEntity ->
+            categories.forEach { cat ->
                 val converted = cat.budgetAmount * (rateMap[user.currency] ?: 1.0)
                 val row = layoutInflater.inflate(R.layout.item_balance_row, budgetRemainingList, false)
                 row.findViewById<TextView>(R.id.labelText).text = cat.categoryName
                 val pb = row.findViewById<ProgressBar>(R.id.progressBar)
-                val convertedBudget = cat.budgetAmount * (rateMap[user.currency] ?: 1.0)
-                pb.max = convertedBudget.toInt().coerceAtLeast(1)
+                val convertedBudget = converted.coerceAtLeast(1.0)
+                pb.max = convertedBudget.toInt()
                 pb.progress = convertedBudget.toInt()
-
 
                 row.findViewById<LinearLayout>(R.id.balanceRow).setOnClickListener {
                     val msg = "${cat.categoryName}: ${nf.format(convertedBudget)} of ${nf.format(convertedBudget)}"
@@ -233,9 +206,8 @@ class HomePage : BaseActivity() {
 
             // Render recent transactions
             transactionList.removeAllViews()
-            transactions.forEach { tx: TransactionEntity ->
+            transactions.forEach { tx ->
                 val row = layoutInflater.inflate(R.layout.item_transaction_row, transactionList, false)
-                // Lookup category name
                 val catName = tx.categoryId?.let { categoryMap[it] } ?: "—"
                 row.findViewById<TextView>(R.id.categoryText).text = catName
                 row.findViewById<TextView>(R.id.nameText).text     = tx.description ?: ""
@@ -246,12 +218,16 @@ class HomePage : BaseActivity() {
         }
     }
 
+
+
+
+
     override fun onBackPressed() {
         if (!isTaskRoot) {
             super.onBackPressed()
         } else {
             Toast.makeText(this,
-                "Use the menu or logout button to exit",
+                "Use the logout button to exit",
                 Toast.LENGTH_SHORT).show()
         }
     }
@@ -275,6 +251,10 @@ class HomePage : BaseActivity() {
     }
 
     private data class Quintuple<A, B, C, D, E>(
-        val first: A, val second: B, val third: C, val fourth: D, val fifth: E
+        val first: A,
+        val second: B,
+        val third: C,
+        val fourth: D,
+        val fifth: E
     )
 }

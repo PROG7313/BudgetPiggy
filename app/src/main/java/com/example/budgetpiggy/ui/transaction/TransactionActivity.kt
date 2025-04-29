@@ -29,6 +29,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
 import kotlin.math.absoluteValue
+import androidx.core.net.toUri
 
 class TransactionActivity : BaseActivity() {
 
@@ -39,7 +40,7 @@ class TransactionActivity : BaseActivity() {
     private var tempPhotoUri: Uri? = null
     private var pendingAccountId: String? = null
     private var pendingCategoryId: String? = null
-    private var isExpense: Boolean = true  // NEW: Tracks if the transaction is an expense
+    private var isExpense: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +57,9 @@ class TransactionActivity : BaseActivity() {
 
         setupNavBar()
         setupInputs()
-        setupIncomeExpenseToggle() // NEW
         setupDynamicAccounts()
         setupDynamicCategories()
-
+        setupIncomeExpenseToggle()
         findViewById<Button>(R.id.btnAddReceipt).setOnClickListener { showReceiptChooser() }
 
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
@@ -224,7 +224,7 @@ class TransactionActivity : BaseActivity() {
                         tag = cat.categoryId
 
                         if (!cat.iconLocalPath.isNullOrBlank()) {
-                            setImageURI(Uri.parse(cat.iconLocalPath))
+                            setImageURI(cat.iconLocalPath.toUri())
                         } else {
                             val resName = cat.iconName ?: "vec_filter"
                             val resId = resources.getIdentifier(resName, "drawable", packageName)

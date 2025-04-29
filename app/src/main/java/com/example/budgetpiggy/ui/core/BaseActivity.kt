@@ -1,7 +1,11 @@
 package com.example.budgetpiggy.ui.core
 
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -14,14 +18,14 @@ import kotlinx.coroutines.launch
 
 open class BaseActivity : AppCompatActivity() {
 
-    // 1) Lazy-init your repo
+    //  Lazy-init your repo
     private val notificationRepo by lazy {
         NotificationRepository(
             AppDatabase.getDatabase(this).notificationDao()
         )
     }
 
-    // 2) Every time your activity resumes, fetch the unread count & update the badge
+    //  Every time your activity resumes, fetch the unread count & update the badge
     override fun onResume() {
         super.onResume()
 
@@ -38,7 +42,42 @@ open class BaseActivity : AppCompatActivity() {
             updateNotificationBadgeGlobally(topBar, unreadCount)
         }
     }
+    protected fun setupFabScrollBehavior(scrollView: ScrollView, fabWrapper: View) {
+        var lastY = 0
+        scrollView.viewTreeObserver.addOnScrollChangedListener {
+            val y = scrollView.scrollY
+            val show = y < lastY || !scrollView.canScrollVertically(-1) || !scrollView.canScrollVertically(1)
+            if (show) {
+                fabWrapper.visibility = View.VISIBLE
+                fabWrapper.alpha = 1f
+            } else {
+                fabWrapper.animate().alpha(0f).setDuration(150)
+                    .withEndAction { fabWrapper.visibility = View.GONE }
+                    .start()
+            }
+            lastY = y
+        }
+    }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            if (imm.isAcceptingText) {
+                val v = currentFocus
+                if (v is EditText) {
+                    val outLocation = IntArray(2)
+                    v.getLocationOnScreen(outLocation)
+                    val x = ev.rawX + v.left - outLocation[0]
+                    val y = ev.rawY + v.top - outLocation[1]
+                    if (x < v.left || x > v.right || y < v.top || y > v.bottom) {
+                        v.clearFocus()
+                        imm.hideSoftInputFromWindow(v.windowToken, 0)
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
     // your existing nav-icon helper
     protected open fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(

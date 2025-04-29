@@ -16,15 +16,14 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.utils.CurrencyManager
+import com.example.budgetpiggy.utils.NetworkUtils
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import java.text.NumberFormat
+import java.util.Currency
 
 class ChangeCurrency : BaseActivity() {
 
@@ -43,10 +42,10 @@ class ChangeCurrency : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.change_currency)
 
-        // hide unused top‐bar bits
-        findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
-        findViewById<TextView>(R.id.greetingText).visibility = View.GONE
-        findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
+        // hide unused top-bar bits
+        findViewById<ImageView>(R.id.piggyIcon).visibility     = View.GONE
+        findViewById<TextView>(R.id.greetingText).visibility  = View.GONE
+        findViewById<ImageView>(R.id.streakIcon).visibility   = View.GONE
 
         // page title
         findViewById<TextView>(R.id.pageTitle).apply {
@@ -96,79 +95,65 @@ class ChangeCurrency : BaseActivity() {
 
         // load current user ID from prefs
         val userId = SessionManager.getUserId(this) ?: return
-        if (userId == null) {
-            tvCurrent.text = "—"
-            Toast.makeText(this, "No logged-in user!", Toast.LENGTH_SHORT).show()
-            return
-        }
 
-        // fetch live rates + user data
+        // main fetch + UI setup
         lifecycleScope.launch {
-            // 1) fetch rates JSON on IO dispatcher
-            val json = withContext(Dispatchers.IO) {
-                try {
-                    val conn = (URL("https://api.exchangerate-api.com/v4/latest/USD")
-                        .openConnection() as HttpURLConnection).apply {
-                        requestMethod = "GET"
-                        connectTimeout = 5_000
-                        readTimeout = 5_000
-                    }
-                    BufferedReader(InputStreamReader(conn.inputStream)).use { it.readText() }
-                        .also { conn.disconnect() }
-                } catch (e: Exception) {
-                    Log.e("ChangeCurrency", "Failed to fetch rates", e)
-                    null
+            // 1) get ZAR→all rates (cached or fresh)
+            val rateMap = withContext(Dispatchers.IO) {
+                CurrencyManager.getRateMap(this@ChangeCurrency, "ZAR")
+            }
+
+            // 2) notify if offline
+            if (!NetworkUtils.isInternetAvailable(this@ChangeCurrency)) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@ChangeCurrency,
+                        "No internet: showing last saved rates",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
-            if (json == null) {
-                Toast.makeText(this@ChangeCurrency,
-                    "Could not load currency rates", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
+            // 3) load user from DB
+            val user = withContext(Dispatchers.IO) {
+                AppDatabase
+                    .getDatabase(this@ChangeCurrency)
+                    .userDao()
+                    .getById(userId)
+            } ?: return@launch
 
-            // 2) log full JSON for debugging
-            Log.d("ChangeCurrency", "Rates JSON: $json")
-
-            // 3) parse out currency codes
-            val ratesObj = JSONObject(json).getJSONObject("rates")
-            allCodes = ratesObj.keys().asSequence().toMutableList().apply { sort() }
-
-            // 4) fetch user from Room
-            val dao  = AppDatabase.getDatabase(this@ChangeCurrency).userDao()
-            val user = dao.getById(userId) ?: return@launch
-
+            // 4) update UI
             withContext(Dispatchers.Main) {
-                // show existing currency + its live rate
+                // current code + rate
                 val currentCode = user.currency
-                val currentRate = ratesObj.optDouble(currentCode, Double.NaN)
-                tvCurrent.text = if (currentRate.isNaN()) {
-                    "$currentCode (rate unavailable)"
-                } else {
-                    "$currentCode = $currentRate"
-                }
+                val currentRate = rateMap[currentCode] ?: 1.0
+                tvCurrent.text = "$currentCode = ${
+                    NumberFormat.getCurrencyInstance().apply {
+                    currency = Currency.getInstance(currentCode)
+                }.format(currentRate)}"
 
-                // populate spinner
+                // prepare spinner list
+                allCodes = rateMap.keys.sorted().toMutableList()
+
                 spinnerChoose.adapter = ArrayAdapter(
                     this@ChangeCurrency,
                     android.R.layout.simple_spinner_dropdown_item,
                     allCodes
                 )
-                // select current
-                val idx = allCodes.indexOf(currentCode).coerceAtLeast(0)
-                spinnerChoose.setSelection(idx)
+                spinnerChoose.setSelection(allCodes.indexOf(currentCode).coerceAtLeast(0))
                 pendingSelection = currentCode
 
-                // listen for selection changes & log them
                 spinnerChoose.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onNothingSelected(parent: AdapterView<*>?) { /* no-op */ }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                     override fun onItemSelected(
                         parent: AdapterView<*>, view: View?, position: Int, id: Long
                     ) {
                         pendingSelection = allCodes[position]
-                        val rate = ratesObj.optDouble(pendingSelection, Double.NaN)
-                        Log.d("ChangeCurrency",
-                            "Selected $pendingSelection → rate ${if (rate.isNaN()) "N/A" else rate}")
+                        val rate = rateMap[pendingSelection] ?: Double.NaN
+                        Log.d(
+                            "ChangeCurrency",
+                            "Selected $pendingSelection → rate ${if (rate.isNaN()) "N/A" else rate}"
+                        )
                     }
                 }
             }
@@ -186,13 +171,19 @@ class ChangeCurrency : BaseActivity() {
                     Log.d("ChangeCurrency", "Saved new currency: $newCode")
                     withContext(Dispatchers.Main) {
                         tvCurrent.text = newCode
-                        Toast.makeText(this@ChangeCurrency,
-                            "Currency changed to $newCode", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@ChangeCurrency,
+                            "Currency changed to $newCode",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@ChangeCurrency,
-                            "Currency unchanged", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@ChangeCurrency,
+                            "Currency unchanged",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
