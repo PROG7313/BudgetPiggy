@@ -116,14 +116,13 @@ class AddCategoryPage : BaseActivity() {
             )
         }
 
-        // built-in icon choices
-        val builtin = listOf("vec_home","vec_food","vec_car","vec_gift","vec_clothes")
+        val builtin = listOf("vec_home", "vec_food", "vec_car", "vec_gift", "vec_clothes")
         builtin.forEach { iconName ->
             val resId = resources.getIdentifier(iconName, "drawable", packageName)
             ImageView(this).apply {
                 setImageResource(resId)
                 val pad = (8 * resources.displayMetrics.density).toInt()
-                setPadding(pad,pad,pad,pad)
+                setPadding(pad, pad, pad, pad)
                 alpha = 0.5f
                 setOnClickListener {
                     selectedIconUri = null
@@ -134,7 +133,27 @@ class AddCategoryPage : BaseActivity() {
                 builtInContainer.addView(this)
             }
         }
-        // default-select first
+
+// 2. Now also load any saved user-uploaded icons
+        val userIcons = filesDir.listFiles()?.filter { it.name.startsWith("cat_icon_") && it.name.endsWith(".png") } ?: emptyList()
+
+        userIcons.forEach { file ->
+            ImageView(this).apply {
+                setImageURI(Uri.fromFile(file))
+                val pad = (8 * resources.displayMetrics.density).toInt()
+                setPadding(pad, pad, pad, pad)
+                alpha = 0.5f
+                setOnClickListener {
+                    selectedBuiltInIcon = null
+                    builtInContainer.children.forEach { it.alpha = 0.5f }
+                    alpha = 1f
+                    selectedIconUri = Uri.fromFile(file)
+                }
+                builtInContainer.addView(this)
+            }
+        }
+
+// 3. Default-select first item
         builtInContainer.children.firstOrNull()?.performClick()
 
         // upload override
@@ -190,21 +209,48 @@ class AddCategoryPage : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ICON && resultCode == Activity.RESULT_OK) {
             data?.data?.let { sourceUri ->
-                val input = contentResolver.openInputStream(sourceUri)!!
+                val inputStream = contentResolver.openInputStream(sourceUri) ?: return
+
+                // Decode the original image into a Bitmap
+                val originalBitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+
+                // Resize it to 48dp x 48dp
+                val sizeInPx = (48 * resources.displayMetrics.density).toInt()
+                val resizedBitmap = android.graphics.Bitmap.createScaledBitmap(
+                    originalBitmap,
+                    sizeInPx,
+                    sizeInPx,
+                    true
+                )
+
+                // Circle-crop it
+                val output = android.graphics.Bitmap.createBitmap(sizeInPx, sizeInPx, android.graphics.Bitmap.Config.ARGB_8888)
+                val canvas = android.graphics.Canvas(output)
+                val paint = android.graphics.Paint().apply {
+                    isAntiAlias = true
+                }
+                val rect = android.graphics.Rect(0, 0, sizeInPx, sizeInPx)
+                val rectF = android.graphics.RectF(rect)
+                canvas.drawOval(rectF, paint)
+                paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+                canvas.drawBitmap(resizedBitmap, rect, rect, paint)
+
+                // Save to file
                 val destFile = File(filesDir, "cat_icon_${UUID.randomUUID()}.png")
                 FileOutputStream(destFile).use { out ->
-                    input.copyTo(out)
+                    output.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out)
                 }
 
-                // <— LOG THE PATH HERE
-                Log.d("AddCategory", "sourceUri=$sourceUri")
-                Log.d("AddCategory", "wrote icon to: ${destFile.absolutePath}")
-
+                // Update UI
                 selectedIconUri = Uri.fromFile(destFile)
                 findViewById<ImageButton>(R.id.btnAddIcon).setImageURI(selectedIconUri)
+
+                Log.d("AddCategory", "sourceUri=$sourceUri")
+                Log.d("AddCategory", "saved resized circle icon to: ${destFile.absolutePath}")
             }
         }
     }
+
 
 
 

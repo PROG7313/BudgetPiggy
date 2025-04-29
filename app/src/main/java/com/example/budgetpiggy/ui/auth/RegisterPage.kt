@@ -8,23 +8,24 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.NotificationEntity
 import com.example.budgetpiggy.data.entities.UserEntity
+import com.example.budgetpiggy.ui.core.SplashActivity
 import com.example.budgetpiggy.utils.PasswordUtils
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import androidx.core.content.edit
+import com.example.budgetpiggy.ui.core.BaseActivity
 
-class RegisterPage : AppCompatActivity() {
+class RegisterPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,7 +192,8 @@ class RegisterPage : AppCompatActivity() {
 
                         // only welcome once
                         val prefs = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
-                        if (!prefs.getBoolean("hasWelcomed", false)) {
+                        val welcomeKey = "hasWelcomed_$newUserId"
+                        if (!prefs.getBoolean(welcomeKey, false)) {
                             // build your welcome notification
                             val welcome = NotificationEntity(
                                 notificationId = UUID.randomUUID().toString(),
@@ -208,23 +210,26 @@ class RegisterPage : AppCompatActivity() {
                                 .insert(welcome)
 
                             // don’t do it again
-                            prefs.edit()
-                                .putBoolean("hasWelcomed", true)
-                                .apply()
+                            prefs.edit {
+                                putBoolean(welcomeKey, true)
+                            }
                         }
 
 
 
                         // persist the logged in user id to the shared preferences
                         SessionManager.saveUserId(this@RegisterPage, newUserId)
-
+                        getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
+                            .edit {
+                                putBoolean("needs_getting_started", true)
+                            }
                         withContext(Dispatchers.Main) {
-                            val intent = Intent(this@RegisterPage, HomePage::class.java).apply {
-                                flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            val intent = Intent(this@RegisterPage, SplashActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             }
                             startActivity(intent)
                             finish()
+
                         }
                     }
 

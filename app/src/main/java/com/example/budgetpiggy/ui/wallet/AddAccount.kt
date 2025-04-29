@@ -20,7 +20,6 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.AccountEntity
 import com.example.budgetpiggy.ui.reports.ReportsPage
-import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

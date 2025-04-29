@@ -22,7 +22,6 @@ import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.w3c.dom.Text
 
 class AccountPage : BaseActivity() {
 
@@ -44,7 +43,7 @@ class AccountPage : BaseActivity() {
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
         val tvUserName = findViewById<TextView>(R.id.tvUserName)
         val userId = SessionManager.getUserId(this) ?: return
-        userId?.let { id ->
+        userId.let { id ->
             lifecycleScope.launch(Dispatchers.IO) {
                 val user = AppDatabase.getDatabase(this@AccountPage).userDao().getById(id)
                 withContext(Dispatchers.Main) {
@@ -100,11 +99,7 @@ class AccountPage : BaseActivity() {
         }
         logoutButton.setOnClickListener {
             // clear the saved session
-
-            getSharedPreferences("app_prefs", MODE_PRIVATE)
-                .edit()
-                .remove("logged_in_user_id")
-                .apply()
+            SessionManager.logout(this)
 
             // go back to SplashActivity and clear everything
             val intent = Intent(this, SplashActivity::class.java).apply {

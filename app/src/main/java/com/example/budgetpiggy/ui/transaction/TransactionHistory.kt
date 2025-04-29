@@ -23,17 +23,15 @@ import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.TransactionEntity
 import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.utils.CurrencyManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
+import androidx.core.net.toUri
 
 class TransactionHistory : BaseActivity() {
 
@@ -98,15 +96,7 @@ class TransactionHistory : BaseActivity() {
             val db = AppDatabase.getDatabase(this@TransactionHistory)
             val user = withContext(Dispatchers.IO) { db.userDao().getById(userId) } ?: return@launch
 
-            val rateMap = withContext(Dispatchers.IO) {
-                val json = URL("https://api.exchangerate-api.com/v4/latest/ZAR")
-                    .openConnection().run {
-                        connect()
-                        BufferedReader(InputStreamReader(inputStream)).use { it.readText() }
-                    }
-                val ratesObj = JSONObject(json).getJSONObject("rates")
-                ratesObj.keys().asSequence().associateWith { ratesObj.getDouble(it) }
-            }
+            val rateMap = CurrencyManager.getRateMap(this@TransactionHistory, "ZAR")
 
             conversionRate = rateMap[user.currency] ?: 1.0
             formatter = NumberFormat.getCurrencyInstance().apply {
@@ -153,7 +143,7 @@ class TransactionHistory : BaseActivity() {
             dateText.text = sdf.format(Date(tx.date))
 
             if (!tx.receiptLocalPath.isNullOrBlank()) {
-                val uri = Uri.parse(tx.receiptLocalPath)
+                val uri = tx.receiptLocalPath.toUri()
                 receiptImage.visibility = View.VISIBLE
                 Glide.with(this).load(uri).into(receiptImage)
                 receiptImage.setOnClickListener { showReceiptFullScreen(uri) }
@@ -178,7 +168,7 @@ class TransactionHistory : BaseActivity() {
                 categoryText.text = "${cat?.categoryName ?: "Unk"}  $prefix$amtFormatted"
 
                 if (cat?.iconLocalPath != null) {
-                    iconImage.setImageURI(Uri.parse(cat.iconLocalPath))
+                    iconImage.setImageURI(cat.iconLocalPath.toUri())
                 } else {
                     val resName = cat?.iconName ?: "vec_filter"
                     val resId = resources.getIdentifier(resName, "drawable", packageName)
