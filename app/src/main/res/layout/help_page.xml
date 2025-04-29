@@ -36,16 +36,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Help Section Title -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/help_title"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginBottom="16dp"/>
-
 
         </LinearLayout>
     </ScrollView>

@@ -37,7 +37,6 @@ class AccountPage : BaseActivity() {
             insets
         }
 
-        // Hide unnecessary icons for Wallet view
         findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
