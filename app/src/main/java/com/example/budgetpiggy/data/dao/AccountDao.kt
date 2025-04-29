@@ -17,6 +17,8 @@ interface AccountDao {
     @Query("SELECT accountName, balance FROM accounts WHERE userId = :userId")
     suspend fun getBalancesForUser(userId: String): List<AccountBalanceView>
 
+    @Query("UPDATE accounts SET balance = :newBalance WHERE accountId = :accountId")
+    suspend fun updateBalance(accountId: String, newBalance: Double)
 
     @Update
     suspend fun update(account: AccountEntity)

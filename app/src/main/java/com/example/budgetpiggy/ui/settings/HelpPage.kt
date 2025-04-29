@@ -7,14 +7,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.core.BaseActivity
-import com.example.budgetpiggy.ui.core.SplashActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
-import com.example.budgetpiggy.utils.SessionManager
 import androidx.core.view.isVisible
 
 class HelpPage : BaseActivity() {
@@ -23,6 +23,21 @@ class HelpPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.help_page)
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.helpPage)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
+        findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
+        findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
+
+
+        // Show and set the title to "Wallet"
+        findViewById<TextView>(R.id.pageTitle).apply {
+            visibility = View.VISIBLE
+            text = getString(R.string.help_title)
+        }
         val helpContainer = findViewById<LinearLayout>(R.id.helpContainer)
         val inflater = LayoutInflater.from(this)
 
@@ -69,33 +84,7 @@ class HelpPage : BaseActivity() {
         val navWallet  = findViewById<ImageView>(R.id.nav_wallet)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
-        val currency = findViewById<LinearLayout>(R.id.currency)
-        val logoutButton = findViewById<LinearLayout>(R.id.logout)
-        val aboutMe = findViewById<LinearLayout>(R.id.about)
-        val help = findViewById<LinearLayout>(R.id.help)
 
-
-        help.setOnClickListener{
-            startActivity(Intent(this, HelpPage::class.java))
-        }
-        aboutMe.setOnClickListener {
-            startActivity(Intent(this, AboutUsPage::class.java))
-        }
-        logoutButton.setOnClickListener {
-            // clear the saved session
-            SessionManager.logout(this)
-
-            // go back to SplashActivity and clear everything
-            val intent = Intent(this, SplashActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
-            finish()
-        }
-
-        currency.setOnClickListener {
-            startActivity(Intent(this, ChangeCurrency::class.java))
-        }
         navHome.setOnClickListener { v: View ->
             setActiveNavIcon(v as ImageView)
             startActivity(Intent(this, HomePage::class.java))

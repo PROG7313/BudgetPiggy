@@ -37,7 +37,6 @@ class AccountPage : BaseActivity() {
             insets
         }
 
-        // Hide unnecessary icons for Wallet view
         findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
@@ -95,6 +94,11 @@ class AccountPage : BaseActivity() {
         val aboutMe = findViewById<LinearLayout>(R.id.about)
         val help = findViewById<LinearLayout>(R.id.help)
 
+        val feedback = findViewById<LinearLayout>(R.id.feedback)
+
+        feedback.setOnClickListener{
+            startActivity(Intent(this, SendFeedbackPage::class.java))
+        }
 
         help.setOnClickListener{
             startActivity(Intent(this, HelpPage::class.java))

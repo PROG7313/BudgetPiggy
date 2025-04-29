@@ -23,6 +23,7 @@ import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
 import kotlin.collections.forEach
 import com.example.budgetpiggy.data.repository.NotificationRepository
+import com.example.budgetpiggy.ui.transaction.TransferFunds
 
 
 class Notification : BaseActivity() {
@@ -83,20 +84,12 @@ class Notification : BaseActivity() {
         }
 
         // FAB show/hide on scroll
-        var lastY = 0
-        scrollView.viewTreeObserver.addOnScrollChangedListener {
-            val y = scrollView.scrollY
-            if (y > lastY && scrollView.canScrollVertically(1)) {
-                fabWrapper.animate().alpha(0f).setDuration(150)
-                    .withEndAction { fabWrapper.visibility = View.GONE }
-                    .start()
-            } else {
-                fabWrapper.visibility = View.VISIBLE
-                fabWrapper.animate().alpha(1f).setDuration(150).start()
-            }
-            lastY = y
-        }
 
+
+        setupFabScrollBehavior(scrollView, fabWrapper)
+        findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
+            startActivity(Intent(this, TransferFunds::class.java))
+        }
         // Initialize badge to zero
         updateNotificationBadgeGlobally(topBar, 0)
 

@@ -94,6 +94,9 @@
         <activity
             android:name=".ui.settings.HelpPage"
             android:exported="true"/>
+        <activity
+            android:name=".ui.settings.SendFeedbackPage"
+            android:exported="true"/>
     </application>
 
 </manifest>
