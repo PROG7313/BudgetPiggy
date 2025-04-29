@@ -22,7 +22,8 @@
             android:text="@string/help_rewards"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"/>
 
         <ImageView
             android:id="@+id/expandIcon"

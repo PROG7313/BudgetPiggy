@@ -7,20 +7,27 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.ui.core.BaseActivity
-import com.example.budgetpiggy.ui.core.SplashActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
-import com.example.budgetpiggy.utils.SessionManager
+import androidx.core.view.isVisible
 
 class HelpPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.help_page)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.helpPage)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         val helpContainer = findViewById<LinearLayout>(R.id.helpContainer)
         val inflater = LayoutInflater.from(this)
@@ -99,7 +106,7 @@ class HelpPage : BaseActivity() {
         content.visibility = View.GONE
 
         header.setOnClickListener {
-            val isVisible = content.visibility == View.VISIBLE
+            val isVisible = content.isVisible
             content.visibility = if (isVisible) View.GONE else View.VISIBLE
             icon.setImageResource(
                 if (isVisible) R.drawable.ic_arrow_drop_down else R.drawable.ic_arrow_up
