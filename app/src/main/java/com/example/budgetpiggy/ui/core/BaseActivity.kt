@@ -59,6 +59,18 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    protected fun clearNavIcons() {
+        val navIcons = listOf(
+            R.id.nav_home to R.drawable.vec_home_inactive,
+            R.id.nav_wallet to R.drawable.vec_wallet_inactive,
+            R.id.nav_reports to R.drawable.vec_reports_inactive,
+            R.id.nav_profile to R.drawable.vec_profile_inactive
+        )
+        navIcons.forEach { (id, drawable) ->
+            findViewById<ImageView>(id)?.setImageResource(drawable)
+        }
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (currentFocus != null) {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
