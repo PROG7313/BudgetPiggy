@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import androidx.core.content.edit
+import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.core.BaseActivity
 
 class RegisterPage : BaseActivity() {
@@ -190,28 +191,36 @@ class RegisterPage : BaseActivity() {
                         )
                         userDao.insert(user)
 
-                        // only welcome once
                         val prefs = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
                         val welcomeKey = "hasWelcomed_$newUserId"
-                        if (!prefs.getBoolean(welcomeKey, false)) {
-                            // build your welcome notification
-                            val welcome = NotificationEntity(
-                                notificationId = UUID.randomUUID().toString(),
-                                userId         = newUserId,
-                                message        = "🎉 Welcome to Budget Piggy!",
-                                timestamp      = System.currentTimeMillis(),
-                                isRead         = false,
-                                iconUrl        = null,
-                                rewardCodeId   = null
-                            )
-                            // insert it
-                            AppDatabase.getDatabase(this@RegisterPage)
-                                .notificationDao()
-                                .insert(welcome)
 
-                            // don’t do it again
-                            prefs.edit {
-                                putBoolean(welcomeKey, true)
+                        if (!prefs.getBoolean(welcomeKey, false)) {
+                            val db = AppDatabase.getDatabase(this@RegisterPage)
+                            val rewardRepo = RewardRepository(
+                                rewardDao = db.rewardDao(),
+                                codeDao   = db.rewardCodeDao(),
+                                notifDao  = db.notificationDao()
+                            )
+
+                            // Launch coroutine if not already inside one
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                // 1. Unlock reward (inserts Reward + Unlock notification)
+                                rewardRepo.unlockCode(userId = newUserId, code = "SIGNUP2025")
+
+                                // 2. Insert soft welcome notification (optional)
+                                val welcomeNotif = NotificationEntity(
+                                    notificationId = UUID.randomUUID().toString(),
+                                    userId         = newUserId,
+                                    message        = "🎉 Welcome to Budget Piggy! Let’s get started.",
+                                    timestamp      = System.currentTimeMillis(),
+                                    isRead         = false,
+                                    iconUrl        = "android.resource://${packageName}/${R.drawable.ic_welcome_bonus}",
+                                    rewardCodeId   = null
+                                )
+                                db.notificationDao().insert(welcomeNotif)
+
+                                // 3. Mark welcome complete
+                                prefs.edit().putBoolean(welcomeKey, true).apply()
                             }
                         }
 
