@@ -91,6 +91,9 @@
         <activity
             android:name=".ui.settings.ChangeCurrency"
             android:exported="true" />
+        <activity
+            android:name=".ui.settings.HelpPage"
+            android:exported="true"/>
     </application>
 
 </manifest>

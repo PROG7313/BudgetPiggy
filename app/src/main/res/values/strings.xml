@@ -129,4 +129,14 @@
     <string name="notification_icon_desc">Notification icon</string>
     <string name="clear_all">Clear All</string>
 
+    <!-- Help Page -->
+    <string name="help_title">Help and Support</string>
+    <string name="help_add_expense">Adding an Expense</string>
+    <string name="help_add_expense_info">To add an expense, go to the dashboard and click the (+) button.</string>
+    <string name="help_notifications">Managing Notifications</string>
+    <string name="help_notifications_info">Access settings from the top bar. From there, you can enable or disable daily budget reminders and alerts for large expenses.</string>
+    <string name="help_rewards">Using the Rewards Page</string>
+    <string name="help_rewards_info">Earn badges by staying within your budget. The rewards page shows your progress and gives tips for earning more rewards.</string>
+    <string name="help_budgets">Setting Your Budget</string>
+    <string name="help_budgets_info">Tap the budget icon to set daily, weekly, or monthly limits. You’ll get notified when you’re nearing or exceeding your limit.</string>
 </resources>

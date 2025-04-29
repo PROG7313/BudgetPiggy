@@ -2,64 +2,43 @@ package com.example.budgetpiggy.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.R
-import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.core.SplashActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import androidx.core.view.isVisible
 
-class AccountPage : BaseActivity() {
+class HelpPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.account)
+        setContentView(R.layout.help_page)
 
-        // Edge-to-edge insets
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.accountPage)) { v, insets ->
-            val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(sys.left, sys.top, sys.right, sys.bottom)
-            insets
+        val helpContainer = findViewById<LinearLayout>(R.id.helpContainer)
+        val inflater = LayoutInflater.from(this)
+
+        val sections = listOf(
+            R.layout.help_section_add_expense,
+            R.layout.help_section_notifications,
+            R.layout.help_section_rewards,
+            R.layout.help_section_budgets
+        )
+
+        for (layoutId in sections) {
+            val sectionView = inflater.inflate(layoutId, helpContainer, false)
+            helpContainer.addView(sectionView)
+
+            setupExpandableSection(sectionView)
         }
-
-        // Hide unnecessary icons for Wallet view
-        findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
-        findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
-        findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
-        val tvUserName = findViewById<TextView>(R.id.tvUserName)
-        val userId = SessionManager.getUserId(this) ?: return
-        userId.let { id ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                val user = AppDatabase.getDatabase(this@AccountPage).userDao().getById(id)
-                withContext(Dispatchers.Main) {
-                    tvUserName.text = "${user?.firstName}"
-                }
-            }
-        }
-
-// Show and set the title to "Wallet"
-        findViewById<TextView>(R.id.pageTitle).apply {
-            visibility = View.VISIBLE
-            text = getString(R.string.account)
-        }
-
-
-
 
         // Bell → Notification screen
         findViewById<ImageView>(R.id.bellIcon)
@@ -137,7 +116,22 @@ class AccountPage : BaseActivity() {
             setActiveNavIcon(v as ImageView)
         }
 
+    }
 
+    private fun setupExpandableSection(sectionView: View) {
+        val header = sectionView.findViewById<TextView>(R.id.sectionHeader)
+        val content = sectionView.findViewById<LinearLayout>(R.id.sectionContent)
+        val icon = sectionView.findViewById<ImageView>(R.id.expandIcon)
+
+        content.visibility = View.GONE
+
+        header.setOnClickListener {
+            val isVisible = content.isVisible
+            content.visibility = if (isVisible) View.GONE else View.VISIBLE
+            icon.setImageResource(
+                if (isVisible) R.drawable.ic_arrow_drop_down else R.drawable.ic_arrow_up
+            )
+        }
     }
 
     override fun onResume() {
@@ -146,3 +140,4 @@ class AccountPage : BaseActivity() {
         setActiveNavIcon(findViewById(R.id.nav_profile))
     }
 }
+
