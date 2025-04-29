@@ -11,7 +11,7 @@
     android:clickable="true"
     tools:context=".ui.settings.AboutUsPage">
 
-    <!-- ✅ Top Bar -->
+    <!-- Top Bar -->
     <include
         android:id="@+id/topBar"
         layout="@layout/layout_top_bar"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 🧾 Scrollable Content -->
+    <!--  Scrollable Content -->
     <ScrollView
         android:id="@+id/scrollArea"
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
             android:paddingEnd="16dp"
             android:paddingBottom="96dp">
 
-            <!-- ℹ️ About Us Card -->
+            <!--  About Us Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/aboutUsCard"
                 android:layout_width="match_parent"
@@ -77,7 +77,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 🌐 Contact / Team Info Card -->
+            <!--  Contact / Team Info Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/teamCard"
                 android:layout_width="match_parent"
@@ -115,7 +115,7 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 👥 Meet Our Team Section -->
+            <!--  Meet Our Team Section -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -235,10 +235,9 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 🔘 Floating Action Button -->
-    <include layout="@layout/fab_overlay" />
 
-    <!-- 📱 Bottom Navigation -->
+
+    <!-- Bottom Navigation -->
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"

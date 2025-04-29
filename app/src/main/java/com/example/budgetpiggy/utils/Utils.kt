@@ -40,10 +40,10 @@ object StreakTracker {
             else -> prefs.getInt(STREAK_COUNT, 1)
         }
 
-        prefs.edit()
-            .putString(LAST_ACTIVE_DATE, today.format(formatter))
-            .putInt(STREAK_COUNT, streak)
-            .apply()
+        prefs.edit {
+            putString(LAST_ACTIVE_DATE, today.format(formatter))
+                .putInt(STREAK_COUNT, streak)
+        }
 
         return streak
     }
@@ -53,7 +53,7 @@ object SessionManager {
     private const val PREFS_NAME  = "app_piggy_prefs"
     private const val KEY_USER_ID = "logged_in_user_id"
 
-    /** Call this once you’ve verified credentials (e.g. in RegisterPage or LoginPage). */
+
     fun saveUserId(context: Context, userId: String) {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -65,4 +65,10 @@ object SessionManager {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getString(KEY_USER_ID, null)
+
+    fun logout(context: Context) {
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit { remove(KEY_USER_ID) }
+    }
 }

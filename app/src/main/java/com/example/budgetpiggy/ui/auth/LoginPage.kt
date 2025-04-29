@@ -13,20 +13,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.utils.PasswordUtils
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginPage : AppCompatActivity() {
+class LoginPage : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -182,7 +182,7 @@ class LoginPage : AppCompatActivity() {
             Toast
                 .makeText(
                     this,
-                    "Use the menu or logout button to exit",
+                    "Use the menu",
                     Toast.LENGTH_SHORT
                 )
                 .show()
