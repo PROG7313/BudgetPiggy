@@ -19,6 +19,11 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<CategoryEntity>
 
+    @Query("UPDATE categories SET budgetAmount = budgetAmount + :amount WHERE categoryId = :categoryId")
+    suspend fun addToBudget(categoryId: String, amount: Double)
+
+    @Query("UPDATE categories SET budgetAmount = budgetAmount - :amount WHERE categoryId = :categoryId")
+    suspend fun subtractFromBudget(categoryId: String, amount: Double)
 
     @Update
     suspend fun update(category: CategoryEntity)
