@@ -147,4 +147,8 @@
     <string name="send_feedback_description">Care to share more about it?</string>
     <string name="send_feedback_publish">Publish Feedback</string>
     <string name="send_feedback_appreciation">Your review will be greatly appreciated!</string>
+    <string name="reward_icon">Reward Icon</string>
+    <string name="enter_reward_code">Enter Reward Code</string>
+    <string name="confirm_reward_code">Confirm</string>
+    <string name="RewardsTitle">Rewards</string>
 </resources>

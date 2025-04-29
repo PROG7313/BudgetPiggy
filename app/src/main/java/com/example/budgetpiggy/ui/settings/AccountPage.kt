@@ -22,6 +22,8 @@ import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.jvm.java
+import com.example.budgetpiggy.ui.rewards.RewardsActivity
 
 class AccountPage : BaseActivity() {
 
@@ -93,12 +95,18 @@ class AccountPage : BaseActivity() {
         val logoutButton = findViewById<LinearLayout>(R.id.logout)
         val aboutMe = findViewById<LinearLayout>(R.id.about)
         val help = findViewById<LinearLayout>(R.id.help)
+        val rewards = findViewById<LinearLayout>(R.id.Rewards)
 
         val feedback = findViewById<LinearLayout>(R.id.feedback)
+
+        rewards.setOnClickListener{
+            startActivity(Intent(this, RewardsActivity::class.java))
+        }
 
         feedback.setOnClickListener{
             startActivity(Intent(this, SendFeedbackPage::class.java))
         }
+
 
         help.setOnClickListener{
             startActivity(Intent(this, HelpPage::class.java))

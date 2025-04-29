@@ -13,4 +13,6 @@ interface RewardDao {
 
     @Query("SELECT * FROM rewards WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<RewardEntity>
+
+
 }
