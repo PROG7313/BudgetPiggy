@@ -95,6 +95,11 @@ class AccountPage : BaseActivity() {
         val aboutMe = findViewById<LinearLayout>(R.id.about)
         val help = findViewById<LinearLayout>(R.id.help)
 
+        val feedback = findViewById<LinearLayout>(R.id.feedback)
+
+        feedback.setOnClickListener{
+            startActivity(Intent(this, SendFeedbackPage::class.java))
+        }
 
         help.setOnClickListener{
             startActivity(Intent(this, HelpPage::class.java))
