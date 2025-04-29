@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class RewardCodeEntity(
     @PrimaryKey val code: String,
     val rewardName: String,
-    val rewardImageUrl: String? = null
+    val rewardImageUrl: String? = null,
+    val rewardImageLocalPath: String?   = null
 )
