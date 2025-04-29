@@ -15,7 +15,6 @@ import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
-import androidx.core.view.isVisible
 
 class HelpPage : BaseActivity() {
 
@@ -69,33 +68,7 @@ class HelpPage : BaseActivity() {
         val navWallet  = findViewById<ImageView>(R.id.nav_wallet)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
-        val currency = findViewById<LinearLayout>(R.id.currency)
-        val logoutButton = findViewById<LinearLayout>(R.id.logout)
-        val aboutMe = findViewById<LinearLayout>(R.id.about)
-        val help = findViewById<LinearLayout>(R.id.help)
 
-
-        help.setOnClickListener{
-            startActivity(Intent(this, HelpPage::class.java))
-        }
-        aboutMe.setOnClickListener {
-            startActivity(Intent(this, AboutUsPage::class.java))
-        }
-        logoutButton.setOnClickListener {
-            // clear the saved session
-            SessionManager.logout(this)
-
-            // go back to SplashActivity and clear everything
-            val intent = Intent(this, SplashActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
-            finish()
-        }
-
-        currency.setOnClickListener {
-            startActivity(Intent(this, ChangeCurrency::class.java))
-        }
         navHome.setOnClickListener { v: View ->
             setActiveNavIcon(v as ImageView)
             startActivity(Intent(this, HomePage::class.java))
@@ -126,7 +99,7 @@ class HelpPage : BaseActivity() {
         content.visibility = View.GONE
 
         header.setOnClickListener {
-            val isVisible = content.isVisible
+            val isVisible = content.visibility == View.VISIBLE
             content.visibility = if (isVisible) View.GONE else View.VISIBLE
             icon.setImageResource(
                 if (isVisible) R.drawable.ic_arrow_drop_down else R.drawable.ic_arrow_up
