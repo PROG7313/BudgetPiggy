@@ -83,21 +83,9 @@
                             android:textSize="18sp"
                             android:textStyle="bold"/>
 
-                        <TextView
-                            android:id="@+id/tvViewBudget"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View Budget ›"
-                            android:textColor="@color/black"
-                            android:textSize="14sp"/>
+
                     </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/ivEditProfile"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/vec_edit"
-                        android:contentDescription="@string/edit_profile"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -129,6 +117,7 @@
 
                     <!-- Item 1 -->
                     <LinearLayout
+                        android:id="@+id/AccountManagement"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -140,6 +129,7 @@
                             android:src="@drawable/vec_acc"
                             android:contentDescription="@string/account_management"/>
                         <TextView
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
@@ -154,6 +144,7 @@
 
                     <!-- Item 2 -->
                     <LinearLayout
+                        android:id="@+id/ManageAccounts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -165,6 +156,7 @@
                             android:src="@drawable/vec_creditcard"
                             android:contentDescription="@string/manage_accounts"/>
                         <TextView
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
@@ -179,6 +171,7 @@
 
                     <!-- Item 3 -->
                     <LinearLayout
+                        android:id="@+id/TransactionHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -190,6 +183,7 @@
                             android:src="@drawable/vec_txhistory"
                             android:contentDescription="@string/transaction_history"/>
                         <TextView
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
@@ -204,6 +198,7 @@
 
                     <!-- Item 4 -->
                     <LinearLayout
+                        android:id="@+id/Rewards"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -215,6 +210,7 @@
                             android:src="@drawable/vec_star"
                             android:contentDescription="@string/rewards"/>
                         <TextView
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"

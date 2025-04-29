@@ -113,8 +113,8 @@
     <string name="profile_avatar">avatar</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="account">Account</string>
-    <string name="account_management">Account Management\n</string>
-    <string name="manage_accounts">Manage Accounts\n</string>
+    <string name="account_management">Account Management</string>
+    <string name="manage_accounts">Manage Accounts</string>
     <string name="rewards">Rewards</string>
     <string name="more">More</string>
     <string name="choose_currency">Choose Currency</string>
