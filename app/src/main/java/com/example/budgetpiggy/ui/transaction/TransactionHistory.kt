@@ -165,7 +165,16 @@ class TransactionHistory : BaseActivity() {
                 }
 
                 accountText.text = "Acct: ${acct?.accountName ?: "?"}"
-                categoryText.text = "${cat?.categoryName ?: "Unk"}  $prefix$amtFormatted"
+                val isAllocation = tx.description?.startsWith("Allocated to category:") == true
+                val categoryLabel = if (isAllocation) "[Allocated] ${cat?.categoryName}" else cat?.categoryName ?: "Unk"
+                val adjustedPrefix = if (isAllocation) "" else prefix
+
+                categoryText.text = "$categoryLabel  $adjustedPrefix$amtFormatted"
+                categoryText.setTextColor(
+                    if (!isAllocation && tx.amount < 0) getColor(R.color.red)
+                    else getColor(R.color.black)
+                )
+
 
                 if (cat?.iconLocalPath != null) {
                     iconImage.setImageURI(cat.iconLocalPath.toUri())
