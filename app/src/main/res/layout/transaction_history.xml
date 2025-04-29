@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <!-- ✅ Sort & Filter Bar (Updated to ConstraintLayout) -->
+    <!--  Sort & Filter Bar (Updated to ConstraintLayout) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sortFilterBar"
         android:layout_width="0dp"
@@ -59,7 +59,7 @@
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ✅ Scrollable Transaction List -->
+    <!--  Scrollable Transaction List -->
     <ScrollView
         android:id="@+id/scrollArea"
         android:layout_width="match_parent"
@@ -85,10 +85,10 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- ✅ FAB Overlay -->
+    <!--  FAB Overlay -->
     <include layout="@layout/fab_overlay" />
 
-    <!-- ✅ Bottom Navigation Bar -->
+    <!--  Bottom Navigation Bar -->
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav_bar"

@@ -35,7 +35,7 @@ class TransactionActivity : BaseActivity() {
 
     private val REQ_CAM = 1001
     private val REQ_GAL = 1002
-
+    private lateinit var categoryContainer: View
     private var receiptUri: String? = null
     private var tempPhotoUri: Uri? = null
     private var pendingAccountId: String? = null
@@ -46,7 +46,7 @@ class TransactionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.transaction_funds)
-
+        categoryContainer = findViewById(R.id.categoryContainer)
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
@@ -68,6 +68,10 @@ class TransactionActivity : BaseActivity() {
             val amt = amtInput.text.toString().toDoubleOrNull()
             if (amt == null || pendingAccountId == null) {
                 Toast.makeText(this, "Enter amount & select account", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (isExpense && pendingCategoryId == null) {
+                Toast.makeText(this, "Select a category", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -123,8 +127,33 @@ class TransactionActivity : BaseActivity() {
                     // Subtract from allocated budget
                     db.categoryDao().subtractFromBudget(pendingCategoryId!!, amt.absoluteValue)
                 }
+                val acct = db.accountDao().getById(pendingAccountId!!)
+                if (acct == null) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@TransactionActivity,
+                            "Account not found.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    return@launch
+                }
+
+                val change = if (isExpense) -amt.absoluteValue else amt.absoluteValue
+                val newBal = acct.balance + change
+
+                if (!isExpense) {
+                    // bump the “total” on income
+                    val newTotal = acct.initialBalance + amt.absoluteValue
+                    db.accountDao().updateInitialBalance(acct.accountId, newTotal)
+                }
+
+
+                db.accountDao().updateBalance(acct.accountId, newBal)
+
 
                 db.transactionDao().insert(tx)
+
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@TransactionActivity, "Saved!", Toast.LENGTH_SHORT).show()
@@ -139,18 +168,22 @@ class TransactionActivity : BaseActivity() {
 
     private fun setupIncomeExpenseToggle() {
         val btnExpense = findViewById<Button>(R.id.btnExpense)
-        val btnIncome = findViewById<Button>(R.id.btnIncome)
+        val btnIncome  = findViewById<Button>(R.id.btnIncome)
 
         btnExpense.setOnClickListener {
             isExpense = true
             setToggleButtons(btnExpense, btnIncome)
+            categoryContainer.visibility = View.VISIBLE
         }
 
         btnIncome.setOnClickListener {
             isExpense = false
             setToggleButtons(btnIncome, btnExpense)
+            categoryContainer.visibility = View.GONE
+            pendingCategoryId = null
         }
     }
+
 
     private fun setupNavBar() {
         listOf(
@@ -181,32 +214,57 @@ class TransactionActivity : BaseActivity() {
     }
 
     private fun setupInputs() {
-        findViewById<Spinner>(R.id.spinnerDay).adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, (1..31).map { it.toString() })
 
-        findViewById<Spinner>(R.id.spinnerMonth).adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, listOf(
+        val daySpinner = findViewById<Spinner>(R.id.spinnerDay)
+        val monthSpinner = findViewById<Spinner>(R.id.spinnerMonth)
+        val yearSpinner = findViewById<Spinner>(R.id.spinnerYear)
+
+        daySpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            (1..31).map { it.toString() }
+        )
+
+        monthSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            listOf(
                 "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ))
+            )
+        )
 
-        findViewById<Spinner>(R.id.spinnerYear).adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, (2020..2030).map { it.toString() })
+        yearSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            (2020..2030).map { it.toString() }
+        )
 
-        findViewById<ImageView>(R.id.datePrev).setOnClickListener { moveDate(-1, findViewById(R.id.spinnerDay)) }
-        findViewById<ImageView>(R.id.dateNext).setOnClickListener { moveDate(+1, findViewById(R.id.spinnerDay)) }
+
+        val today = Calendar.getInstance()
+
+        daySpinner.setSelection(today.get(Calendar.DAY_OF_MONTH) - 1)
+
+        monthSpinner.setSelection(today.get(Calendar.MONTH))
+
+        yearSpinner.setSelection(today.get(Calendar.YEAR) - 2020)
+
+
+        findViewById<ImageView>(R.id.datePrev)
+            .setOnClickListener { moveDate(-1, daySpinner) }
+        findViewById<ImageView>(R.id.dateNext)
+            .setOnClickListener { moveDate(+1, daySpinner) }
+
+
 
         findViewById<Button>(R.id.btnTransferFunds).setOnClickListener {
-            setToggleButtons(it as Button, findViewById(R.id.btnMakeTransaction))
+
             startActivity(Intent(this, TransferFunds::class.java))
         }
 
-        findViewById<Button>(R.id.btnMakeTransaction).apply {
-            isEnabled = false
-            background = resources.getDrawable(R.drawable.bg_toggle_active, null)
-            setTextColor(resources.getColor(android.R.color.white, null))
-        }
+
     }
+
 
     private fun setupDynamicAccounts() {
         val acctContainer = findViewById<LinearLayout>(R.id.accountToggleContainer)

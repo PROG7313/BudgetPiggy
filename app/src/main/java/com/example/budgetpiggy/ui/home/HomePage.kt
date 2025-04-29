@@ -17,6 +17,7 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.ui.transaction.TransactionActivity
 import com.example.budgetpiggy.ui.transaction.TransactionHistory
 import com.example.budgetpiggy.ui.transaction.TransferFunds
 import com.example.budgetpiggy.ui.wallet.WalletPage
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 class HomePage : BaseActivity() {
 
@@ -118,7 +120,7 @@ class HomePage : BaseActivity() {
         setupFabScrollBehavior(scrollView, fabWrapper)
 
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
-            startActivity(Intent(this, TransferFunds::class.java))
+            startActivity(Intent(this, TransactionActivity::class.java))
         }
     }
 
@@ -134,61 +136,74 @@ class HomePage : BaseActivity() {
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // Fetch everything from Room + cached/fresh rates
+            // 1) Fetch from Room + rates
             val (data, categoryMap) = withContext(Dispatchers.IO) {
-                val db       = AppDatabase.getDatabase(this@HomePage)
-                val aDao     = db.accountDao()
-                val cDao     = db.categoryDao()
-                val tDao     = db.transactionDao()
-                val uDao     = db.userDao()
+                val db    = AppDatabase.getDatabase(this@HomePage)
+                val aDao  = db.accountDao()
+                val cDao  = db.categoryDao()
+                val tDao  = db.transactionDao()
+                val uDao  = db.userDao()
 
-                val balList  = aDao.getBalancesForUser(userId)
-                val catList  = cDao.getByUserId(userId)
-                val txList   = tDao.getByUserId(userId)
+                // now includes initialBalance
+                val balList = aDao.getBalancesForUser(userId)
+                val catList = cDao.getByUserId(userId)
+                val txList  = tDao.getByUserId(userId)
                     .sortedByDescending { it.date }
                     .take(5)
-                val usr      = uDao.getById(userId)!!
+                val usr     = uDao.getById(userId)!!
 
-                // Map categoryId -> categoryName
                 val categoryMap = catList.associate { it.categoryId to it.categoryName }
+                val rateMap     = CurrencyManager.getRateMap(this@HomePage, "ZAR")
 
-                // Get currency rates (online → fetch & cache; offline → load last‐saved)
-
-                val rateMap = CurrencyManager.getRateMap(this@HomePage, "ZAR")
                 (Quintuple(balList, catList, txList, usr, rateMap) to categoryMap)
             }
 
-            // Unpack data
+            // 2) Unpack & formatter
             val (balances, categories, transactions, user, rateMap) = data
             val nf = NumberFormat.getCurrencyInstance().apply {
                 currency = Currency.getInstance(user.currency)
             }
 
-            // Render account balances
+            // 3) Render account balances with remaining vs total
             accountBalanceList.removeAllViews()
             balances.forEach { acct ->
-                val converted = acct.balance * (rateMap[user.currency] ?: 1.0)
-                val row = layoutInflater.inflate(R.layout.item_balance_row, accountBalanceList, false)
-                row.findViewById<TextView>(R.id.labelText).text = acct.accountName
-                val pb = row.findViewById<ProgressBar>(R.id.progressBar)
-                val convertedBalance = converted.coerceAtLeast(1.0)
-                pb.max = convertedBalance.toInt()
-                pb.progress = convertedBalance.toInt()
+                // currency-converted values
+                val rate     = rateMap[user.currency] ?: 1.0
+                val remaining = acct.balance * rate
+                val total     = acct.initialBalance * rate
 
-                row.findViewById<LinearLayout>(R.id.balanceRow).setOnClickListener {
-                    val msg = "${acct.accountName}: ${nf.format(converted)}"
-                    val t = Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT)
-                    t.show()
-                    Handler(Looper.getMainLooper()).postDelayed({ t.cancel() }, 600)
-                }
+                val row = layoutInflater
+                    .inflate(R.layout.item_balance_row, accountBalanceList, false)
+
+                row.findViewById<TextView>(R.id.labelText).text = acct.accountName
+
+                val pb = row.findViewById<ProgressBar>(R.id.progressBar)
+                val maxVal = total.coerceAtLeast(1.0).roundToInt()
+                val prog   = remaining.coerceIn(0.0, total).roundToInt()
+                pb.max      = maxVal
+                pb.progress = prog
+
+                row.findViewById<TextView>(R.id.remainingText)
+                    .text = "Remaining: ${nf.format(remaining)}"
+                row.findViewById<TextView>(R.id.totalText)
+                    .text = "Total: ${nf.format(total)}"
+
+                row.findViewById<LinearLayout>(R.id.balanceRow)
+                    .setOnClickListener {
+                        val msg = "${acct.accountName}: ${nf.format(remaining)} of ${nf.format(total)}"
+                        val t = Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT)
+                        t.show()
+                        Handler(Looper.getMainLooper()).postDelayed({ t.cancel() }, 600)
+                    }
+
                 accountBalanceList.addView(row)
             }
 
-            // Render budget remaining
+            // 4) Render budget remaining (unchanged)
             budgetRemainingList.removeAllViews()
             categories.forEach { cat ->
                 val converted = cat.budgetAmount * (rateMap[user.currency] ?: 1.0)
-                val row = layoutInflater.inflate(R.layout.item_balance_row, budgetRemainingList, false)
+                val row = layoutInflater.inflate(R.layout.item_balance_row_budget, budgetRemainingList, false)
                 row.findViewById<TextView>(R.id.labelText).text = cat.categoryName
                 val pb = row.findViewById<ProgressBar>(R.id.progressBar)
                 val convertedBudget = converted.coerceAtLeast(1.0)
@@ -204,19 +219,21 @@ class HomePage : BaseActivity() {
                 budgetRemainingList.addView(row)
             }
 
-            // Render recent transactions
+            // 5) Render recent transactions (unchanged)
             transactionList.removeAllViews()
             transactions.forEach { tx ->
-                val row = layoutInflater.inflate(R.layout.item_transaction_row, transactionList, false)
+                val row = layoutInflater
+                    .inflate(R.layout.item_transaction_row, transactionList, false)
                 val catName = tx.categoryId?.let { categoryMap[it] } ?: "—"
                 row.findViewById<TextView>(R.id.categoryText).text = catName
                 row.findViewById<TextView>(R.id.nameText).text     = tx.description ?: ""
-                val amount = tx.amount * (rateMap[user.currency] ?: 1.0)
-                row.findViewById<TextView>(R.id.amountText).text   = nf.format(amount)
+                val amt = tx.amount * (rateMap[user.currency] ?: 1.0)
+                row.findViewById<TextView>(R.id.amountText).text   = nf.format(amt)
                 transactionList.addView(row)
             }
         }
     }
+
 
 
 

@@ -162,4 +162,5 @@
     <string name="enter_reward_code">Enter Reward Code</string>
     <string name="confirm_reward_code">Confirm</string>
     <string name="RewardsTitle">Rewards</string>
+    <string name="edit_account">Edit Account</string>
 </resources>

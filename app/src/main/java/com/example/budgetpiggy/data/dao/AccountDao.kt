@@ -14,11 +14,14 @@ interface AccountDao {
     @Query("SELECT * FROM accounts WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<AccountEntity>
 
-    @Query("SELECT accountName, balance FROM accounts WHERE userId = :userId")
+
+    @Query("SELECT accountName, balance, initialBalance FROM accounts WHERE userId = :userId")
     suspend fun getBalancesForUser(userId: String): List<AccountBalanceView>
 
     @Query("UPDATE accounts SET balance = :newBalance WHERE accountId = :accountId")
     suspend fun updateBalance(accountId: String, newBalance: Double)
+    @Query("UPDATE accounts SET initialBalance = :newTotal WHERE accountId = :id")
+    suspend fun updateInitialBalance(id: String, newTotal: Double)
 
     @Update
     suspend fun update(account: AccountEntity)
@@ -30,10 +33,14 @@ interface AccountDao {
 
 
 
+
+
     data class AccountBalanceView(
         val accountName: String,
-        val balance: Double
+        val balance: Double,         // remaining
+        val initialBalance: Double   // total
     )
+
 
 
 }
