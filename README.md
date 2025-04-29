@@ -3,6 +3,8 @@
 **Budget Piggy** is a fun and interactive mobile budgeting app built with **Kotlin** using **Android Studio**, designed to help anyone—whether you're a student, parent, or professional—take control of your finances with ease. With **gamification**, intuitive interfaces, and smart tracking, Budget Piggy makes budgeting feel less like a chore and more like a game!
 
 ---
+## ✨ HOW TO INSTALL AND RUN  (NEEDS DOING) 
+
 
 ## ✨ Features (v1.0)
 
@@ -52,4 +54,4 @@
 - Firebase cloud sync
 - Account backup
 
-
+(REFERENCE LIST) 
