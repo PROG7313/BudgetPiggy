@@ -1,6 +1,5 @@
 package com.example.budgetpiggy.ui.settings
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
