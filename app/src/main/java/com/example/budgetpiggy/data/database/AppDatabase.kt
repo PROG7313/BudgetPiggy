@@ -58,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "budget_piggy_db"
                 )
-                  //  .fallbackToDestructiveMigration() // keeps your schema version at 3
+                  //  .fallbackToDestructiveMigration() // keeps schema at version 1
                     .build()
                     .also { INSTANCE = it }
             }

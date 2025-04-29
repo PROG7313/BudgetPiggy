@@ -225,35 +225,42 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 8) From Category label -->
-            <TextView
-                style="@style/Label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="From Category"
-                android:layout_marginBottom="8dp"/>
-
-            <!-- 9) From Category icons (dynamically populated) -->
-            <androidx.cardview.widget.CardView
+            <!-- 8+9) Category picker, only shown on Expense -->
+            <LinearLayout
+                android:id="@+id/categoryContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                android:padding="16dp"
+                android:orientation="vertical"
+                android:visibility="gone"
                 android:layout_marginBottom="16dp">
 
-                <HorizontalScrollView
+                <TextView
+                    style="@style/Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From Category"
+                    android:layout_marginBottom="8dp"/>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fillViewport="true">
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:padding="16dp">
 
-                    <LinearLayout
-                        android:id="@+id/fromCategoryList"
-                        android:layout_width="wrap_content"
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"/>
-                </HorizontalScrollView>
-            </androidx.cardview.widget.CardView>
+                        android:fillViewport="true">
+
+                        <LinearLayout
+                            android:id="@+id/fromCategoryList"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"/>
+                    </HorizontalScrollView>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <!-- 10) Add Receipt -->
             <Button

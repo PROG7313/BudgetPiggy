@@ -116,14 +116,17 @@ class AddAccountPage : BaseActivity() {
                         .getDatabase(this@AddAccountPage)
                         .accountDao()
 
+                    val now = System.currentTimeMillis()
                     val account = AccountEntity(
-                        accountId   = UUID.randomUUID().toString(),
-                        userId      = userId,
-                        accountName = name,
-                        balance     = balance,
-                        type        = type,
-                        createdAt   = System.currentTimeMillis()
+                        accountId      = UUID.randomUUID().toString(),
+                        userId         = userId,
+                        accountName    = name,
+                        balance        = balance,       // remaining
+                        initialBalance = balance,       // total on creation
+                        type           = type,
+                        createdAt      = now
                     )
+
                     dao.insert(account)
                 }
 

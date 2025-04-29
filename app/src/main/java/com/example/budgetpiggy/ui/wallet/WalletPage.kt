@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Currency
 import androidx.core.net.toUri
-import com.example.budgetpiggy.ui.transaction.TransferFunds
+import com.example.budgetpiggy.ui.transaction.TransactionActivity
 
 class WalletPage : BaseActivity() {
 
@@ -61,7 +61,7 @@ class WalletPage : BaseActivity() {
         setupFabScrollBehavior(scrollView, fabWrapper)
 
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
-            startActivity(Intent(this, TransferFunds::class.java))
+            startActivity(Intent(this, TransactionActivity::class.java))
         }
         // Bind lists
         accountList = findViewById(R.id.accountList)
@@ -93,7 +93,7 @@ class WalletPage : BaseActivity() {
         findViewById<ImageView>(R.id.addCategoryPlus).setOnClickListener {
             startActivity(Intent(this, AddCategoryPage::class.java))
         }
-        setupFabScrollBehavior()
+
     }
 
     override fun onResume() {
@@ -103,24 +103,7 @@ class WalletPage : BaseActivity() {
         loadBudgetCategories()
     }
 
-    private fun setupFabScrollBehavior() {
-        val scrollView = findViewById<ScrollView>(R.id.walletScrollView)
-        val fabWrapper = findViewById<View>(R.id.fabWrapper)
-        var lastY = 0
-        scrollView.viewTreeObserver.addOnScrollChangedListener {
-            val y = scrollView.scrollY
-            val show = y < lastY || !scrollView.canScrollVertically(-1) || !scrollView.canScrollVertically(1)
-            if (show) {
-                fabWrapper.visibility = View.VISIBLE
-                fabWrapper.alpha = 1f
-            } else {
-                fabWrapper.animate().alpha(0f).setDuration(150)
-                    .withEndAction { fabWrapper.visibility = View.GONE }
-                    .start()
-            }
-            lastY = y
-        }
-    }
+
 
     private fun setupBottomNav() {
         findViewById<ImageView>(R.id.nav_home).setOnClickListener { v ->
