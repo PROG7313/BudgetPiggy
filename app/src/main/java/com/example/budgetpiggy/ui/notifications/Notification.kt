@@ -23,6 +23,9 @@ import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
 import kotlin.collections.forEach
 import com.example.budgetpiggy.data.repository.NotificationRepository
+import com.example.budgetpiggy.ui.home.HomePage
+import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.ui.settings.AccountPage
 import com.example.budgetpiggy.ui.transaction.TransferFunds
 
 
@@ -71,8 +74,38 @@ class Notification : BaseActivity() {
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
         val clearAll   = findViewById<TextView>(R.id.clear_All)
 
-        // Back navigation
-        backArrow.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        // Navigation & actions
+        findViewById<ImageView>(R.id.nav_home).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            startActivity(Intent(this, HomePage::class.java))
+        }
+
+        findViewById<ImageView>(R.id.backArrow).setOnClickListener { v ->
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
+                .withEndAction {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressed()
+                }.start()
+        }
+        findViewById<ImageView>(R.id.bellIcon).setOnClickListener {
+            startActivity(Intent(this, Notification::class.java))
+        }
+        findViewById<ImageView>(R.id.nav_wallet).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
+                .withEndAction {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, WalletPage::class.java))
+                }.start()
+        }
+        findViewById<ImageView>(R.id.nav_reports).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            startActivity(Intent(this, ReportsPage::class.java))
+        }
+        findViewById<ImageView>(R.id.nav_profile).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            startActivity(Intent(this, AccountPage::class.java))
+        }
 
         // Bottom nav wiring (example for Wallet)
         findViewById<ImageView>(R.id.nav_wallet).setOnClickListener { view ->
@@ -185,5 +218,10 @@ class Notification : BaseActivity() {
             R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
             R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        clearNavIcons()
     }
 }

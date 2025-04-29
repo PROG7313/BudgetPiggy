@@ -1,5 +1,6 @@
 package com.example.budgetpiggy.ui.rewards
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -16,6 +17,11 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.core.BaseActivity
+import com.example.budgetpiggy.ui.home.HomePage
+import com.example.budgetpiggy.ui.notifications.Notification
+import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.ui.settings.AccountPage
+import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
 
 class RewardsActivity : BaseActivity() {
@@ -100,10 +106,70 @@ class RewardsActivity : BaseActivity() {
             )
         }
 
-        // 7) back arrow & bottom nav can be wired exactly as in your other screens:
-        findViewById<View>(R.id.backArrow).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+        // Navigation & actions
+        findViewById<ImageView>(R.id.nav_home).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            startActivity(Intent(this, HomePage::class.java))
         }
-        // …and so on for nav_home, nav_wallet, etc., calling setActiveNavIcon(...) + startActivity(...)
+
+        findViewById<ImageView>(R.id.backArrow).setOnClickListener { v ->
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
+                .withEndAction {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    onBackPressed()
+                }.start()
+        }
+        findViewById<ImageView>(R.id.bellIcon).setOnClickListener {
+            startActivity(Intent(this, Notification::class.java))
+        }
+        findViewById<ImageView>(R.id.nav_wallet).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
+                .withEndAction {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, WalletPage::class.java))
+                }.start()
+        }
+        findViewById<ImageView>(R.id.nav_reports).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            startActivity(Intent(this, ReportsPage::class.java))
+        }
+        findViewById<ImageView>(R.id.nav_profile).setOnClickListener { v ->
+            setActiveNavIcon(v as ImageView)
+            startActivity(Intent(this, AccountPage::class.java))
+        }
+
+    }
+    override fun setActiveNavIcon(activeIcon: ImageView) {
+        val navIcons = listOf(
+            R.id.nav_home to R.drawable.vec_home_inactive,
+            R.id.nav_wallet to R.drawable.vec_wallet_inactive,
+            R.id.nav_reports to R.drawable.vec_reports_inactive,
+            R.id.nav_profile to R.drawable.vec_profile_inactive
+        )
+        navIcons.forEach { (id, drawable) ->
+            findViewById<ImageView>(id).setImageResource(drawable)
+        }
+        when (activeIcon.id) {
+            R.id.nav_home -> activeIcon.setImageResource(R.drawable.vec_home_active)
+            R.id.nav_wallet -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
+            R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
+            R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (!isTaskRoot) {
+            super.onBackPressed()
+        } else {
+            Toast.makeText(this,
+                "Use the logout button to exit",
+                Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        clearNavIcons()
     }
 }
