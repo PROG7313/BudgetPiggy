@@ -43,6 +43,36 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/help_budgets_info" />
+            android:text="@string/help_budgets_info1" />
+
+        <ImageView
+            android:id="@+id/BudgetHelpImage1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/help_budget1"
+            android:contentDescription="@string/help_budgets"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/help_budgets_info2"
+            android:layout_marginTop="16dp"/>
+
+        <ImageView
+            android:id="@+id/BudgetHelpImage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/help_budget2"
+            android:contentDescription="@string/help_budgets"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/help_budgets_info3"
+            android:layout_marginTop="16dp"/>
     </LinearLayout>
 </LinearLayout>

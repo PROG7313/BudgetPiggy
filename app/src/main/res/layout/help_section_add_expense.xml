@@ -43,6 +43,30 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/help_add_expense_info" />
+            android:text="@string/help_add_expense_info1" />
+
+        <ImageView
+            android:id="@+id/expenseHelpImage1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/help_expense1"
+            android:contentDescription="@string/help_add_expense"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/help_add_expense_info2"
+            android:layout_marginTop="16dp"/>
+
+        <ImageView
+            android:id="@+id/expenseHelpImage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/help_expense2"
+            android:contentDescription="@string/help_add_expense"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center" />
     </LinearLayout>
 </LinearLayout>

@@ -132,11 +132,14 @@
     <!-- Help Page -->
     <string name="help_title">Help and Support</string>
     <string name="help_add_expense">Adding an Expense</string>
-    <string name="help_add_expense_info">To add an expense, go to the dashboard and click the (+) button.</string>
+    <string name="help_add_expense_info1">To add an expense, go to the dashboard and click the (+) button.</string>
+    <string name="help_add_expense_info2">Thereafter, fill in the required fields including; amount, type, description, date, category. You have the ability to upload a receipt image if wanted. Then click confirm.</string>
     <string name="help_notifications">Managing Notifications</string>
-    <string name="help_notifications_info">Access settings from the top bar. From there, you can enable or disable daily budget reminders and alerts for large expenses.</string>
+    <string name="help_notifications_info">Access notifications from the top bar. From there, you can view and manage daily budget reminders and alerts for expenses.</string>
     <string name="help_rewards">Using the Rewards Page</string>
     <string name="help_rewards_info">Earn badges by staying within your budget. The rewards page shows your progress and gives tips for earning more rewards.</string>
-    <string name="help_budgets">Setting Your Budget</string>
-    <string name="help_budgets_info">Tap the budget icon to set daily, weekly, or monthly limits. You’ll get notified when you’re nearing or exceeding your limit.</string>
+    <string name="help_budgets">Setting Your Budget Categories</string>
+    <string name="help_budgets_info1">Tap the budget icon on the bottom navigation bar to get redirected to the page where you have the option to either add Budget Categories or Account types</string>
+    <string name="help_budgets_info2">Tap the Budget Categories to set daily, weekly, or monthly limits on specific categories. You’ll get notified when you’re nearing or exceeding your limit.</string>
+    <string name="help_budgets_info3">Thereafter, fill in the required fields including; amount, category name, icon, type and account. Then you have created your very own budget category.</string>
 </resources>

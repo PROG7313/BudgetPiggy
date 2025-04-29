@@ -40,11 +40,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/help_notifications_info" />
+
+        <ImageView
+            android:id="@+id/notificationHelpImage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/help_notification1"
+            android:contentDescription="@string/help_notifications"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center" />
     </LinearLayout>
 </LinearLayout>
