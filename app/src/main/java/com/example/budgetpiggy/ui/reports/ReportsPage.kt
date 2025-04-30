@@ -50,24 +50,30 @@ class ReportsPage : BaseActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Edge to edge UI
         enableEdgeToEdge()
         setContentView(R.layout.reports)
 
-
+        // Floating action button to add a new transaction
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
             startActivity(Intent(this, TransactionActivity::class.java))
         }
+
+        // Hide unrelated UI components
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
 
+        // Show and set page title
         findViewById<TextView>(R.id.pageTitle).apply {
             visibility = View.VISIBLE
             text = getString(R.string.reports)
         }
+
         val scrollView = findViewById<ScrollView>(R.id.reportsScroll)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
 
+        // Setup of floating action button and its behaviour while scrolling
         setupFabScrollBehavior(scrollView, fabWrapper)
         listOf(
             R.id.nav_home to HomePage::class.java,
@@ -81,12 +87,14 @@ class ReportsPage : BaseActivity() {
             }
         }
 
+        // Handles padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.reportsPage)) { v, insets ->
             val b = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(b.left, b.top, b.right, b.bottom)
             insets
         }
 
+        // Initialize views for charts and date range button
         dateRangeButton   = findViewById(R.id.dateRangeButton)
         totalBalanceChart = findViewById(R.id.totalBalanceChart)
         earningsChart     = findViewById(R.id.earningsChart)
@@ -94,6 +102,7 @@ class ReportsPage : BaseActivity() {
         categoryChart     = findViewById(R.id.categoryChart)
         balanceTrendChart = findViewById(R.id.balanceTrendChart)
 
+        // Back, Open and Filter navigation
         findViewById<ImageView>(R.id.backArrow).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -104,6 +113,7 @@ class ReportsPage : BaseActivity() {
             showCategoryFilterDialog()
         }
 
+        // Default date range
         val now = Calendar.getInstance()
         endDate = now.timeInMillis
         now.add(Calendar.DAY_OF_YEAR, -30)
@@ -115,6 +125,7 @@ class ReportsPage : BaseActivity() {
         loadAllCharts()
     }
 
+    // Set active navigation icon
     override fun onResume() {
         super.onResume()
         setActiveNavIcon(findViewById(R.id.nav_reports))
@@ -122,27 +133,34 @@ class ReportsPage : BaseActivity() {
 
     private fun pickDateRange() {
         val cal = Calendar.getInstance()
+        // Show date picker dialog for selecting start date
         DatePickerDialog(this, { _, y, m, d ->
             val sCal = Calendar.getInstance().apply {
                 set(y, m, d, 0, 0, 0); set(Calendar.MILLISECOND, 0)
             }
+            // Show date picker dialog for selecting the end date
             DatePickerDialog(this, { _, y2, m2, d2 ->
                 val eCal = Calendar.getInstance().apply {
                     set(y2, m2, d2, 23, 59, 59); set(Calendar.MILLISECOND, 999)
                 }
+                // Set selected start and end date
                 startDate = sCal.timeInMillis
                 endDate = eCal.timeInMillis
+                // Format and update the displayed date range
                 val fmt = SimpleDateFormat("MMM d", Locale.getDefault())
                 dateRangeButton.text = "${fmt.format(startDate)} – ${fmt.format(endDate)}"
+                // Reload the charts with new date
                 loadAllCharts()
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun loadAllCharts() {
+        // Get current user
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
+            // Fetch all the necessary data for charts asynchronously from database
             val (balances, categories, txList, user, rateMap) = withContext(Dispatchers.IO) {
                 val db = AppDatabase.getDatabase(this@ReportsPage)
                 val aDao = db.accountDao()
@@ -164,6 +182,7 @@ class ReportsPage : BaseActivity() {
                 Quintuple(balList, catList, filteredTx, user, rateMap)
             }
 
+            // Convert user's currency to ZAR if needed (Android, 2025)
             val userCurrency = Currency.getInstance(user.currency)
             val zarToUserRate = rateMap[user.currency] ?: 1.0
             val nf = NumberFormat.getCurrencyInstance().apply { currency = userCurrency }
@@ -171,7 +190,7 @@ class ReportsPage : BaseActivity() {
             setupPie(totalBalanceChart, balances.map {
                 PieEntry((it.balance * zarToUserRate).toFloat(), it.accountName)
             })
-
+            // Set up earnings chart (positive transactions)
             val earningMap = txList.filter { tx -> tx.amount > 0 }
                 .groupBy { tx -> tx.accountId }
                 .mapNotNull { (accountId, transactions) ->
@@ -185,7 +204,7 @@ class ReportsPage : BaseActivity() {
                 }
             setupPie(earningsChart, earningMap)
 
-
+            // Set up the spending chart (negative transactions)
             val spendingMap = txList.filter { tx -> tx.amount < 0 }
                 .groupBy { tx -> tx.categoryId }
                 .mapNotNull { (categoryId, transactions) ->
@@ -205,6 +224,7 @@ class ReportsPage : BaseActivity() {
             setupPie(categoryChart, budgetEntries)
             populateCategoryList(budgetEntries, nf)
 
+            // Group transactions by day and calculate cumulative balance trend (Android, 2025)
             val daySums = txList.groupBy {
                 val c = Calendar.getInstance().apply { timeInMillis = it.date }
                 c.set(Calendar.HOUR_OF_DAY, 0); c.set(Calendar.MINUTE, 0)
@@ -212,6 +232,7 @@ class ReportsPage : BaseActivity() {
                 c.timeInMillis
             }.mapValues { it.value.sumOf { tx -> tx.amount * zarToUserRate }.toFloat() }
 
+            // Generate list of all days in the selected date range (Android, 2025)
             val days = mutableListOf<Long>()
             val cal2 = Calendar.getInstance().apply { timeInMillis = startDate }
             while (cal2.timeInMillis <= endDate) {
@@ -219,6 +240,7 @@ class ReportsPage : BaseActivity() {
                 cal2.add(Calendar.DATE, 1)
             }
 
+            // Prepare the line chart with cumulative data
             var cum = 0f
             val lineEntries = days.mapIndexed { idx, day ->
                 cum += daySums[day] ?: 0f
@@ -228,8 +250,10 @@ class ReportsPage : BaseActivity() {
         }
     }
 
+    // Configures and displays pie chart using data
     private fun setupPie(chart: PieChart, entries: List<PieEntry>) {
         val ds = PieDataSet(entries, "").apply {
+            // Apply material colors and set value text size
             colors = ColorTemplate.MATERIAL_COLORS.toList()
             valueTextSize = 14f
         }
@@ -241,6 +265,7 @@ class ReportsPage : BaseActivity() {
         }
     }
 
+    // Configures and displays a line chart using data (Android, 2025)
     private fun setupLine(chart: LineChart, entries: List<Entry>) {
         val ds = LineDataSet(entries, "").apply {
             setDrawValues(false)
@@ -255,6 +280,7 @@ class ReportsPage : BaseActivity() {
         }
     }
 
+    // Dynamically populates a linear layout with category icons and amounts (Ambitions, 2025)
     private fun populateCategoryList(entries: List<PieEntry>, nf: NumberFormat) {
         val container = findViewById<LinearLayout>(R.id.categoryList)
         container.removeAllViews()
@@ -273,6 +299,7 @@ class ReportsPage : BaseActivity() {
         }
     }
 
+    // Displays a dialog allowing the user to filter visible categories (Ambitions, 2025)
     private fun showCategoryFilterDialog() {
         val all = allCategoryNames
         val sel = all.map { lastSelectedCategories.contains(it) }.toBooleanArray()
@@ -289,6 +316,7 @@ class ReportsPage : BaseActivity() {
             .show()
     }
 
+    // Updates navbar
     override fun setActiveNavIcon(activeIcon: ImageView) {
         listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
@@ -306,6 +334,7 @@ class ReportsPage : BaseActivity() {
         }
     }
 
+    // Util data class
     private data class Quintuple<A, B, C, D, E>(
         val first: A, val second: B, val third: C, val fourth: D, val fifth: E
     )

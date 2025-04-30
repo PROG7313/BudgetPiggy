@@ -32,7 +32,7 @@ import com.example.budgetpiggy.ui.transaction.TransferFunds
 
 class Notification : BaseActivity() {
 
-    // Obtain the ViewModel, injecting current userId
+    // Obtain the ViewModel, injecting current userId (Android, 2025)
     private val viewModel: NotificationViewModel by viewModels {
         val uid = SessionManager.getUserId(this)
             ?: throw IllegalStateException("No user logged in!")
@@ -108,7 +108,7 @@ class Notification : BaseActivity() {
             startActivity(Intent(this, AccountPage::class.java))
         }
 
-        // Bottom nav wiring (example for Wallet)
+        // Bottom nav wiring (example for Wallet) (Android, 2025)
         findViewById<ImageView>(R.id.nav_wallet).setOnClickListener { view ->
             setActiveNavIcon(view as ImageView)
             view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25).withEndAction {
@@ -118,8 +118,6 @@ class Notification : BaseActivity() {
         }
 
         // FAB show/hide on scroll
-
-
         setupFabScrollBehavior(scrollView, fabWrapper)
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
             startActivity(Intent(this, TransactionActivity::class.java))
@@ -153,7 +151,7 @@ class Notification : BaseActivity() {
                 //  Message text
                 card.findViewById<TextView>(R.id.notificationMessage).text = notif.message
 
-                //  Reward code if present
+                //  Reward code if present (Android, 2025)
                 val codeView = card.findViewById<TextView>(R.id.notificationCode)
                 if (notif.rewardCodeId != null) {
                     codeView.apply {
@@ -202,6 +200,7 @@ class Notification : BaseActivity() {
         }
     }
 
+    // Updates the icon tint based on active section
     override fun setActiveNavIcon(activeIcon: ImageView) {
 
         val navIcons = listOf(
@@ -221,8 +220,11 @@ class Notification : BaseActivity() {
         }
     }
 
+    // Clear nav icon state on resume to reflect current session
     override fun onResume() {
         super.onResume()
         clearNavIcons()
+
+        com.example.budgetpiggy.utils.BadgeManager.clearBadge(this)
     }
 }

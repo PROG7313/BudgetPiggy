@@ -17,29 +17,34 @@ import com.example.budgetpiggy.ui.home.HomePage
 class GettingStartedPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.getting_started)
+        enableEdgeToEdge() // Allows drawing behind the system bars
+        setContentView(R.layout.getting_started) // set layout
+
+        // Ensures the user interface elements have correct padding around system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.gettingStartedPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Reference to back arrow and button (Android, 2025)
         val backArrow = findViewById<ImageView>(R.id.backArrow)
         val getBudgetingBtn = findViewById<Button>(R.id.getStartedButton)
         backArrow.setOnClickListener { view ->
 
-
-            view.animate()
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .setDuration(25)
-                .withEndAction {
+        // Handle back arrow action with animation
+        view.animate()
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .setDuration(25)
+            .withEndAction {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
                     onBackPressed()
-                }.start()
+            }.start()
 
         }
 
+        // Handle button with animation
         getBudgetingBtn.setOnClickListener { view ->
             view.animate()
                 .scaleX(0.95f)
@@ -48,7 +53,7 @@ class GettingStartedPage : AppCompatActivity() {
                 .withEndAction {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
 
-
+                    // Save preference so that the user only sees the Getting Started page once
                     getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).edit {
                         putBoolean("needs_getting_started", false)
                     }
@@ -62,6 +67,7 @@ class GettingStartedPage : AppCompatActivity() {
 
     }
 
+    // Override back button to confirm with user before exiting (Ambitions, 2025)
     @Suppress("MissingSuperCall")
     override fun onBackPressed() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
@@ -86,10 +92,4 @@ class GettingStartedPage : AppCompatActivity() {
         }
         builder.show()
     }
-
-
-
 }
-
-
-

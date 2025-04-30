@@ -25,11 +25,14 @@ import java.util.UUID
 import androidx.core.content.edit
 import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.core.BaseActivity
+import com.example.budgetpiggy.ui.notifications.NotificationHelper
+
 
 class RegisterPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Modern edge to edge UI
         enableEdgeToEdge()
         setContentView(R.layout.register)
 
@@ -78,7 +81,7 @@ class RegisterPage : BaseActivity() {
             passwordEdit.setSelection(passwordEdit.text.length)
         }
 
-        // floating labels helper
+        // floating labels helper (Developers, 2025).
         fun setupFloatingLabel(editTxt: EditText, label: TextView, hint: String) {
             editTxt.setOnFocusChangeListener { _, focused ->
                 if (focused || editTxt.text.isNotEmpty()) {
@@ -126,7 +129,7 @@ class RegisterPage : BaseActivity() {
             })
         }
 
-        // attach floating labels
+        // attach floating labels (Gaur, 2025).
         setupFloatingLabel(firstNameEdit, firstNameLabel, getString(R.string.first_name))
         setupFloatingLabel(lastNameEdit, lastNameLabel, getString(R.string.last_name))
         setupFloatingLabel(emailEdit, emailLabel, getString(R.string.email_address))
@@ -158,9 +161,7 @@ class RegisterPage : BaseActivity() {
                         return@withEndAction
                     }
 
-
-
-
+                    // (Developers, 2025).
                     lifecycleScope.launch(Dispatchers.IO) {
                         val userDao = AppDatabase.getDatabase(this@RegisterPage).userDao()
                         val existingUser = userDao.getUserByEmail(email)
@@ -207,7 +208,14 @@ class RegisterPage : BaseActivity() {
                                 // 1. Unlock reward (inserts Reward + Unlock notification)
                                 rewardRepo.unlockCode(userId = newUserId, code = "SIGNUP2025")
 
-                                // 2. Insert soft welcome notification (optional)
+                                // 2. Send system notification
+                                NotificationHelper.sendNotification(
+                                    context = this@RegisterPage,
+                                    title = "🎁 Reward Unlocked!",
+                                    message = "You just unlocked WELCOME BONUS reward!"
+                                )
+
+                            // 3. Insert soft welcome notification (optional)
                                 val welcomeNotif = NotificationEntity(
                                     notificationId = UUID.randomUUID().toString(),
                                     userId         = newUserId,
@@ -218,6 +226,7 @@ class RegisterPage : BaseActivity() {
                                     rewardCodeId   = null
                                 )
                                 db.notificationDao().insert(welcomeNotif)
+
 
                                 // 3. Mark welcome complete
                                 prefs.edit().putBoolean(welcomeKey, true).apply()
