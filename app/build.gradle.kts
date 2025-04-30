@@ -75,4 +75,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(kotlin("test"))
+
+    implementation("me.leolin:ShortcutBadger:1.1.22@aar")
 }

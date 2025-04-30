@@ -25,6 +25,8 @@ import java.util.UUID
 import androidx.core.content.edit
 import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.core.BaseActivity
+import com.example.budgetpiggy.ui.notifications.NotificationHelper
+
 
 class RegisterPage : BaseActivity() {
 
@@ -207,7 +209,14 @@ class RegisterPage : BaseActivity() {
                                 // 1. Unlock reward (inserts Reward + Unlock notification)
                                 rewardRepo.unlockCode(userId = newUserId, code = "SIGNUP2025")
 
-                                // 2. Insert soft welcome notification (optional)
+                                // 2. Send system notification
+                                NotificationHelper.sendNotification(
+                                    context = this@RegisterPage,
+                                    title = "🎁 Reward Unlocked!",
+                                    message = "You just unlocked WELCOME BONUS reward!"
+                                )
+
+                            // 3. Insert soft welcome notification (optional)
                                 val welcomeNotif = NotificationEntity(
                                     notificationId = UUID.randomUUID().toString(),
                                     userId         = newUserId,
@@ -218,6 +227,7 @@ class RegisterPage : BaseActivity() {
                                     rewardCodeId   = null
                                 )
                                 db.notificationDao().insert(welcomeNotif)
+
 
                                 // 3. Mark welcome complete
                                 prefs.edit().putBoolean(welcomeKey, true).apply()

@@ -17,9 +17,11 @@ import com.example.budgetpiggy.R
 import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.AccountEntity
 import com.example.budgetpiggy.data.repository.RewardRepository
+import com.example.budgetpiggy.ui.category.AddCategoryPage
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
+import com.example.budgetpiggy.ui.notifications.NotificationHelper
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.settings.AccountPage
 import kotlinx.coroutines.Dispatchers
@@ -116,6 +118,13 @@ class AddAccountPage : BaseActivity() {
                     val dao = db.accountDao()
 
                     val now = System.currentTimeMillis()
+
+                    // 2. Send system notification
+                    NotificationHelper.sendNotification(
+                        context = this@AddAccountPage,
+                        title = "🎁 Reward Unlocked!",
+                        message = "You just unlocked FIRST ACCOUNT reward!"
+                    )
 
                     val account = AccountEntity(
                         accountId = UUID.randomUUID().toString(),

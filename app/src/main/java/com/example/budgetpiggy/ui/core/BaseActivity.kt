@@ -25,23 +25,24 @@ open class BaseActivity : AppCompatActivity() {
         )
     }
 
-    //  Every time your activity resumes, fetch the unread count & update the badge
+    //  Every time the activity resumes, fetch the unread count & update the badge
     override fun onResume() {
         super.onResume()
 
-        // get the logged-in user or bail out
+        // Clear the app icon badge (e.g., on the launcher)
+        com.example.budgetpiggy.utils.BadgeManager.clearBadge(this)
+
         val uid = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // pull the first (current) snapshot of notifications
             val list = notificationRepo.notificationsFor(uid).first()
             val unreadCount = list.count { !it.isRead }
 
-            // find your top‐bar include and update its badge
             val topBar = findViewById<View>(R.id.topBar)
             updateNotificationBadgeGlobally(topBar, unreadCount)
         }
     }
+
     protected fun setupFabScrollBehavior(scrollView: ScrollView, fabWrapper: View) {
         var lastY = 0
         scrollView.viewTreeObserver.addOnScrollChangedListener {
@@ -109,7 +110,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    // your existing badge-updater
+    //  existing badge-updater
     fun updateNotificationBadgeGlobally(topBar: View?, count: Int) {
         val badge = topBar
             ?.findViewById<TextView>(R.id.notificationBadge)
