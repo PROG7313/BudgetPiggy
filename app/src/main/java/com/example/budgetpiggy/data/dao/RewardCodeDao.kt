@@ -16,4 +16,5 @@ interface RewardCodeDao {
 
     @Query("SELECT * FROM reward_codes")
     suspend fun getAll(): List<RewardCodeEntity>
+
 }

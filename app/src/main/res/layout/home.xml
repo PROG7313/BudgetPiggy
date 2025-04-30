@@ -54,7 +54,6 @@
                     android:padding="16dp"
                     android:background="@color/cardBackground">
 
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -70,9 +69,7 @@
                             android:textColor="@color/black"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
-
                     </LinearLayout>
-
 
                     <LinearLayout
                         android:id="@+id/accountBalanceList"
@@ -114,7 +111,6 @@
                             android:textColor="@color/black"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
-
                     </LinearLayout>
 
                     <!-- Dynamic list container -->
@@ -125,6 +121,94 @@
                         android:orientation="vertical"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- Expense Goals Card -->
+            <!-- Expense Goals Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/expenseGoalsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="@color/cardBackground">
+
+                    <!-- 1) Header -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Expense Goals"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <!-- 2) Current spending -->
+                    <TextView
+                        android:id="@+id/tvCurrentExpense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Current: R0"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"/>
+
+                    <!-- 3) Progress bar -->
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:id="@+id/expenseGoalsProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:progress="0"
+                        android:secondaryProgress="0"
+                        android:max="100" />
+
+                    <!-- 4) Min / Max labels -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/tvMinExpenseGoal"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Min: R0"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"/>
+
+                        <TextView
+                            android:id="@+id/tvMaxExpenseGoal"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:text="Max: R0"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+
+                    <!-- 5) Set Goals button -->
+                    <Button
+                        android:id="@+id/btnSetExpenseGoals"
+                        style="@style/mainButtonsStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="12dp"
+                        android:text="Set Goals"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
 
             <!-- Transactions History Card -->
             <androidx.cardview.widget.CardView
@@ -160,7 +244,6 @@
                             android:textColor="@color/black"
                             android:textSize="18sp"
                             android:textStyle="bold"/>
-
                     </LinearLayout>
 
                     <!-- Dynamic list container -->

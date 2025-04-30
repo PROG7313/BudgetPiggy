@@ -14,5 +14,6 @@ interface RewardDao {
     @Query("SELECT * FROM rewards WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<RewardEntity>
 
-
+    @Query("SELECT * FROM rewards WHERE code = :code AND userId = :userId LIMIT 1")
+    suspend fun getByCodeForUser(code: String, userId: String): RewardEntity?
 }

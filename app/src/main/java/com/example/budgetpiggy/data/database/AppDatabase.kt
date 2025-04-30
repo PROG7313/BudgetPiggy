@@ -50,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             //  DEV-ONLY: Wipe the old DB before building your Room instance
-           //context.applicationContext.deleteDatabase("budget_piggy_db")
+          // context.applicationContext.deleteDatabase("budget_piggy_db")
 
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
