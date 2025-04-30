@@ -23,6 +23,8 @@ import com.example.budgetpiggy.data.database.AppDatabase
 import com.example.budgetpiggy.data.entities.CategoryEntity
 import com.example.budgetpiggy.data.entities.NotificationEntity
 import com.example.budgetpiggy.data.repository.RewardRepository
+import com.example.budgetpiggy.ui.auth.RegisterPage
+import com.example.budgetpiggy.ui.notifications.NotificationHelper
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
@@ -205,16 +207,24 @@ class AddCategoryPage : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val db = AppDatabase.getDatabase(this@AddCategoryPage)
 
-                // Insert category
-                db.categoryDao().insert(cat)
+              // Insert category
+db.categoryDao().insert(cat)
 
-                // Try unlock reward (built-in method handles checks + notification)
-                val rewardRepo = RewardRepository(
-                    rewardDao = db.rewardDao(),
-                    codeDao   = db.rewardCodeDao(),
-                    notifDao  = db.notificationDao()
-                )
-                rewardRepo.unlockCode(userId, "FIRSTCAT2025")
+// 1. Send system notification
+NotificationHelper.sendNotification(
+    context = this@AddCategoryPage,
+    title = "🎁 Reward Unlocked!",
+    message = "You just unlocked FIRST CATEGORY reward!"
+)
+
+// 2. Try unlock reward (built-in method handles checks + notification)
+val rewardRepo = RewardRepository(
+    rewardDao = db.rewardDao(),
+    codeDao   = db.rewardCodeDao(),
+    notifDao  = db.notificationDao()
+)
+rewardRepo.unlockCode(userId, "FIRSTCAT2025")
+
 
                 // Finish on UI thread
                 withContext(Dispatchers.Main) {

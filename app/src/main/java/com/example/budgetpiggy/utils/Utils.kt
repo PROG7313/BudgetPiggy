@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import androidx.core.content.edit
+import me.leolin.shortcutbadger.ShortcutBadger
 
 fun updateNotificationBadge(view: View, count: Int) {
     val badge = view.findViewById<TextView>(R.id.notificationBadge)
@@ -70,5 +71,23 @@ object SessionManager {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .edit { remove(KEY_USER_ID) }
+    }
+}
+
+object BadgeManager {
+    private const val PREF_NAME = "badgePrefs"
+    private const val BADGE_COUNT_KEY = "badgeCount"
+
+    fun incrementBadge(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val newCount = prefs.getInt(BADGE_COUNT_KEY, 0) + 1
+        prefs.edit().putInt(BADGE_COUNT_KEY, newCount).apply()
+        ShortcutBadger.applyCount(context, newCount)
+    }
+
+    fun clearBadge(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putInt(BADGE_COUNT_KEY, 0).apply()
+        ShortcutBadger.removeCount(context)
     }
 }

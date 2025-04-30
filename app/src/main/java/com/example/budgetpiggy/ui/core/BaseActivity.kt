@@ -27,22 +27,26 @@ open class BaseActivity : AppCompatActivity() {
 
     // When the activity resumes (e.g., returning from background), (Ambitions, 2025)
     // update the notification badge with the count of unread notifications
+
     override fun onResume() {
         super.onResume()
 
-        // get the logged-in user or bail out
+        // Clear the app icon badge (e.g., on the launcher)
+        com.example.budgetpiggy.utils.BadgeManager.clearBadge(this)
+
         val uid = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // pull the first (current) snapshot of notifications
             val list = notificationRepo.notificationsFor(uid).first()
             val unreadCount = list.count { !it.isRead }
+
 
             // find your top‐bar include and update its badge (Android, 2025).
             val topBar = findViewById<View>(R.id.topBar)
             updateNotificationBadgeGlobally(topBar, unreadCount)
         }
     }
+
 
     // Add hide/show behavior to the FloatingActionButton based on scroll direction
     protected fun setupFabScrollBehavior(scrollView: ScrollView, fabWrapper: View) {
@@ -114,6 +118,7 @@ open class BaseActivity : AppCompatActivity() {
             R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
         }
     }
+
 
     // Update the global notification badge with a count, or hide it if zero
     fun updateNotificationBadgeGlobally(topBar: View?, count: Int) {

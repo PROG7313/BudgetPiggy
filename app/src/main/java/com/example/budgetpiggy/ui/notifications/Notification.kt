@@ -224,5 +224,7 @@ class Notification : BaseActivity() {
     override fun onResume() {
         super.onResume()
         clearNavIcons()
+
+        com.example.budgetpiggy.utils.BadgeManager.clearBadge(this)
     }
 }
