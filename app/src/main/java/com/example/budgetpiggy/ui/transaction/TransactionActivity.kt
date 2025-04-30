@@ -33,8 +33,10 @@ import androidx.core.net.toUri
 
 class TransactionActivity : BaseActivity() {
 
+    //Requests codes for camera and gallery intents
     private val REQ_CAM = 1001
     private val REQ_GAL = 1002
+    // UI and state variables
     private lateinit var categoryContainer: View
     private var receiptUri: String? = null
     private var tempPhotoUri: Uri? = null
@@ -46,35 +48,45 @@ class TransactionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.transaction_funds)
+
+        // Hide unnecessary nav
         categoryContainer = findViewById(R.id.categoryContainer)
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
+
+        // Set page title
         findViewById<TextView>(R.id.pageTitle).apply {
             visibility = View.VISIBLE
             text = getString(R.string.make_transaction)
         }
 
+        // Setup UI components
         setupNavBar()
         setupInputs()
         setupDynamicAccounts()
         setupDynamicCategories()
         setupIncomeExpenseToggle()
+        // Handle receipt button click
         findViewById<Button>(R.id.btnAddReceipt).setOnClickListener { showReceiptChooser() }
 
+        // Handle confirm button click
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             val amtInput = findViewById<EditText>(R.id.amountInput)
             val descInput = findViewById<EditText>(R.id.descriptionInput)
             val amt = amtInput.text.toString().toDoubleOrNull()
+            // Validate amount and account
             if (amt == null || pendingAccountId == null) {
                 Toast.makeText(this, "Enter amount & select account", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            // Validate category for expenses
             if (isExpense && pendingCategoryId == null) {
                 Toast.makeText(this, "Select a category", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // Get selected date
             val d = findViewById<Spinner>(R.id.spinnerDay).selectedItem.toString().toInt()
             val m = findViewById<Spinner>(R.id.spinnerMonth).selectedItemPosition
             val y = findViewById<Spinner>(R.id.spinnerYear).selectedItem.toString().toInt()
@@ -83,6 +95,7 @@ class TransactionActivity : BaseActivity() {
                 set(Calendar.MILLISECOND, 0)
             }
 
+            // Create transaction object (Android, 2025).
             val tx = TransactionEntity(
                 transactionId = UUID.randomUUID().toString(),
                 userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", "")!!,
@@ -95,6 +108,7 @@ class TransactionActivity : BaseActivity() {
                 receiptLocalPath = receiptUri
             )
 
+            // Save transaction to database
             lifecycleScope.launch(Dispatchers.IO) {
                 val db = AppDatabase.getDatabase(this@TransactionActivity)
 
@@ -148,10 +162,8 @@ class TransactionActivity : BaseActivity() {
                     db.accountDao().updateInitialBalance(acct.accountId, newTotal)
                 }
 
-
                 db.accountDao().updateBalance(acct.accountId, newBal)
-
-
+                // Insert transaction
                 db.transactionDao().insert(tx)
 
 
@@ -160,12 +172,10 @@ class TransactionActivity : BaseActivity() {
                     finish()
                 }
             }
-
-
         }
-
     }
 
+    // Setup toggle buttons for expense/income
     private fun setupIncomeExpenseToggle() {
         val btnExpense = findViewById<Button>(R.id.btnExpense)
         val btnIncome  = findViewById<Button>(R.id.btnIncome)
@@ -184,7 +194,7 @@ class TransactionActivity : BaseActivity() {
         }
     }
 
-
+    // Setup navbar buttons
     private fun setupNavBar() {
         listOf(
             R.id.nav_home to HomePage::class.java,
@@ -213,8 +223,9 @@ class TransactionActivity : BaseActivity() {
         }
     }
 
+    // Setup date pickers and transfer button
     private fun setupInputs() {
-
+        // populate spinners (CodeStuff, 2024)
         val daySpinner = findViewById<Spinner>(R.id.spinnerDay)
         val monthSpinner = findViewById<Spinner>(R.id.spinnerMonth)
         val yearSpinner = findViewById<Spinner>(R.id.spinnerYear)
@@ -240,32 +251,25 @@ class TransactionActivity : BaseActivity() {
             (2020..2030).map { it.toString() }
         )
 
-
+        // Set current date
         val today = Calendar.getInstance()
-
         daySpinner.setSelection(today.get(Calendar.DAY_OF_MONTH) - 1)
-
         monthSpinner.setSelection(today.get(Calendar.MONTH))
-
         yearSpinner.setSelection(today.get(Calendar.YEAR) - 2020)
-
 
         findViewById<ImageView>(R.id.datePrev)
             .setOnClickListener { moveDate(-1, daySpinner) }
         findViewById<ImageView>(R.id.dateNext)
             .setOnClickListener { moveDate(+1, daySpinner) }
 
-
-
+        // Transfer button
         findViewById<Button>(R.id.btnTransferFunds).setOnClickListener {
 
             startActivity(Intent(this, TransferFunds::class.java))
         }
-
-
     }
 
-
+    // Dynamically generate account buttons for current user (Android, 2025).
     private fun setupDynamicAccounts() {
         val acctContainer = findViewById<LinearLayout>(R.id.accountToggleContainer)
         lifecycleScope.launch {
@@ -300,6 +304,7 @@ class TransactionActivity : BaseActivity() {
         }
     }
 
+    // Handles dynamic category loading and selection UI
     private fun setupDynamicCategories() {
         val catContainer = findViewById<LinearLayout>(R.id.fromCategoryList)
         lifecycleScope.launch {
@@ -337,6 +342,7 @@ class TransactionActivity : BaseActivity() {
         }
     }
 
+    // Receipt image input (camera/gallery)  which secure URI
     private fun showReceiptChooser() {
         val opts = arrayOf("Take Photo", "Choose from Gallery")
         AlertDialog.Builder(this)
@@ -360,6 +366,7 @@ class TransactionActivity : BaseActivity() {
             }.show()
     }
 
+    // Result processing for image sources (Android, 2025).
     override fun onActivityResult(req: Int, res: Int, data: Intent?) {
         super.onActivityResult(req, res, data)
         if (res != Activity.RESULT_OK) return

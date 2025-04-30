@@ -101,7 +101,7 @@ class AccountPage : BaseActivity() {
                 .start()
         }
 
-        // Section buttons
+        // Section buttons (CodingStuff, 2024).
         findViewById<LinearLayout>(R.id.AccountManagement).setOnClickListener {
             startActivity(Intent(this, AccountManagement::class.java))
         }

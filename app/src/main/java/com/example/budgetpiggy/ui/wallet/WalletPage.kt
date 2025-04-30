@@ -36,15 +36,12 @@ class WalletPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.wallet)
-
-
         // Edge‐to‐edge insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.walletPage)) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
-
         // Hide home-only icons
         findViewById<ImageView>(R.id.piggyIcon)?.visibility   = View.GONE
         findViewById<ImageView>(R.id.streakIcon)?.visibility  = View.GONE
@@ -63,7 +60,7 @@ class WalletPage : BaseActivity() {
         findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
             startActivity(Intent(this, TransactionActivity::class.java))
         }
-        // Bind lists
+        // Bind lists (CodingStuff, 2025).
         accountList = findViewById(R.id.accountList)
         budgetList  = findViewById(R.id.budgetList)
 
@@ -93,7 +90,6 @@ class WalletPage : BaseActivity() {
         findViewById<ImageView>(R.id.addCategoryPlus).setOnClickListener {
             startActivity(Intent(this, AddCategoryPage::class.java))
         }
-
     }
 
     override fun onResume() {
@@ -102,8 +98,6 @@ class WalletPage : BaseActivity() {
         loadAccountTypes()
         loadBudgetCategories()
     }
-
-
 
     private fun setupBottomNav() {
         findViewById<ImageView>(R.id.nav_home).setOnClickListener { v ->
@@ -123,9 +117,9 @@ class WalletPage : BaseActivity() {
         }
     }
 
+    // Loads user accounts from DB and displays them
     private fun loadAccountTypes() {
         accountList.removeAllViews()
-
         val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE).getString("logged_in_user_id", "")!!
 
         lifecycleScope.launch {
@@ -140,7 +134,7 @@ class WalletPage : BaseActivity() {
 
                 Triple(balList, usr, rateMap)
             }
-
+            // Format numbers in local currency
             val nf = NumberFormat.getCurrencyInstance().apply {
                 currency = Currency.getInstance(user.currency)
             }
@@ -151,6 +145,7 @@ class WalletPage : BaseActivity() {
                     R.layout.item_wallet_account_row,
                     accountList, false
                 )
+                // Set delete action
                 item.findViewById<TextView>(R.id.accountTypeText).text =
                     acct.accountName
                 item.findViewById<TextView>(R.id.accountBalanceText).text =
@@ -166,6 +161,7 @@ class WalletPage : BaseActivity() {
         }
     }
 
+    // Deletes an account and refreshes the list (Android, 2025).
     private fun deleteAccount(userId: String, accountName: String) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -178,10 +174,9 @@ class WalletPage : BaseActivity() {
         }
     }
 
+    // Loads budget categories and displays them
     private fun loadBudgetCategories() {
         budgetList.removeAllViews()
-
-
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
@@ -191,9 +186,7 @@ class WalletPage : BaseActivity() {
                 val uDao = db.userDao()
                 val list = cDao.getByUserId(userId)
                 val usr  = uDao.getById(userId)!!
-
                 val rateMap = CurrencyManager.getRateMap(this@WalletPage, "ZAR")
-
                 Triple(list, usr, rateMap)
             }
 
