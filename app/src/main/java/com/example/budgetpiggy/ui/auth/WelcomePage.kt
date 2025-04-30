@@ -13,45 +13,33 @@ import com.example.budgetpiggy.R
 class WelcomePage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Modern edge to edge UI (tech, 2023)
         enableEdgeToEdge()
         setContentView(R.layout.welcome_page)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.welcomePage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val createAccountBtn = findViewById<Button>(R.id.createAccountButton)
         val loginTextView = findViewById<TextView>(R.id.loginTextView)
-        createAccountBtn.setOnClickListener {
-                view ->
 
-
-            view.animate()
-                .scaleX(0.95f)
-                .scaleY(0.95f)
-                .setDuration(25)
-                .withEndAction {
+        // Adds a tap animation to create account button
+        createAccountBtn.setOnClickListener { view ->
+            view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25).withEndAction {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
                     startActivity(Intent(this, RegisterPage::class.java))
                 }.start()
-
         }
 
-loginTextView.setOnClickListener {
-        view ->
-
-
-    view.animate()
-        .scaleX(0.95f)
-        .scaleY(0.95f)
-        .setDuration(25)
-        .withEndAction {
-            view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
-            startActivity(Intent(this, LoginPage::class.java))
-        }.start()
-
-}
-
-
+        // Adds a rap animation to login text
+        loginTextView.setOnClickListener { view ->
+            view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25).withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                    startActivity(Intent(this, LoginPage::class.java))
+                }.start()
+        }
     }
 }
