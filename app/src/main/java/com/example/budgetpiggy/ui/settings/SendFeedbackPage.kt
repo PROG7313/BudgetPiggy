@@ -29,6 +29,7 @@ class SendFeedbackPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.send_feedback)
 
+        // Handle padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.sendFeedbackPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -41,7 +42,7 @@ class SendFeedbackPage : BaseActivity() {
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
 
-        // Show and set the title to "Wallet"
+        // Show and set the title to "Send Feedback"
         findViewById<TextView>(R.id.pageTitle).apply {
             visibility = View.VISIBLE
             text = getString(R.string.send_feedback)

@@ -20,11 +20,13 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Launch a coroutine tied to the activity lifecycle (Android, 2025)
         lifecycleScope.launch(Dispatchers.IO) {
+            // DB instance
             val db = AppDatabase.getDatabase(this@SplashActivity)
-
+            // Package name
             val pkg = packageName // <- needed for building resource URIs
-
+            // List of reward codes
             val codes = listOf(
                 Triple(
                     "SIGNUP2025",
@@ -44,6 +46,7 @@ class SplashActivity : AppCompatActivity() {
                 // more codes can be added later
             )
 
+            // Insert codes into the DB only if they don't already exist
             codes.forEach { (code, name, imgUrl) ->
                 if (db.rewardCodeDao().getByCode(code) == null) {
                     db.rewardCodeDao().insert(
@@ -63,6 +66,7 @@ class SplashActivity : AppCompatActivity() {
                 val userId              = prefs.getString("logged_in_user_id", null)
                 val needsGettingStarted = prefs.getBoolean("needs_getting_started", false)
 
+                // Navigation to the correct screen (Android, 2025)
                 when {
                     !seenOnboarding -> {
                         prefs.edit { putBoolean("has_seen_onboarding", true) }

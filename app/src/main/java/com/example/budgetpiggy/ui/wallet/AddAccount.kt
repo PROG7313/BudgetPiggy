@@ -41,6 +41,7 @@ class AddAccountPage : BaseActivity() {
             insets
         }
 
+        // Bottom nav listeners
         val navHome = findViewById<ImageView>(R.id.nav_home)
         val navWallet = findViewById<ImageView>(R.id.nav_wallet)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
@@ -66,6 +67,7 @@ class AddAccountPage : BaseActivity() {
             startActivity(Intent(this, AccountPage::class.java))
         }
 
+        // Hide unnecessary UI elements
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
@@ -79,7 +81,7 @@ class AddAccountPage : BaseActivity() {
         val typeInput = findViewById<EditText>(R.id.accountDescInput)
         val allocInput = findViewById<EditText>(R.id.allocateInput)
 
-        // Show keyboard on amount focus
+        // Show keyboard on amount focus (Android, 2025).
         allocInput.setOnFocusChangeListener { v, has ->
             if (has) {
                 (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
@@ -110,13 +112,14 @@ class AddAccountPage : BaseActivity() {
                 return@setOnClickListener
             }
 
+            // Save account to database in background
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     val db = AppDatabase.getDatabase(this@AddAccountPage)
                     val dao = db.accountDao()
 
                     val now = System.currentTimeMillis()
-
+                    // Create AccountEntity object
                     val account = AccountEntity(
                         accountId = UUID.randomUUID().toString(),
                         userId = userId,
@@ -126,9 +129,7 @@ class AddAccountPage : BaseActivity() {
                         type = type,
                         createdAt = now
                     )
-
                     dao.insert(account)
-
                     // Unlock reward for creating first account
                     val rewardRepo = RewardRepository(
                         rewardDao = db.rewardDao(),
@@ -142,7 +143,6 @@ class AddAccountPage : BaseActivity() {
                 finish()
             }
         }
-
         // Back arrow
         findViewById<ImageView>(R.id.backArrow)?.setOnClickListener { view ->
             view.animate()
@@ -152,7 +152,6 @@ class AddAccountPage : BaseActivity() {
                     onBackPressedDispatcher.onBackPressed()
                 }.start()
         }
-
         // Bell icon
         findViewById<ImageView>(R.id.bellIcon)?.setOnClickListener {
             startActivity(Intent(this, Notification::class.java))

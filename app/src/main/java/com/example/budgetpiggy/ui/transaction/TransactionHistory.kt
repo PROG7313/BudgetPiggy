@@ -52,18 +52,22 @@ class TransactionHistory : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.transaction_history)
 
+        // Hide icons not needed for this page
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
+        // Set page title
         findViewById<TextView>(R.id.greetingText).apply {
             visibility = View.VISIBLE
             text = getString(R.string.transaction_history)
         }
 
+        // Handle safe insets for immersive mode
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.transactionHistoryPage)) { v, insets ->
             val sb = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
+        // FAB scroll behaviour
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
         // FAB behavior
@@ -80,6 +84,7 @@ class TransactionHistory : BaseActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        // Bottom nav bar routing
         listOf(
             R.id.nav_home to HomePage::class.java,
             R.id.nav_wallet to WalletPage::class.java,
@@ -92,10 +97,12 @@ class TransactionHistory : BaseActivity() {
             }
         }
 
+        // Setup transaction list and filter/sort actions.
         transactionListLayout = findViewById(R.id.transactionList)
         findViewById<TextView>(R.id.sortByText).setOnClickListener { showSortDialog() }
         findViewById<TextView>(R.id.filterText).setOnClickListener { showFilterDialog() }
 
+        // Load and render transacitons
         lifecycleScope.launch {
             val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
                 .getString("logged_in_user_id", null) ?: return@launch
@@ -110,6 +117,7 @@ class TransactionHistory : BaseActivity() {
                 currency = Currency.getInstance(user.currency)
             }
 
+            // Load and sort transaction from newest to oldest
             allTransactions = withContext(Dispatchers.IO) {
                 db.transactionDao().getByUserId(userId).sortedByDescending { it.date }
             }
@@ -119,6 +127,7 @@ class TransactionHistory : BaseActivity() {
         }
     }
 
+    // Renders each transaction row in the UI (Android, 2025) (Developers, 2025)
     private fun renderTransactions(formatter: NumberFormat, conversionRate: Double) {
         transactionListLayout.removeAllViews()
 
@@ -126,6 +135,7 @@ class TransactionHistory : BaseActivity() {
             val row = LayoutInflater.from(this)
                 .inflate(R.layout.transaction_item_row, transactionListLayout, false)
 
+            // View bingings
             val iconImage = row.findViewById<ImageView>(R.id.iconImage)
             val categoryText = row.findViewById<TextView>(R.id.categoryText)
             val accountText = row.findViewById<TextView>(R.id.accountText)
@@ -136,10 +146,12 @@ class TransactionHistory : BaseActivity() {
             val receiptImage = row.findViewById<ImageView>(R.id.receiptImage)
             val toggleArea = row.findViewById<View>(R.id.toggleRowArea)
 
+            // Format amount with correct prefix and convection
             val convertedAmount = tx.amount * conversionRate
             val prefix = if (convertedAmount < 0) "-" else "+"
             val amtFormatted = formatter.format(convertedAmount.absoluteValue)
 
+            // Initial display
             categoryText.text = "$prefix$amtFormatted"
             categoryText.setTextColor(
                 if (tx.amount < 0) getColor(R.color.red)
@@ -149,6 +161,7 @@ class TransactionHistory : BaseActivity() {
             descText.text = tx.description ?: ""
             dateText.text = sdf.format(Date(tx.date))
 
+            // Load receipt image if available
             if (!tx.receiptLocalPath.isNullOrBlank()) {
                 val uri = tx.receiptLocalPath.toUri()
                 receiptImage.visibility = View.VISIBLE
@@ -164,6 +177,7 @@ class TransactionHistory : BaseActivity() {
                 eyeIcon.setImageResource(if (expanded) R.drawable.vec_eye_open else R.drawable.vec_eye_closed)
             }
 
+            // Fetch category and accounts info for transacitons
             lifecycleScope.launch {
                 val db = AppDatabase.getDatabase(this@TransactionHistory)
                 val acct = withContext(Dispatchers.IO) { db.accountDao().getById(tx.accountId) }
@@ -196,6 +210,7 @@ class TransactionHistory : BaseActivity() {
         }
     }
 
+    // Show receipt image in fullscreen dialog
     private fun showReceiptFullScreen(uri: Uri) {
         val dialogView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_receipt_preview, null)
@@ -207,8 +222,10 @@ class TransactionHistory : BaseActivity() {
         dlg.show()
     }
 
+    // Opens date picker for selecting filter dates
     private fun showFilterDialog() {
         lifecycleScope.launch {
+            // Get database instance, fetch according information
             val db = AppDatabase.getDatabase(this@TransactionHistory)
             val catIds = allTransactions.mapNotNull { it.categoryId }.distinct()
             val catEntities = withContext(Dispatchers.IO) {
@@ -219,6 +236,7 @@ class TransactionHistory : BaseActivity() {
             val names = nameToId.keys.toTypedArray()
             val checked = names.map { nameToId[it] in selectedCategories }.toBooleanArray()
 
+            // Inflate the filter dialog layout
             val view = layoutInflater.inflate(R.layout.dialog_filter, null)
             val startDateLabel = view.findViewById<TextView>(R.id.startDateLabel)
             val endDateLabel = view.findViewById<TextView>(R.id.endDateLabel)
@@ -231,6 +249,7 @@ class TransactionHistory : BaseActivity() {
             startDateLabel.text = "Start Date: ${sdf.format(startDate!!)}"
             endDateLabel.text = "End Date: ${sdf.format(endDate!!)}"
 
+            // Show date picker when start date field is tapped
             startDateTap.setOnClickListener {
                 pickDate { date ->
                     startDate = date
@@ -245,6 +264,7 @@ class TransactionHistory : BaseActivity() {
                 }
             }
 
+            // Show filter dialog with  multi choice category selection
             AlertDialog.Builder(this@TransactionHistory)
                 .setTitle("Filter")
                 .setView(view)
@@ -266,6 +286,7 @@ class TransactionHistory : BaseActivity() {
         }
     }
 
+    // Applies category and date filters to the transactions
     private fun applyFilter() {
         filteredTransactions = allTransactions.filter { tx ->
             val catOk = selectedCategories.isEmpty() || selectedCategories.contains(tx.categoryId)
@@ -277,6 +298,7 @@ class TransactionHistory : BaseActivity() {
         renderTransactions(formatter, conversionRate)
     }
 
+    // Opens date picker and returns the selected date through a callback (GeekforGeeks, 2022)
     private fun pickDate(callback: (Date) -> Unit) {
         val calendar = Calendar.getInstance()
         val dpd = DatePickerDialog(this,
@@ -291,6 +313,7 @@ class TransactionHistory : BaseActivity() {
         dpd.show()
     }
 
+    // Shows a sorting dialog for transactions
     private fun showSortDialog() {
         val opts = arrayOf("Date ↓", "Date ↑", "Category A→Z", "Category Z→A")
         AlertDialog.Builder(this)
