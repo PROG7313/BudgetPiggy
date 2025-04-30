@@ -2,6 +2,7 @@ package com.example.budgetpiggy.ui.core
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -44,33 +45,35 @@ class SplashActivity : AppCompatActivity() {
                 }
             }
 
-            // 2) check 30 days since goals were first set
+            //  check 30 days since goals were first set
             val prefs = getSharedPreferences("app_piggy_prefs", Context.MODE_PRIVATE)
             val ts    = prefs.getLong("goal_set_ts", 0L)
-            if (ts > 0 && System.currentTimeMillis() - ts >= 30L * 24 * 60 * 60 * 1000) {
+            val now   = System.currentTimeMillis()
+            if (ts > 0 && now - ts >= 30L * 24 * 60 * 60 * 1000) {
+                Log.d("SplashActivity", "🎯 Goal‐reward block is RUNNING! ts=$ts, now=$now")
+
                 val uid = prefs.getString("logged_in_user_id", null)
                 if (uid != null) {
-                    val startOfMonth = Calendar.getInstance().apply {
-                        set(Calendar.DAY_OF_MONTH, 1)
-                        set(Calendar.HOUR_OF_DAY, 0)
-                        set(Calendar.MINUTE, 0)
-                        set(Calendar.SECOND, 0)
-                        set(Calendar.MILLISECOND, 0)
-                    }.timeInMillis
 
+
+
+                    // sum spending for the month
                     val totalExp = db.transactionDao()
-                        .sumMonthlySpending(uid, startOfMonth, System.currentTimeMillis())
+                        .sumMonthlySpending(uid, ts, now)
 
+                    Log.d("SplashActivity", "TotalExp=$totalExp, minGoal=${prefs.getInt("min_expense_goal",0)}, maxGoal=${prefs.getInt("max_expense_goal",0)}")
 
+                    // decide which reward
                     val awardCode = when {
                         totalExp >= prefs.getInt("max_expense_goal", 0) -> "GOAL_MAX"
                         totalExp >= prefs.getInt("min_expense_goal", 0) -> "GOAL_MIN"
                         else -> null
                     }
+                    Log.d("SplashActivity", "awardCode=$awardCode")
 
                     awardCode?.let { code ->
                         if (db.rewardDao().getByCodeForUser(code, uid) == null) {
-
+                            // fetch the catalog name for display
                             val catalog = db.rewardCodeDao().getByCode(code)
                             val name    = catalog?.rewardName ?: code
 
@@ -82,11 +85,18 @@ class SplashActivity : AppCompatActivity() {
                                     unlockedAt = Date().time
                                 )
                             )
+                            Log.d("SplashActivity", "Inserted RewardEntity for code=$code, user=$uid")
+                        } else {
+                            Log.d("SplashActivity", "User already has reward code=$code")
                         }
                     }
 
+                    // clear so this only runs once
                     prefs.edit { remove("goal_set_ts") }
+                    Log.d("SplashActivity", "Cleared goal_set_ts")
                 }
+            } else {
+                Log.d("SplashActivity", "Skipping goal‐reward block; ts=$ts, now=$now")
             }
 
             // 3) navigate

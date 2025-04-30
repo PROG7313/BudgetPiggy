@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -192,6 +193,7 @@ class HomePage : BaseActivity() {
                     prefs.edit()
                         .putLong("goal_set_ts", System.currentTimeMillis())
                         .apply()
+                    Log.d("HomePage", "Saved goal_set_ts = ${prefs.getLong("goal_set_ts",0)}")
                 }
 
                 updateGoalViews()
@@ -204,7 +206,7 @@ class HomePage : BaseActivity() {
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // 1) Fetch from Room + rates
+            // 1) Fetch balances, categories, latest 5 transactions, user & rateMap
             val (data, categoryMap) = withContext(Dispatchers.IO) {
                 val db    = AppDatabase.getDatabase(this@HomePage)
                 val aDao  = db.accountDao()
@@ -225,41 +227,52 @@ class HomePage : BaseActivity() {
                 (Quintuple(balList, catList, txList, usr, rateMap) to categoryMap)
             }
 
-            // 2) Unpack & formatter
+            // 2) Unpack & prepare formatter
             val (balances, categories, transactions, user, rateMap) = data
             val nf = NumberFormat.getCurrencyInstance().apply {
                 currency = Currency.getInstance(user.currency)
             }
 
             // ─── Expense Goals UI ───
-            // calculate month-to-date spend
-            val currentRaw = transactions
-                .filter { it.amount < 0 }   // negative = expense
-                .sumOf   { -it.amount }     // make positive
-            val rate    = rateMap[user.currency] ?: 1.0
-            val current = (currentRaw * rate).roundToInt()
+            val prefs   = getSharedPreferences("app_piggy_prefs", Context.MODE_PRIVATE)
+            val startTs = prefs.getLong("goal_set_ts", 0L)
+            val endTs   = System.currentTimeMillis()
 
-            // read saved goals
+            // 1) Sum all negative transactions in that window (DAO returns a positive Double)
+            val totalRaw = withContext(Dispatchers.IO) {
+                AppDatabase
+                    .getDatabase(this@HomePage)
+                    .transactionDao()
+                    .sumMonthlySpending(userId, startTs, endTs)
+            }
+
+            // 2) Convert to display currency + round
+            val rate    = rateMap[user.currency] ?: 1.0
+            val current = (totalRaw * rate).roundToInt()
+
+            // 3) Pull out your saved goals
             val minGoal = prefs.getInt("min_expense_goal", 0)
             val maxGoal = prefs.getInt("max_expense_goal", 0)
 
-            // update labels
-            tvCurrentExpense.text = "Current: ${nf.format(currentRaw * rate)}"
-            tvMinExpenseGoal.text = "Min: R$minGoal"
-            tvMaxExpenseGoal.text = "Max: R$maxGoal"
+            // 4) Update the three TextViews
+            tvCurrentExpense.text = "Current: ${nf.format(totalRaw * rate)}"
+            tvMinExpenseGoal  .text = "Min: R$minGoal"
+            tvMaxExpenseGoal  .text = "Max: R$maxGoal"
 
-            // configure progress bar
-            expenseGoalsProgress.max               = maxGoal.coerceAtLeast(1)
-            expenseGoalsProgress.secondaryProgress = minGoal.coerceIn(0, maxGoal)
-            expenseGoalsProgress.progress          = current.coerceIn(0, maxGoal)
+            // 5) Configure the ProgressBar
+            expenseGoalsProgress.apply {
+                max               = maxGoal.coerceAtLeast(1)
+                secondaryProgress = minGoal.coerceIn(0, maxGoal)
+                progress          = current.coerceIn(0, maxGoal)
+            }
             // ─────────────────────────
 
-            // 3) Render account balances with remaining vs total
+            // 3) Render account balances
             accountBalanceList.removeAllViews()
             balances.forEach { acct ->
-                val rate      = rateMap[user.currency] ?: 1.0
-                val remaining = acct.balance * rate
-                val total     = acct.initialBalance * rate
+                val r         = rateMap[user.currency] ?: 1.0
+                val remaining = acct.balance * r
+                val total     = acct.initialBalance * r
 
                 val row = layoutInflater.inflate(
                     R.layout.item_balance_row,
@@ -269,10 +282,8 @@ class HomePage : BaseActivity() {
                 row.findViewById<TextView>(R.id.labelText).text = acct.accountName
 
                 val pb = row.findViewById<ProgressBar>(R.id.progressBar)
-                val maxVal = total.coerceAtLeast(1.0).roundToInt()
-                val prog   = remaining.coerceIn(0.0, total).roundToInt()
-                pb.max      = maxVal
-                pb.progress = prog
+                pb.max      = total.coerceAtLeast(1.0).roundToInt()
+                pb.progress = remaining.coerceIn(0.0, total).roundToInt()
 
                 row.findViewById<TextView>(R.id.remainingText).text =
                     "Remaining: ${nf.format(remaining)}"
@@ -282,22 +293,25 @@ class HomePage : BaseActivity() {
                 row.findViewById<LinearLayout>(R.id.balanceRow)
                     .setOnClickListener {
                         val msg = "${acct.accountName}: ${nf.format(remaining)} of ${nf.format(total)}"
-                        val t = Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT)
-                        t.show()
-                        Handler(Looper.getMainLooper()).postDelayed({ t.cancel() }, 600)
+                        Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT).show()
                     }
 
                 accountBalanceList.addView(row)
             }
 
+
             // 4) Render budget remaining
             budgetRemainingList.removeAllViews()
             categories.forEach { cat ->
                 val totalBudget = cat.budgetAmount
+
+                // If your TransactionEntity.amount is negative for expenses,
+                // flip the sign to get a positive spent
                 val spent = transactions
                     .filter { it.categoryId == cat.categoryId }
-                    .sumOf   { it.amount }
+                    .sumOf { -it.amount }    // <-- make it positive
 
+                // now remaining = budget minus what you actually spent
                 val remainingBudget = (totalBudget - spent).coerceAtLeast(0.0)
                 val rate            = rateMap[user.currency] ?: 1.0
                 val convertedTotal     = (totalBudget   * rate).roundToInt()
@@ -310,25 +324,20 @@ class HomePage : BaseActivity() {
                 )
                 row.findViewById<TextView>(R.id.labelText).text = cat.categoryName
 
+                // set up your bar
                 val pb = row.findViewById<ProgressBar>(R.id.progressBar)
                 pb.max      = convertedTotal.coerceAtLeast(1)
                 pb.progress = convertedRemaining.coerceIn(0, convertedTotal)
 
+                // and your two labels
                 row.findViewById<TextView>(R.id.remainingText).text =
                     "Remaining: ${nf.format(remainingBudget * rate)}"
                 row.findViewById<TextView>(R.id.totalText).text =
                     "Total:     ${nf.format(totalBudget   * rate)}"
 
-                row.findViewById<LinearLayout>(R.id.balanceRow)
-                    .setOnClickListener {
-                        val msg = "${cat.categoryName}: " +
-                                "${nf.format(remainingBudget * rate)} of " +
-                                "${nf.format(totalBudget   * rate)}"
-                        Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT).show()
-                    }
-
                 budgetRemainingList.addView(row)
             }
+
 
             // 5) Render recent transactions
             transactionList.removeAllViews()
@@ -347,6 +356,9 @@ class HomePage : BaseActivity() {
             }
         }
     }
+
+
+
 
 
 
