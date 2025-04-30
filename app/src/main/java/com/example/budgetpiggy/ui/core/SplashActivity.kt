@@ -61,36 +61,7 @@ class SplashActivity : AppCompatActivity() {
 
             // B) If 30 days since goal set, award goal-based reward
             val prefs = getSharedPreferences("app_piggy_prefs", Context.MODE_PRIVATE)
-            val ts    = prefs.getLong("goal_set_ts", 0L)
-            val now   = System.currentTimeMillis()
-            if (ts > 0 && now - ts >= 30L * 24 * 60 * 60 * 1000) {
-                Log.d("SplashActivity", "Goal‐reward block running (ts=$ts, now=$now)")
-                val uid = prefs.getString("logged_in_user_id", null)
-                if (uid != null) {
-                    val totalExp = db.transactionDao().sumMonthlySpending(uid, ts, now)
-                    val minGoal  = prefs.getInt("min_expense_goal", 0)
-                    val maxGoal  = prefs.getInt("max_expense_goal", 0)
-                    val awardCode = when {
-                        totalExp >= maxGoal -> "GOAL_MAX"
-                        totalExp >= minGoal -> "GOAL_MIN"
-                        else                -> null
-                    }
-                    awardCode?.takeIf { db.rewardDao().getByCodeForUser(it, uid) == null }?.let { code ->
-                        val name = db.rewardCodeDao().getByCode(code)?.rewardName ?: code
-                        db.rewardDao().insert(
-                            RewardEntity(
-                                rewardId   = UUID.randomUUID().toString(),
-                                userId     = uid,
-                                rewardName = name,
-                                unlockedAt = Date().time
-                            )
-                        )
-                        Log.d("SplashActivity", "Inserted goal reward $code for user $uid")
-                    }
-                }
-                prefs.edit { remove("goal_set_ts") }
-                Log.d("SplashActivity", "Cleared goal_set_ts")
-            }
+
 
             // C) Navigate on main thread
             withContext(Dispatchers.Main) {

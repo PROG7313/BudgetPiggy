@@ -23,10 +23,7 @@ import androidx.room.PrimaryKey
 data class RewardEntity(
     @PrimaryKey val rewardId: String,
     val userId: String,
-
-
     val code: String? = null,
-
     val rewardName: String,
     val unlockedAt: Long
 )
