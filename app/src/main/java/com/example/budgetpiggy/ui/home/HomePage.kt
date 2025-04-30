@@ -43,7 +43,7 @@ class HomePage : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.home)
 
-        // Bind views
+        // Bind views (Android, 2025)
         val greetingText = findViewById<TextView>(R.id.greetingText)
         streakBadge           = findViewById(R.id.streakBadge)
         accountBalanceList    = findViewById(R.id.accountBalanceList)
@@ -71,7 +71,7 @@ class HomePage : BaseActivity() {
             streakBadge.visibility = View.GONE
         }
 
-        // Transaction card click
+        // Transaction card click (Ambitions, 2025)
         findViewById<View>(R.id.transactionCard).setOnClickListener { v ->
             v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(2)
                 .withEndAction {
@@ -87,7 +87,7 @@ class HomePage : BaseActivity() {
             insets
         }
 
-        // Navigation & actions
+        // Navigation & actions (Ambitions, 2025)
         findViewById<ImageView>(R.id.backArrow).setOnClickListener { v ->
             v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
                 .withEndAction {
@@ -130,13 +130,11 @@ class HomePage : BaseActivity() {
         loadHomeData()
     }
 
-
-
     private fun loadHomeData() {
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // 1) Fetch from Room + rates
+            // Fetch from Room + rates
             val (data, categoryMap) = withContext(Dispatchers.IO) {
                 val db    = AppDatabase.getDatabase(this@HomePage)
                 val aDao  = db.accountDao()
@@ -158,13 +156,13 @@ class HomePage : BaseActivity() {
                 (Quintuple(balList, catList, txList, usr, rateMap) to categoryMap)
             }
 
-            // 2) Unpack & formatter
+            // Unpack & formatter
             val (balances, categories, transactions, user, rateMap) = data
             val nf = NumberFormat.getCurrencyInstance().apply {
                 currency = Currency.getInstance(user.currency)
             }
 
-            // 3) Render account balances with remaining vs total
+            // Render account balances with remaining vs total
             accountBalanceList.removeAllViews()
             balances.forEach { acct ->
                 // currency-converted values
@@ -199,7 +197,7 @@ class HomePage : BaseActivity() {
                 accountBalanceList.addView(row)
             }
 
-            // 4) Render budget remaining (unchanged)
+            // Render budget remaining (unchanged) (Ambitions, 2025)
             budgetRemainingList.removeAllViews()
             categories.forEach { cat ->
                 val converted = cat.budgetAmount * (rateMap[user.currency] ?: 1.0)
@@ -219,7 +217,7 @@ class HomePage : BaseActivity() {
                 budgetRemainingList.addView(row)
             }
 
-            // 5) Render recent transactions (unchanged)
+            // Render recent transactions (unchanged)
             transactionList.removeAllViews()
             transactions.forEach { tx ->
                 val row = layoutInflater
@@ -234,11 +232,7 @@ class HomePage : BaseActivity() {
         }
     }
 
-
-
-
-
-
+    // Back behaviour
     override fun onBackPressed() {
         if (!isTaskRoot) {
             super.onBackPressed()
@@ -249,6 +243,7 @@ class HomePage : BaseActivity() {
         }
     }
 
+    // Updates the navigation icons to show the active one and reset the previous one
     override fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
@@ -267,6 +262,7 @@ class HomePage : BaseActivity() {
         }
     }
 
+    // Data class that holds layout (Android, 2025).
     private data class Quintuple<A, B, C, D, E>(
         val first: A,
         val second: B,

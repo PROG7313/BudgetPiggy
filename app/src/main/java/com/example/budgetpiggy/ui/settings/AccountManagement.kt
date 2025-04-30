@@ -128,7 +128,7 @@ class AccountManagement : BaseActivity() {
         saveButton       = findViewById(R.id.saveButton)
         deleteButton     = findViewById(R.id.deleteAccountButton)
 
-        //  Load current user
+        //  Load current user (CodingStuff, 2024).
         val userId = SessionManager.getUserId(this) ?: return
         lifecycleScope.launch {
             currentUser = withContext(Dispatchers.IO) {
@@ -184,7 +184,7 @@ class AccountManagement : BaseActivity() {
             }
         }
 
-        //  Delete account
+        //  Delete account (Android, 2025)
         deleteButton.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Delete account?")

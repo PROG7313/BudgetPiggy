@@ -32,6 +32,7 @@ class RegisterPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Modern edge to edge UI
         enableEdgeToEdge()
         setContentView(R.layout.register)
 
@@ -80,7 +81,7 @@ class RegisterPage : BaseActivity() {
             passwordEdit.setSelection(passwordEdit.text.length)
         }
 
-        // floating labels helper
+        // floating labels helper (Developers, 2025).
         fun setupFloatingLabel(editTxt: EditText, label: TextView, hint: String) {
             editTxt.setOnFocusChangeListener { _, focused ->
                 if (focused || editTxt.text.isNotEmpty()) {
@@ -128,7 +129,7 @@ class RegisterPage : BaseActivity() {
             })
         }
 
-        // attach floating labels
+        // attach floating labels (Gaur, 2025).
         setupFloatingLabel(firstNameEdit, firstNameLabel, getString(R.string.first_name))
         setupFloatingLabel(lastNameEdit, lastNameLabel, getString(R.string.last_name))
         setupFloatingLabel(emailEdit, emailLabel, getString(R.string.email_address))
@@ -160,9 +161,7 @@ class RegisterPage : BaseActivity() {
                         return@withEndAction
                     }
 
-
-
-
+                    // (Developers, 2025).
                     lifecycleScope.launch(Dispatchers.IO) {
                         val userDao = AppDatabase.getDatabase(this@RegisterPage).userDao()
                         val existingUser = userDao.getUserByEmail(email)

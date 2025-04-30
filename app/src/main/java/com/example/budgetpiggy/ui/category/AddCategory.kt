@@ -33,11 +33,13 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import androidx.core.graphics.scale
+import androidx.core.graphics.createBitmap
 
 class AddCategoryPage : BaseActivity() {
     private val REQUEST_ICON = 2001
 
-    // either a built-in drawable name, or a stored URI
+    // Either a built-in drawable name, or a stored URI
     private var selectedBuiltInIcon: String? = null
     private var selectedIconUri: Uri?        = null
 
@@ -46,7 +48,7 @@ class AddCategoryPage : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.addcategory)
 
-        // hide home-only UI
+        // Hide home-only UI
         listOf(R.id.piggyIcon, R.id.greetingText, R.id.streakIcon)
             .forEach { findViewById<View>(it)?.visibility = View.GONE }
 
@@ -61,7 +63,7 @@ class AddCategoryPage : BaseActivity() {
             insets
         }
 
-        // nav & back & bell
+        // Nav, Back & Bell handlers
         findViewById<ImageView>(R.id.nav_home)?.setOnClickListener {
             setActiveNavIcon(it as ImageView)
             startActivity(Intent(this, HomePage::class.java))
@@ -88,7 +90,7 @@ class AddCategoryPage : BaseActivity() {
             startActivity(Intent(this, Notification::class.java))
         }
 
-        // form fields
+        // Form fields
         val nameInput       = findViewById<EditText>(R.id.categoryNameInput)
         val amountInput     = findViewById<EditText>(R.id.amountInput)
         val typeInput       = findViewById<EditText>(R.id.categoryTypeInput)
@@ -97,23 +99,26 @@ class AddCategoryPage : BaseActivity() {
         val btnAddIcon      = findViewById<ImageButton>(R.id.btnAddIcon)
         val btnConfirm      = findViewById<Button>(R.id.btnConfirm)
 
-        // focus keyboard on amount
+        // Focus keyboard on amount
         amountInput.setOnFocusChangeListener { v, has ->
             if (has) (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
                 .showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
         }
 
-        // load accounts
+        // Fetches logged-in user ID using session manager. Aborts if no session exists (GeeksforGeeks, 2022)
         val userId = SessionManager.getUserId(this) ?: run {
             Toast.makeText(this,"No logged-in user!",Toast.LENGTH_SHORT).show()
             finish()
             return
         }
+
         lifecycleScope.launch {
             val names = withContext(Dispatchers.IO) {
                 AppDatabase.getDatabase(this@AddCategoryPage)
                     .accountDao().getByUserId(userId).map { it.accountName }
             }
+
+            // Dynamically loads linked user accounts for dropdown selection
             accountSpinner.adapter = ArrayAdapter(
                 this@AddCategoryPage,
                 android.R.layout.simple_spinner_dropdown_item,
@@ -121,6 +126,7 @@ class AddCategoryPage : BaseActivity() {
             )
         }
 
+        // Loads built-in drawable icons
         val builtin = listOf("vec_home", "vec_food", "vec_car", "vec_gift", "vec_clothes")
         builtin.forEach { iconName ->
             val resId = resources.getIdentifier(iconName, "drawable", packageName)
@@ -139,7 +145,7 @@ class AddCategoryPage : BaseActivity() {
             }
         }
 
-// 2. Now also load any saved user-uploaded icons
+        // Load any saved user-uploaded icons (Android, 2025)
         val userIcons = filesDir.listFiles()?.filter { it.name.startsWith("cat_icon_") && it.name.endsWith(".png") } ?: emptyList()
 
         userIcons.forEach { file ->
@@ -158,7 +164,7 @@ class AddCategoryPage : BaseActivity() {
             }
         }
 
-// 3. Default-select first item
+        // Default-select first item
         builtInContainer.children.firstOrNull()?.performClick()
 
         // upload override
@@ -201,25 +207,26 @@ class AddCategoryPage : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val db = AppDatabase.getDatabase(this@AddCategoryPage)
 
-                // 1. Insert category
-                db.categoryDao().insert(cat)
+              // Insert category
+db.categoryDao().insert(cat)
 
-                // 2. Send system notification
-                NotificationHelper.sendNotification(
-                    context = this@AddCategoryPage,
-                    title = "🎁 Reward Unlocked!",
-                    message = "You just unlocked FIRST CATEGORY reward!"
-                )
+// 1. Send system notification
+NotificationHelper.sendNotification(
+    context = this@AddCategoryPage,
+    title = "🎁 Reward Unlocked!",
+    message = "You just unlocked FIRST CATEGORY reward!"
+)
 
-                // 2. Try unlock reward (built-in method handles checks + notification)
-                val rewardRepo = RewardRepository(
-                    rewardDao = db.rewardDao(),
-                    codeDao   = db.rewardCodeDao(),
-                    notifDao  = db.notificationDao()
-                )
-                rewardRepo.unlockCode(userId, "FIRSTCAT2025")
+// 2. Try unlock reward (built-in method handles checks + notification)
+val rewardRepo = RewardRepository(
+    rewardDao = db.rewardDao(),
+    codeDao   = db.rewardCodeDao(),
+    notifDao  = db.notificationDao()
+)
+rewardRepo.unlockCode(userId, "FIRSTCAT2025")
 
-                // 3. Finish on UI thread
+
+                // Finish on UI thread
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@AddCategoryPage, "Category added!", Toast.LENGTH_SHORT).show()
                     finish()
@@ -236,20 +243,14 @@ class AddCategoryPage : BaseActivity() {
             data?.data?.let { sourceUri ->
                 val inputStream = contentResolver.openInputStream(sourceUri) ?: return
 
-                // Decode the original image into a Bitmap
+                // Decode the original image into a Bitmap (Android, 2025)
                 val originalBitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
 
                 // Resize it to 48dp x 48dp
                 val sizeInPx = (48 * resources.displayMetrics.density).toInt()
-                val resizedBitmap = android.graphics.Bitmap.createScaledBitmap(
-                    originalBitmap,
-                    sizeInPx,
-                    sizeInPx,
-                    true
-                )
+                val resizedBitmap = originalBitmap.scale(sizeInPx, sizeInPx)
 
-                // Circle-crop it
-                val output = android.graphics.Bitmap.createBitmap(sizeInPx, sizeInPx, android.graphics.Bitmap.Config.ARGB_8888)
+                val output = createBitmap(sizeInPx, sizeInPx)
                 val canvas = android.graphics.Canvas(output)
                 val paint = android.graphics.Paint().apply {
                     isAntiAlias = true
@@ -275,8 +276,6 @@ class AddCategoryPage : BaseActivity() {
             }
         }
     }
-
-
 
 
     override fun setActiveNavIcon(activeIcon: ImageView) {

@@ -24,6 +24,7 @@ import com.example.budgetpiggy.utils.SessionManager
 
 class RewardsActivity : BaseActivity() {
 
+    // ViewModel scoped to this activity, initialized using factory with dependencies (Android, 2025).
     private val viewModel: RewardsViewModel by viewModels {
         val userId = SessionManager.getUserId(this)
             ?: throw IllegalStateException("No user logged in!")
@@ -41,16 +42,19 @@ class RewardsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rewards)
 
+        // Handles padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_rewards)) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
 
+        // Hide unnecessary UI elements
         findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
+        // Set page title
         findViewById<TextView>(R.id.pageTitle).apply {
             visibility = View.VISIBLE
             text = getString(R.string.RewardsTitle)
@@ -63,6 +67,7 @@ class RewardsActivity : BaseActivity() {
             rewardsGrid.adapter = RewardsAdapter(items)
         }
 
+        // Navbar icons with click listeners
         findViewById<ImageView>(R.id.nav_home).setOnClickListener {
             setActiveNavIcon(it as ImageView)
             startActivity(Intent(this, HomePage::class.java))
@@ -91,6 +96,7 @@ class RewardsActivity : BaseActivity() {
         }
     }
 
+    // Highlights the active navigation icon
     override fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
@@ -109,6 +115,7 @@ class RewardsActivity : BaseActivity() {
         }
     }
 
+    // Back press action
     override fun onBackPressed() {
         if (!isTaskRoot) {
             super.onBackPressed()
@@ -117,6 +124,7 @@ class RewardsActivity : BaseActivity() {
         }
     }
 
+    // Clears navigation icon highlight
     override fun onResume() {
         super.onResume()
         clearNavIcons()

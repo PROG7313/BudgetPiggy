@@ -18,14 +18,16 @@ import kotlinx.coroutines.launch
 
 open class BaseActivity : AppCompatActivity() {
 
-    //  Lazy-init your repo
+    //  Lazily initialize the NotificationRepository using the app's database
     private val notificationRepo by lazy {
         NotificationRepository(
             AppDatabase.getDatabase(this).notificationDao()
         )
     }
 
-    //  Every time the activity resumes, fetch the unread count & update the badge
+    // When the activity resumes (e.g., returning from background), (Ambitions, 2025)
+    // update the notification badge with the count of unread notifications
+
     override fun onResume() {
         super.onResume()
 
@@ -38,11 +40,15 @@ open class BaseActivity : AppCompatActivity() {
             val list = notificationRepo.notificationsFor(uid).first()
             val unreadCount = list.count { !it.isRead }
 
+
+            // find your top‐bar include and update its badge (Android, 2025).
             val topBar = findViewById<View>(R.id.topBar)
             updateNotificationBadgeGlobally(topBar, unreadCount)
         }
     }
 
+
+    // Add hide/show behavior to the FloatingActionButton based on scroll direction
     protected fun setupFabScrollBehavior(scrollView: ScrollView, fabWrapper: View) {
         var lastY = 0
         scrollView.viewTreeObserver.addOnScrollChangedListener {
@@ -60,6 +66,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    // Reset all navigation icons to their "inactive" state
     protected fun clearNavIcons() {
         val navIcons = listOf(
             R.id.nav_home to R.drawable.vec_home_inactive,
@@ -72,6 +79,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    // Automatically hide the keyboard if user taps outside an EditText
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (currentFocus != null) {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -91,7 +99,8 @@ open class BaseActivity : AppCompatActivity() {
         }
         return super.dispatchTouchEvent(ev)
     }
-    // your existing nav-icon helper
+
+    // Activate one navigation icon while deactivating the others
     protected open fun setActiveNavIcon(activeIcon: ImageView) {
         val navIcons = listOf(
             R.id.nav_home    to R.drawable.vec_home_inactive,
@@ -110,7 +119,8 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    //  existing badge-updater
+
+    // Update the global notification badge with a count, or hide it if zero
     fun updateNotificationBadgeGlobally(topBar: View?, count: Int) {
         val badge = topBar
             ?.findViewById<TextView>(R.id.notificationBadge)

@@ -23,24 +23,29 @@ class HelpPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.help_page)
 
+        // Apply window insets to avoid UI elements overlapping system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.helpPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Hide piggy icon, streak icon, and greeting text which are not needed on this page
         findViewById<ImageView>(R.id.piggyIcon)?.visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
-
-        // Show and set the title to "Wallet"
+        // Show and set the title to "Help"
         findViewById<TextView>(R.id.pageTitle).apply {
             visibility = View.VISIBLE
             text = getString(R.string.help_title)
         }
+
+        // Reference to the container that will hold all help sections
         val helpContainer = findViewById<LinearLayout>(R.id.helpContainer)
         val inflater = LayoutInflater.from(this)
 
+        // List of help section layout resources to inflate dynamically
         val sections = listOf(
             R.layout.help_section_add_expense,
             R.layout.help_section_notifications,
@@ -48,6 +53,7 @@ class HelpPage : BaseActivity() {
             R.layout.help_section_budgets
         )
 
+        // Inflate and add each help section to the container, and make them expandable
         for (layoutId in sections) {
             val sectionView = inflater.inflate(layoutId, helpContainer, false)
             helpContainer.addView(sectionView)
@@ -55,7 +61,7 @@ class HelpPage : BaseActivity() {
             setupExpandableSection(sectionView)
         }
 
-        // Bell → Notification screen
+        // Bell icon → opens Notification screen with click animation
         findViewById<ImageView>(R.id.bellIcon)
             .setOnClickListener { v: View ->
                 v.animate()
@@ -67,7 +73,7 @@ class HelpPage : BaseActivity() {
                     .start()
             }
 
-        // Back arrow → go back
+        // Back arrow icon → navigates back with click animation
         findViewById<ImageView>(R.id.backArrow)
             .setOnClickListener { v: View ->
                 v.animate()
@@ -79,40 +85,43 @@ class HelpPage : BaseActivity() {
                     .start()
             }
 
-        // Bottom nav icons
+        // Bottom navigation icons setup
         val navHome    = findViewById<ImageView>(R.id.nav_home)
         val navWallet  = findViewById<ImageView>(R.id.nav_wallet)
         val navReports = findViewById<ImageView>(R.id.nav_reports)
         val navProfile = findViewById<ImageView>(R.id.nav_profile)
 
+        // Navigate to Home page with icon click animation
         navHome.setOnClickListener { v: View ->
             setActiveNavIcon(v as ImageView)
             startActivity(Intent(this, HomePage::class.java))
         }
 
+        // Navigate to Wallet page with icon click animation
         navWallet.setOnClickListener { v: View ->
             setActiveNavIcon(v as ImageView)
             startActivity(Intent(this, WalletPage::class.java))
         }
 
+        // Navigate to Reports page with icon click animation
         navReports.setOnClickListener { v: View ->
             setActiveNavIcon(v as ImageView)
             startActivity(Intent(this, ReportsPage::class.java))
         }
 
+        // Clicked on Profile icon (HelpPage is considered part of profile/settings), stays on same page
         navProfile.setOnClickListener { v: View ->
-            // Already in AccountPage
             setActiveNavIcon(v as ImageView)
         }
-
     }
 
+    // Set up expand/collapse behavior for a help section
     private fun setupExpandableSection(sectionView: View) {
         val header = sectionView.findViewById<TextView>(R.id.sectionHeader)
         val content = sectionView.findViewById<LinearLayout>(R.id.sectionContent)
         val icon = sectionView.findViewById<ImageView>(R.id.expandIcon)
 
-        content.visibility = View.GONE
+        content.visibility = View.GONE // Initially collapsed
 
         header.setOnClickListener {
             val isVisible = content.isVisible
@@ -123,10 +132,9 @@ class HelpPage : BaseActivity() {
         }
     }
 
+    // Highlight the profile icon in the bottom nav when returning to this screen
     override fun onResume() {
         super.onResume()
-        // Highlight profile/account icon
         setActiveNavIcon(findViewById(R.id.nav_profile))
     }
 }
-
