@@ -15,11 +15,18 @@ import androidx.room.PrimaryKey
             onDelete      = ForeignKey.CASCADE
         )
     ],
-    indices = [ Index("userId") ]
+    indices = [
+        Index("userId"),
+        Index("code")
+    ]
 )
 data class RewardEntity(
     @PrimaryKey val rewardId: String,
     val userId: String,
+
+
+    val code: String? = null,
+
     val rewardName: String,
     val unlockedAt: Long
 )

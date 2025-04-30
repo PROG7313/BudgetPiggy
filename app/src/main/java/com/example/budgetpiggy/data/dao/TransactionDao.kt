@@ -19,34 +19,72 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE userId = :userId")
     suspend fun getByUserId(userId: String): List<TransactionEntity>
 
-
-        // Use a timestamp range to get current month's earnings
-        @Query("""
-        SELECT amount FROM transactions 
-        WHERE userId = :userId AND amount > 0 AND date BETWEEN :startTimestamp AND :endTimestamp
+    // Returns raw amounts for positive transactions (earnings) this month
+    @Query("""
+        SELECT amount
+          FROM transactions
+         WHERE userId = :userId
+           AND amount > 0
+           AND date BETWEEN :startTimestamp AND :endTimestamp
     """)
-        suspend fun getMonthlyEarnings(userId: String, startTimestamp: Long, endTimestamp: Long): List<Double>
+    suspend fun getMonthlyEarnings(
+        userId: String,
+        startTimestamp: Long,
+        endTimestamp: Long
+    ): List<Double>
 
-        @Query("""
-        SELECT amount FROM transactions 
-        WHERE userId = :userId AND amount < 0 AND date BETWEEN :startTimestamp AND :endTimestamp
+    // Returns raw amounts for negative transactions (spending) this month
+    @Query("""
+        SELECT amount
+          FROM transactions
+         WHERE userId = :userId
+           AND amount < 0
+           AND date BETWEEN :startTimestamp AND :endTimestamp
     """)
-        suspend fun getMonthlySpending(userId: String, startTimestamp: Long, endTimestamp: Long): List<Double>
+    suspend fun getMonthlySpending(
+        userId: String,
+        startTimestamp: Long,
+        endTimestamp: Long
+    ): List<Double>
 
-        @Query("""
-        SELECT c.categoryName AS category, SUM(t.amount) AS total 
-        FROM transactions t
-        INNER JOIN categories c ON t.categoryId = c.categoryId
-        WHERE t.userId = :userId AND t.amount < 0
-        GROUP BY t.categoryId
+    // Summed spending (negative amounts made positive) for the month
+    @Query("""
+        SELECT SUM(-amount)
+          FROM transactions
+         WHERE userId = :userId
+           AND amount < 0
+           AND date BETWEEN :startTimestamp AND :endTimestamp
     """)
-        suspend fun getSpendingByCategory(userId: String): List<CategorySpendingView>
+    suspend fun sumMonthlySpending(
+        userId: String,
+        startTimestamp: Long,
+        endTimestamp: Long
+    ): Double
 
+    // Summed earnings for the month
+    @Query("""
+        SELECT SUM(amount)
+          FROM transactions
+         WHERE userId = :userId
+           AND amount > 0
+           AND date BETWEEN :startTimestamp AND :endTimestamp
+    """)
+    suspend fun sumMonthlyEarnings(
+        userId: String,
+        startTimestamp: Long,
+        endTimestamp: Long
+    ): Double
 
-    data class CategorySpendingView(
-        val category: String,
-        val total: Double
-    )
+    // Aggregated spending by category
+    @Query("""
+        SELECT c.categoryName AS category, SUM(t.amount) AS total
+          FROM transactions t
+          INNER JOIN categories c ON t.categoryId = c.categoryId
+         WHERE t.userId = :userId
+           AND t.amount < 0
+         GROUP BY t.categoryId
+    """)
+    suspend fun getSpendingByCategory(userId: String): List<CategorySpendingView>
 
     @Update
     suspend fun update(transaction: TransactionEntity)
@@ -54,5 +92,8 @@ interface TransactionDao {
     @Delete
     suspend fun delete(transaction: TransactionEntity)
 
-
+    data class CategorySpendingView(
+        val category: String,
+        val total: Double
+    )
 }

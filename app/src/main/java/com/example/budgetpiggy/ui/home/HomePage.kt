@@ -1,6 +1,9 @@
 package com.example.budgetpiggy.ui.home
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,7 +22,6 @@ import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.transaction.TransactionActivity
 import com.example.budgetpiggy.ui.transaction.TransactionHistory
-import com.example.budgetpiggy.ui.transaction.TransferFunds
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.CurrencyManager
 import com.example.budgetpiggy.utils.SessionManager
@@ -30,6 +32,7 @@ import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
+import androidx.core.content.edit
 
 class HomePage : BaseActivity() {
 
@@ -37,7 +40,12 @@ class HomePage : BaseActivity() {
     private lateinit var accountBalanceList: LinearLayout
     private lateinit var budgetRemainingList: LinearLayout
     private lateinit var transactionList: LinearLayout
-
+    private lateinit var prefs: SharedPreferences
+    private lateinit var tvMinExpenseGoal: TextView
+    private lateinit var tvMaxExpenseGoal: TextView
+    private lateinit var btnSetExpenseGoals: Button
+    private lateinit var tvCurrentExpense: TextView
+    private lateinit var expenseGoalsProgress: ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,13 +53,21 @@ class HomePage : BaseActivity() {
 
         // Bind views
         val greetingText = findViewById<TextView>(R.id.greetingText)
-        streakBadge           = findViewById(R.id.streakBadge)
-        accountBalanceList    = findViewById(R.id.accountBalanceList)
-        budgetRemainingList   = findViewById(R.id.budgetRemainingList)
-        transactionList       = findViewById(R.id.transactionList)
-
+        streakBadge = findViewById(R.id.streakBadge)
+        accountBalanceList = findViewById(R.id.accountBalanceList)
+        budgetRemainingList = findViewById(R.id.budgetRemainingList)
+        transactionList = findViewById(R.id.transactionList)
+        tvMinExpenseGoal = findViewById(R.id.tvMinExpenseGoal)
+        tvMaxExpenseGoal = findViewById(R.id.tvMaxExpenseGoal)
+        btnSetExpenseGoals = findViewById(R.id.btnSetExpenseGoals)
+        tvCurrentExpense       = findViewById(R.id.tvCurrentExpense)
+        expenseGoalsProgress   = findViewById(R.id.expenseGoalsProgress)
+        prefs = getSharedPreferences("app_piggy_prefs", Context.MODE_PRIVATE)
         // Greet user
-
+        updateGoalViews()
+        btnSetExpenseGoals.setOnClickListener {
+            showSetGoalsDialog()
+        }
         val userId = SessionManager.getUserId(this) ?: return
         userId.let { id ->
             lifecycleScope.launch(Dispatchers.IO) {
@@ -130,7 +146,59 @@ class HomePage : BaseActivity() {
         loadHomeData()
     }
 
+    private fun updateGoalViews() {
+        val minGoal = prefs.getInt("min_expense_goal", 0)
+        val maxGoal = prefs.getInt("max_expense_goal", 0)
 
+        // 1) Update the labels
+        tvMinExpenseGoal.text     = "Min: R$minGoal"
+        tvMaxExpenseGoal.text     = "Max: R$maxGoal"
+
+        // 2) We’ll fill in `tvCurrentExpense` and the progress bar _later_ in loadHomeData()
+        //    so here we just clear/reset the bar in case maxGoal is zero:
+        expenseGoalsProgress.max             = maxGoal.coerceAtLeast(1)
+        expenseGoalsProgress.secondaryProgress = 0
+        expenseGoalsProgress.progress        = 0
+    }
+
+
+
+    private fun showSetGoalsDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_set_goals, null)
+        val etMin = dialogView.findViewById<EditText>(R.id.etMinGoal)
+        val etMax = dialogView.findViewById<EditText>(R.id.etMaxGoal)
+
+
+        etMin.setText(prefs.getInt("min_expense_goal", 0).toString())
+        etMax.setText(prefs.getInt("max_expense_goal", 0).toString())
+
+        AlertDialog.Builder(this)
+            .setTitle("Set Expense Goals")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val newMin = etMin.text.toString().toIntOrNull() ?: 0
+                val newMax = etMax.text.toString().toIntOrNull() ?: 0
+                prefs.edit() {
+                    putInt("min_expense_goal", newMin)
+                        .putInt("max_expense_goal", newMax)
+                }
+
+                prefs.edit()
+                    .putInt("min_expense_goal", newMin)
+                    .putInt("max_expense_goal", newMax)
+                    .apply()
+
+                if (!prefs.contains("goal_set_ts")) {
+                    prefs.edit()
+                        .putLong("goal_set_ts", System.currentTimeMillis())
+                        .apply()
+                }
+
+                updateGoalViews()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
 
     private fun loadHomeData() {
         val userId = SessionManager.getUserId(this) ?: return
@@ -144,7 +212,6 @@ class HomePage : BaseActivity() {
                 val tDao  = db.transactionDao()
                 val uDao  = db.userDao()
 
-                // now includes initialBalance
                 val balList = aDao.getBalancesForUser(userId)
                 val catList = cDao.getByUserId(userId)
                 val txList  = tDao.getByUserId(userId)
@@ -164,17 +231,41 @@ class HomePage : BaseActivity() {
                 currency = Currency.getInstance(user.currency)
             }
 
+            // ─── Expense Goals UI ───
+            // calculate month-to-date spend
+            val currentRaw = transactions
+                .filter { it.amount < 0 }   // negative = expense
+                .sumOf   { -it.amount }     // make positive
+            val rate    = rateMap[user.currency] ?: 1.0
+            val current = (currentRaw * rate).roundToInt()
+
+            // read saved goals
+            val minGoal = prefs.getInt("min_expense_goal", 0)
+            val maxGoal = prefs.getInt("max_expense_goal", 0)
+
+            // update labels
+            tvCurrentExpense.text = "Current: ${nf.format(currentRaw * rate)}"
+            tvMinExpenseGoal.text = "Min: R$minGoal"
+            tvMaxExpenseGoal.text = "Max: R$maxGoal"
+
+            // configure progress bar
+            expenseGoalsProgress.max               = maxGoal.coerceAtLeast(1)
+            expenseGoalsProgress.secondaryProgress = minGoal.coerceIn(0, maxGoal)
+            expenseGoalsProgress.progress          = current.coerceIn(0, maxGoal)
+            // ─────────────────────────
+
             // 3) Render account balances with remaining vs total
             accountBalanceList.removeAllViews()
             balances.forEach { acct ->
-                // currency-converted values
-                val rate     = rateMap[user.currency] ?: 1.0
+                val rate      = rateMap[user.currency] ?: 1.0
                 val remaining = acct.balance * rate
                 val total     = acct.initialBalance * rate
 
-                val row = layoutInflater
-                    .inflate(R.layout.item_balance_row, accountBalanceList, false)
-
+                val row = layoutInflater.inflate(
+                    R.layout.item_balance_row,
+                    accountBalanceList,
+                    false
+                )
                 row.findViewById<TextView>(R.id.labelText).text = acct.accountName
 
                 val pb = row.findViewById<ProgressBar>(R.id.progressBar)
@@ -183,10 +274,10 @@ class HomePage : BaseActivity() {
                 pb.max      = maxVal
                 pb.progress = prog
 
-                row.findViewById<TextView>(R.id.remainingText)
-                    .text = "Remaining: ${nf.format(remaining)}"
-                row.findViewById<TextView>(R.id.totalText)
-                    .text = "Total: ${nf.format(total)}"
+                row.findViewById<TextView>(R.id.remainingText).text =
+                    "Remaining: ${nf.format(remaining)}"
+                row.findViewById<TextView>(R.id.totalText).text =
+                    "Total: ${nf.format(total)}"
 
                 row.findViewById<LinearLayout>(R.id.balanceRow)
                     .setOnClickListener {
@@ -199,31 +290,54 @@ class HomePage : BaseActivity() {
                 accountBalanceList.addView(row)
             }
 
-            // 4) Render budget remaining (unchanged)
+            // 4) Render budget remaining
             budgetRemainingList.removeAllViews()
             categories.forEach { cat ->
-                val converted = cat.budgetAmount * (rateMap[user.currency] ?: 1.0)
-                val row = layoutInflater.inflate(R.layout.item_balance_row_budget, budgetRemainingList, false)
-                row.findViewById<TextView>(R.id.labelText).text = cat.categoryName
-                val pb = row.findViewById<ProgressBar>(R.id.progressBar)
-                val convertedBudget = converted.coerceAtLeast(1.0)
-                pb.max = convertedBudget.toInt()
-                pb.progress = convertedBudget.toInt()
+                val totalBudget = cat.budgetAmount
+                val spent = transactions
+                    .filter { it.categoryId == cat.categoryId }
+                    .sumOf   { it.amount }
 
-                row.findViewById<LinearLayout>(R.id.balanceRow).setOnClickListener {
-                    val msg = "${cat.categoryName}: ${nf.format(convertedBudget)} of ${nf.format(convertedBudget)}"
-                    val t = Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT)
-                    t.show()
-                    Handler(Looper.getMainLooper()).postDelayed({ t.cancel() }, 600)
-                }
+                val remainingBudget = (totalBudget - spent).coerceAtLeast(0.0)
+                val rate            = rateMap[user.currency] ?: 1.0
+                val convertedTotal     = (totalBudget   * rate).roundToInt()
+                val convertedRemaining = (remainingBudget * rate).roundToInt()
+
+                val row = layoutInflater.inflate(
+                    R.layout.item_balance_row,
+                    budgetRemainingList,
+                    false
+                )
+                row.findViewById<TextView>(R.id.labelText).text = cat.categoryName
+
+                val pb = row.findViewById<ProgressBar>(R.id.progressBar)
+                pb.max      = convertedTotal.coerceAtLeast(1)
+                pb.progress = convertedRemaining.coerceIn(0, convertedTotal)
+
+                row.findViewById<TextView>(R.id.remainingText).text =
+                    "Remaining: ${nf.format(remainingBudget * rate)}"
+                row.findViewById<TextView>(R.id.totalText).text =
+                    "Total:     ${nf.format(totalBudget   * rate)}"
+
+                row.findViewById<LinearLayout>(R.id.balanceRow)
+                    .setOnClickListener {
+                        val msg = "${cat.categoryName}: " +
+                                "${nf.format(remainingBudget * rate)} of " +
+                                "${nf.format(totalBudget   * rate)}"
+                        Toast.makeText(this@HomePage, msg, Toast.LENGTH_SHORT).show()
+                    }
+
                 budgetRemainingList.addView(row)
             }
 
-            // 5) Render recent transactions (unchanged)
+            // 5) Render recent transactions
             transactionList.removeAllViews()
             transactions.forEach { tx ->
-                val row = layoutInflater
-                    .inflate(R.layout.item_transaction_row, transactionList, false)
+                val row = layoutInflater.inflate(
+                    R.layout.item_transaction_row,
+                    transactionList,
+                    false
+                )
                 val catName = tx.categoryId?.let { categoryMap[it] } ?: "—"
                 row.findViewById<TextView>(R.id.categoryText).text = catName
                 row.findViewById<TextView>(R.id.nameText).text     = tx.description ?: ""
@@ -233,6 +347,7 @@ class HomePage : BaseActivity() {
             }
         }
     }
+
 
 
 
