@@ -37,9 +37,6 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-
-
-
             <!-- Star Rating -->
             <TextView
                 android:id="@+id/Intro"
@@ -55,7 +52,6 @@
                 android:textStyle="bold" />
 
             <!-- Feedback Input -->
-
             <RatingBar
                 android:id="@+id/ratingBar"
                 style="?android:attr/ratingBarStyle"
@@ -107,7 +103,6 @@
                 android:layout_marginTop="8dp" />
         </LinearLayout>
     </ScrollView>
-
     <!-- Bottom Navigation -->
     <include
         android:id="@+id/bottomNav"
