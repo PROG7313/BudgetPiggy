@@ -156,91 +156,108 @@ class ReportsPage : BaseActivity() {
     }
 
     private fun loadAllCharts() {
-        // Get current user
         val userId = SessionManager.getUserId(this) ?: return
 
         lifecycleScope.launch {
-            // Fetch all the necessary data for charts asynchronously from database
+            // 1) Load balances, categories, filtered transactions, user & rates
             val (balances, categories, txList, user, rateMap) = withContext(Dispatchers.IO) {
-                val db = AppDatabase.getDatabase(this@ReportsPage)
-                val aDao = db.accountDao()
-                val cDao = db.categoryDao()
-                val tDao = db.transactionDao()
+                val db      = AppDatabase.getDatabase(this@ReportsPage)
+                val aDao    = db.accountDao()
+                val cDao    = db.categoryDao()
+                val tDao    = db.transactionDao()
 
-                val balList = aDao.getBalancesForUser(userId)
-                val catList = cDao.getByUserId(userId)
-                val allTx = tDao.getByUserId(userId)
+                val balList    = aDao.getBalancesForUser(userId)
+                val catList    = cDao.getByUserId(userId)
+                val allTx      = tDao.getByUserId(userId)
                 val filteredTx = allTx.filter { it.date in startDate..endDate }
 
-                allCategoryNames = catList.map { it.categoryName }
+                allCategoryNames       = catList.map { it.categoryName }
                 lastSelectedCategories = allCategoryNames.toMutableList()
 
-                val rateMap = CurrencyManager.getRateMap(this@ReportsPage, "ZAR")
+                val rates = CurrencyManager.getRateMap(this@ReportsPage, "ZAR")
+                val usr   = db.userDao().getById(userId)!!
 
-                val user = db.userDao().getById(userId)!!
-
-                Quintuple(balList, catList, filteredTx, user, rateMap)
+                Quintuple(balList, catList, filteredTx, usr, rates)
             }
 
-            // Convert user's currency to ZAR if needed (Android, 2025)
-            val userCurrency = Currency.getInstance(user.currency)
-            val zarToUserRate = rateMap[user.currency] ?: 1.0
-            val nf = NumberFormat.getCurrencyInstance().apply { currency = userCurrency }
+            // 2) Build lookup maps
+            val accountMap: Map<String,String> = withContext(Dispatchers.IO) {
+                AppDatabase.getDatabase(this@ReportsPage)
+                    .accountDao()
+                    .getByUserId(userId)
+                    .associate { acct -> acct.accountId to acct.accountName }
+            }
+            val categoryMap = categories.associate { it.categoryId to it.categoryName }
+            val zarRate     = rateMap[user.currency] ?: 1.0
+            val nf          = NumberFormat.getCurrencyInstance().apply {
+                currency = Currency.getInstance(user.currency)
+            }
 
-            setupPie(totalBalanceChart, balances.map {
-                PieEntry((it.balance * zarToUserRate).toFloat(), it.accountName)
-            })
-            // Set up earnings chart (positive transactions)
-            val earningMap = txList.filter { tx -> tx.amount > 0 }
-                .groupBy { tx -> tx.accountId }
-                .mapNotNull { (accountId, transactions) ->
-                    val name = balances.find { balance -> balance.accountName == accountId }?.accountName
-                    name?.let { accountName ->
+            // 3) Total balance pie
+            setupPie(
+                totalBalanceChart,
+                balances.map {
+                    PieEntry((it.balance * zarRate).toFloat(), it.accountName)
+                }
+            )
+
+            // 4) Earnings pie
+            val earningEntries = txList
+                .filter { it.amount > 0 }
+                .groupBy { it.accountId }
+                .mapNotNull { (acctId, txs) ->
+                    accountMap[acctId]?.let { acctName ->
                         PieEntry(
-                            transactions.sumOf { transaction -> transaction.amount * zarToUserRate }.toFloat(),
-                            accountName
+                            txs.sumOf { it.amount * zarRate }.toFloat(),
+                            acctName
                         )
                     }
                 }
-            setupPie(earningsChart, earningMap)
+            setupPie(earningsChart, earningEntries)
 
-            // Set up the spending chart (negative transactions)
-            val spendingMap = txList.filter { tx -> tx.amount < 0 }
-                .groupBy { tx -> tx.categoryId }
-                .mapNotNull { (categoryId, transactions) ->
-                    val name = categories.find { category -> category.categoryId == categoryId }?.categoryName
-                    name?.let { categoryName ->
+            // 5) Spending pie
+            val spendingEntries = txList
+                .filter { it.amount < 0 }
+                .groupBy { it.categoryId }
+                .mapNotNull { (catId, txs) ->
+                    categoryMap[catId]?.let { catName ->
                         PieEntry(
-                            transactions.sumOf { transaction -> transaction.amount.absoluteValue * zarToUserRate }.toFloat(),
-                            categoryName
+                            txs.sumOf { it.amount.absoluteValue * zarRate }.toFloat(),
+                            catName
                         )
                     }
                 }
-            setupPie(spendingChart, spendingMap)
+            setupPie(spendingChart, spendingEntries)
 
-            val budgetEntries = categories.map {
-                PieEntry((it.budgetAmount * zarToUserRate).toFloat(), it.categoryName)
+            // 6) Budget-per-category pie
+            val categoryEntries = categories.map {
+                PieEntry((it.budgetAmount * zarRate).toFloat(), it.categoryName)
             }
-            setupPie(categoryChart, budgetEntries)
-            populateCategoryList(budgetEntries, nf)
+            setupPie(categoryChart, categoryEntries)
+            populateCategoryList(categoryEntries, nf)
 
-            // Group transactions by day and calculate cumulative balance trend (Android, 2025)
+            // 7) Balance trend line chart
+            //    group by day
             val daySums = txList.groupBy {
-                val c = Calendar.getInstance().apply { timeInMillis = it.date }
-                c.set(Calendar.HOUR_OF_DAY, 0); c.set(Calendar.MINUTE, 0)
-                c.set(Calendar.SECOND, 0); c.set(Calendar.MILLISECOND, 0)
-                c.timeInMillis
-            }.mapValues { it.value.sumOf { tx -> tx.amount * zarToUserRate }.toFloat() }
-
-            // Generate list of all days in the selected date range (Android, 2025)
-            val days = mutableListOf<Long>()
-            val cal2 = Calendar.getInstance().apply { timeInMillis = startDate }
-            while (cal2.timeInMillis <= endDate) {
-                days.add(cal2.timeInMillis)
-                cal2.add(Calendar.DATE, 1)
+                Calendar.getInstance().apply { timeInMillis = it.date }.run {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                    timeInMillis
+                }
+            }.mapValues { (_, txs) ->
+                txs.sumOf { it.amount * zarRate }.toFloat()
             }
 
-            // Prepare the line chart with cumulative data
+            // build list of days properly
+            val days = mutableListOf<Long>()
+            val cal = Calendar.getInstance().apply { timeInMillis = startDate }
+            while (cal.timeInMillis <= endDate) {
+                days.add(cal.timeInMillis)
+                cal.add(Calendar.DATE, 1)
+            }
+
             var cum = 0f
             val lineEntries = days.mapIndexed { idx, day ->
                 cum += daySums[day] ?: 0f
@@ -249,6 +266,9 @@ class ReportsPage : BaseActivity() {
             setupLine(balanceTrendChart, lineEntries)
         }
     }
+
+
+
 
     // Configures and displays pie chart using data
     private fun setupPie(chart: PieChart, entries: List<PieEntry>) {
@@ -289,10 +309,10 @@ class ReportsPage : BaseActivity() {
             val icon = view.findViewById<ImageView>(R.id.categoryIcon)
             val label = view.findViewById<TextView>(R.id.categoryLabel)
             when (e.label.lowercase(Locale.getDefault())) {
-                "vehicle" -> icon.setImageResource(R.drawable.vec_car)
+                "car" -> icon.setImageResource(R.drawable.vec_car)
                 "home" -> icon.setImageResource(R.drawable.vec_home)
                 "groceries", "food" -> icon.setImageResource(R.drawable.vec_food)
-                else -> icon.setImageResource(R.drawable.vec_filter)
+                else -> icon.setImageResource(R.drawable.pic_piggy_money)
             }
             label.text = "${e.label}: ${nf.format(e.value.toDouble())}"
             container.addView(view)

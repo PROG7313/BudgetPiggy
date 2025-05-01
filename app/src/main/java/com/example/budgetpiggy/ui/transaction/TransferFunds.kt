@@ -195,7 +195,6 @@ class TransferFunds : BaseActivity() {
             }
         }
 
-        //  Confirm button logic for transferring funds
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             val amountStr = findViewById<EditText>(R.id.amountInput).text.toString()
             val amount = amountStr.toDoubleOrNull()
@@ -208,7 +207,7 @@ class TransferFunds : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val db = AppDatabase.getDatabase(this@TransferFunds)
                 val accountDao = db.accountDao()
-                val transactionDao = db.transactionDao()
+                val transferDao = db.transferDao()
                 val categoryDao = db.categoryDao()
 
                 val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
@@ -217,7 +216,6 @@ class TransferFunds : BaseActivity() {
                 val now = System.currentTimeMillis()
 
                 if (isAccountToAccountMode) {
-                    // --- Account → Account ---
                     val fromAccount = selectedFromAccountId?.let { accountDao.getById(it) }
                     val toAccount = selectedToAccountId?.let { accountDao.getById(it) }
 
@@ -235,42 +233,20 @@ class TransferFunds : BaseActivity() {
                         return@launch
                     }
 
-                    val change = amount // already guaranteed > 0
+                    accountDao.updateBalance(fromAccount.accountId, fromAccount.balance - amount)
+                    accountDao.updateBalance(toAccount.accountId, toAccount.balance + amount)
+                    accountDao.updateInitialBalance(toAccount.accountId, toAccount.initialBalance + amount)
 
-                    val fromNewBal = fromAccount.balance - change
-                    accountDao.updateBalance(fromAccount.accountId, fromNewBal)
-
-                    val toNewBal   = toAccount.balance + change
-                    val toNewTotal = toAccount.initialBalance + change
-                    // Update balances
-                    accountDao.updateBalance(toAccount.accountId, toNewBal)
-                    accountDao.updateInitialBalance(toAccount.accountId, toNewTotal)
-                    // Create debit transaction for sender
-                    transactionDao.insert(
-                        TransactionEntity(
-                            transactionId = UUID.randomUUID().toString(),
-                            userId        = userId,
-                            accountId     = fromAccount.accountId,
-                            categoryId    = null,
-                            amount        = -change,
-                            description   = "Transfer to ${toAccount.accountName}",
-                            date          = now,
-                            receiptImageUrl  = null,
-                            receiptLocalPath = null
-                        )
-                    )
-                    // Create credit transaction for receiver
-                    transactionDao.insert(
-                        TransactionEntity(
-                            transactionId = UUID.randomUUID().toString(),
-                            userId        = userId,
-                            accountId     = toAccount.accountId,
-                            categoryId    = null,
-                            amount        = change,
-                            description   = "Transfer from ${fromAccount.accountName}",
-                            date          = now,
-                            receiptImageUrl  = null,
-                            receiptLocalPath = null
+                    transferDao.insert(
+                        com.example.budgetpiggy.data.entities.TransferEntity(
+                            transferId = UUID.randomUUID().toString(),
+                            userId = userId,
+                            fromAccountId = fromAccount.accountId,
+                            toAccountId = toAccount.accountId,
+                            fromCategoryId = null,
+                            toCategoryId = null,
+                            amount = amount,
+                            date = now
                         )
                     )
                 } else {
@@ -291,33 +267,32 @@ class TransferFunds : BaseActivity() {
                         return@launch
                     }
 
-                    // Subtract from account balance
                     accountDao.updateBalance(fromAccount.accountId, fromAccount.balance - amount)
-
-                    // Add to category budget
                     categoryDao.addToBudget(category.categoryId, amount)
 
-                    // Log allocation transaction
-                    transactionDao.insert(
-                        TransactionEntity(
-                            transactionId = UUID.randomUUID().toString(),
+                    transferDao.insert(
+                        com.example.budgetpiggy.data.entities.TransferEntity(
+                            transferId = UUID.randomUUID().toString(),
                             userId = userId,
-                            accountId = fromAccount.accountId,
-                            categoryId = category.categoryId,
-                            amount = -amount,
-                            description = "Allocated to category: ${category.categoryName}",
-                            date = now,
-                            receiptImageUrl = null,
-                            receiptLocalPath = null
+                            fromAccountId = fromAccount.accountId,
+                            toAccountId = null,
+                            fromCategoryId = null,
+                            toCategoryId = category.categoryId,
+                            amount = amount,
+                            date = now
                         )
                     )
                 }
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@TransferFunds, "Transfer completed!", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
         }
+
+
+
         //  Defaults
         btnTransfer.performClick()    // main mode
         btnModeAccount.performClick() // sub-mode

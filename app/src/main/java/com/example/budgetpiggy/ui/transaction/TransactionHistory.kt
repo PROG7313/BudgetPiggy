@@ -7,22 +7,27 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.example.budgetpiggy.ui.settings.AccountPage
+import com.example.budgetpiggy.R
+import com.example.budgetpiggy.data.database.AppDatabase
+import com.example.budgetpiggy.data.entities.TransactionEntity
+import com.example.budgetpiggy.data.entities.TransferEntity
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
-import com.example.budgetpiggy.R
-import com.example.budgetpiggy.ui.wallet.WalletPage
-import com.example.budgetpiggy.data.database.AppDatabase
-import com.example.budgetpiggy.data.entities.TransactionEntity
 import com.example.budgetpiggy.ui.reports.ReportsPage
+import com.example.budgetpiggy.ui.settings.AccountPage
+import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.CurrencyManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +36,6 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
-import androidx.core.net.toUri
 
 class TransactionHistory : BaseActivity() {
 
@@ -52,39 +56,39 @@ class TransactionHistory : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.transaction_history)
 
-        // Hide icons not needed for this page
+        // Hide icons not needed
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
-        // Set page title
+
+        // Title
         findViewById<TextView>(R.id.greetingText).apply {
             visibility = View.VISIBLE
             text = getString(R.string.transaction_history)
         }
 
-        // Handle safe insets for immersive mode
+        // Safe insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.transactionHistoryPage)) { v, insets ->
             val sb = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
-        // FAB scroll behaviour
+
+        // FAB scroll
         val scrollView = findViewById<ScrollView>(R.id.scrollArea)
         val fabWrapper = findViewById<View>(R.id.fabWrapper)
-        // FAB behavior
         setupFabScrollBehavior(scrollView, fabWrapper)
 
-        findViewById<ImageView>(R.id.fabPlus)?.setOnClickListener {
+        findViewById<ImageView>(R.id.fabPlus).setOnClickListener {
             startActivity(Intent(this, TransactionActivity::class.java))
         }
         findViewById<ImageView>(R.id.bellIcon).setOnClickListener {
             startActivity(Intent(this, Notification::class.java))
         }
-
         findViewById<ImageView>(R.id.backArrow).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Bottom nav bar routing
+        // Bottom nav
         listOf(
             R.id.nav_home to HomePage::class.java,
             R.id.nav_wallet to WalletPage::class.java,
@@ -97,29 +101,56 @@ class TransactionHistory : BaseActivity() {
             }
         }
 
-        // Setup transaction list and filter/sort actions.
+        // Filters & sorts
         transactionListLayout = findViewById(R.id.transactionList)
         findViewById<TextView>(R.id.sortByText).setOnClickListener { showSortDialog() }
         findViewById<TextView>(R.id.filterText).setOnClickListener { showFilterDialog() }
 
-        // Load and render transacitons
+        // Load data
         lifecycleScope.launch {
-            val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
-                .getString("logged_in_user_id", null) ?: return@launch
+            val prefs = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
+            val userId = prefs.getString("logged_in_user_id", null) ?: return@launch
 
             val db = AppDatabase.getDatabase(this@TransactionHistory)
             val user = withContext(Dispatchers.IO) { db.userDao().getById(userId) } ?: return@launch
 
             val rateMap = CurrencyManager.getRateMap(this@TransactionHistory, "ZAR")
-
             conversionRate = rateMap[user.currency] ?: 1.0
             formatter = NumberFormat.getCurrencyInstance().apply {
                 currency = Currency.getInstance(user.currency)
             }
 
-            // Load and sort transaction from newest to oldest
+            // Combine transactions + transfers
             allTransactions = withContext(Dispatchers.IO) {
-                db.transactionDao().getByUserId(userId).sortedByDescending { it.date }
+                val txs = db.transactionDao().getByUserId(userId)
+                val transfers = db.transferDao().getByUserId(userId)
+                val transferAsTxs = transfers.flatMap { tr ->
+                    listOf(
+                        // debit
+                        TransactionEntity(
+                            transactionId    = UUID.randomUUID().toString(),
+                            userId           = tr.userId,
+                            accountId        = tr.fromAccountId!!,
+                            categoryId       = null,
+                            amount           = -tr.amount,
+                            date             = tr.date,
+                            description      = "Transfer to account ${tr.toAccountId}",
+                            receiptLocalPath = null
+                        ),
+                        // credit
+                        TransactionEntity(
+                            transactionId    = UUID.randomUUID().toString(),
+                            userId           = tr.userId,
+                            accountId        = tr.toAccountId!!,
+                            categoryId       = null,
+                            amount           = tr.amount,
+                            date             = tr.date,
+                            description      = "Transfer from account ${tr.fromAccountId}",
+                            receiptLocalPath = null
+                        )
+                    )
+                }
+                (txs + transferAsTxs).sortedByDescending { it.date }
             }
 
             filteredTransactions = allTransactions
@@ -127,41 +158,34 @@ class TransactionHistory : BaseActivity() {
         }
     }
 
-    // Renders each transaction row in the UI (Android, 2025) (Developers, 2025)
     private fun renderTransactions(formatter: NumberFormat, conversionRate: Double) {
         transactionListLayout.removeAllViews()
-
         for (tx in filteredTransactions) {
             val row = LayoutInflater.from(this)
                 .inflate(R.layout.transaction_item_row, transactionListLayout, false)
 
-            // View bingings
-            val iconImage = row.findViewById<ImageView>(R.id.iconImage)
-            val categoryText = row.findViewById<TextView>(R.id.categoryText)
-            val accountText = row.findViewById<TextView>(R.id.accountText)
-            val dateText = row.findViewById<TextView>(R.id.dateText)
-            val eyeIcon = row.findViewById<ImageView>(R.id.eyeIcon)
+            val iconImage      = row.findViewById<ImageView>(R.id.iconImage)
+            val categoryText   = row.findViewById<TextView>(R.id.categoryText)
+            val accountText    = row.findViewById<TextView>(R.id.accountText)
+            val dateText       = row.findViewById<TextView>(R.id.dateText)
+            val eyeIcon        = row.findViewById<ImageView>(R.id.eyeIcon)
             val expandedLayout = row.findViewById<LinearLayout>(R.id.expandedContent)
-            val descText = row.findViewById<TextView>(R.id.descriptionText)
-            val receiptImage = row.findViewById<ImageView>(R.id.receiptImage)
-            val toggleArea = row.findViewById<View>(R.id.toggleRowArea)
+            val descText       = row.findViewById<TextView>(R.id.descriptionText)
+            val receiptImage   = row.findViewById<ImageView>(R.id.receiptImage)
+            val toggleArea     = row.findViewById<View>(R.id.toggleRowArea)
 
-            // Format amount with correct prefix and convection
-            val convertedAmount = tx.amount * conversionRate
-            val prefix = if (convertedAmount < 0) "-" else "+"
-            val amtFormatted = formatter.format(convertedAmount.absoluteValue)
+            val converted = tx.amount * conversionRate
+            val prefix = if (converted < 0) "-" else "+"
+            val amtFmt = formatter.format(converted.absoluteValue)
 
-            // Initial display
-            categoryText.text = "$prefix$amtFormatted"
+            categoryText.text = "$prefix$amtFmt"
             categoryText.setTextColor(
                 if (tx.amount < 0) getColor(R.color.red)
                 else getColor(R.color.black)
             )
-
             descText.text = tx.description ?: ""
             dateText.text = sdf.format(Date(tx.date))
 
-            // Load receipt image if available
             if (!tx.receiptLocalPath.isNullOrBlank()) {
                 val uri = tx.receiptLocalPath.toUri()
                 receiptImage.visibility = View.VISIBLE
@@ -174,34 +198,34 @@ class TransactionHistory : BaseActivity() {
             toggleArea.setOnClickListener {
                 val expanded = expandedLayout.isVisible
                 expandedLayout.visibility = if (expanded) View.GONE else View.VISIBLE
-                eyeIcon.setImageResource(if (expanded) R.drawable.vec_eye_open else R.drawable.vec_eye_closed)
+                eyeIcon.setImageResource(
+                    if (expanded) R.drawable.vec_eye_open else R.drawable.vec_eye_closed
+                )
             }
 
-            // Fetch category and accounts info for transacitons
             lifecycleScope.launch {
-                val db = AppDatabase.getDatabase(this@TransactionHistory)
-                val acct = withContext(Dispatchers.IO) { db.accountDao().getById(tx.accountId) }
+                val db   = AppDatabase.getDatabase(this@TransactionHistory)
+                val acct= withContext(Dispatchers.IO) { db.accountDao().getById(tx.accountId) }
                 val cat = tx.categoryId?.let {
                     withContext(Dispatchers.IO) { db.categoryDao().getById(it) }
                 }
 
-                accountText.text = "Acct: ${acct?.accountName ?: "?"}"
-                val isAllocation = tx.description?.startsWith("Allocated to category:") == true
-                val categoryLabel = if (isAllocation) "[Allocated] ${cat?.categoryName}" else cat?.categoryName ?: "Unk"
-                val adjustedPrefix = if (isAllocation) "" else prefix
+                accountText.text = "Account: ${acct?.accountName ?: "?"}"
+                val isAlloc = tx.description?.startsWith("Allocated to category:") == true
+                val label   = if (isAlloc) "[Allocated] ${cat?.categoryName}" else cat?.categoryName ?: "Transfer"
+                val adjPref = if (isAlloc) "" else prefix
 
-                categoryText.text = "$categoryLabel  $adjustedPrefix$amtFormatted"
+                categoryText.text = "$label  $adjPref$amtFmt"
                 categoryText.setTextColor(
-                    if (!isAllocation && tx.amount < 0) getColor(R.color.red)
+                    if (!isAlloc && tx.amount < 0) getColor(R.color.red)
                     else getColor(R.color.black)
                 )
-
 
                 if (cat?.iconLocalPath != null) {
                     iconImage.setImageURI(cat.iconLocalPath.toUri())
                 } else {
-                    val resName = cat?.iconName ?: "vec_filter"
-                    val resId = resources.getIdentifier(resName, "drawable", packageName)
+                    val resName = cat?.iconName ?: "vec_transfer"
+                    val resId   = resources.getIdentifier(resName, "drawable", packageName)
                     iconImage.setImageResource(resId)
                 }
             }
@@ -210,67 +234,62 @@ class TransactionHistory : BaseActivity() {
         }
     }
 
-    // Show receipt image in fullscreen dialog
     private fun showReceiptFullScreen(uri: Uri) {
         val dialogView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_receipt_preview, null)
         val img = dialogView.findViewById<ImageView>(R.id.fullscreenReceiptImage)
         Glide.with(this).load(uri).into(img)
-        val dlg = AlertDialog.Builder(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-            .setView(dialogView).create()
+        val dlg = AlertDialog.Builder(
+            this,
+            android.R.style.Theme_Black_NoTitleBar_Fullscreen
+        )
+            .setView(dialogView)
+            .create()
         img.setOnClickListener { dlg.dismiss() }
         dlg.show()
     }
 
-    // Opens date picker for selecting filter dates
     private fun showFilterDialog() {
         lifecycleScope.launch {
-            // Get database instance, fetch according information
-            val db = AppDatabase.getDatabase(this@TransactionHistory)
-            val catIds = allTransactions.mapNotNull { it.categoryId }.distinct()
-            val catEntities = withContext(Dispatchers.IO) {
+            val db       = AppDatabase.getDatabase(this@TransactionHistory)
+            val catIds   = allTransactions.mapNotNull { it.categoryId }.distinct()
+            val cats = withContext(Dispatchers.IO) {
                 catIds.mapNotNull { id -> db.categoryDao().getById(id) }
             }
+            val nameToId = cats.associate { it.categoryName to it.categoryId }
+            val names    = nameToId.keys.toTypedArray()
+            val checked  = names.map { nameToId[it] in selectedCategories }.toBooleanArray()
 
-            val nameToId = catEntities.associate { it.categoryName to it.categoryId }
-            val names = nameToId.keys.toTypedArray()
-            val checked = names.map { nameToId[it] in selectedCategories }.toBooleanArray()
-
-            // Inflate the filter dialog layout
             val view = layoutInflater.inflate(R.layout.dialog_filter, null)
-            val startDateLabel = view.findViewById<TextView>(R.id.startDateLabel)
-            val endDateLabel = view.findViewById<TextView>(R.id.endDateLabel)
-            val startDateTap = view.findViewById<TextView>(R.id.startDateTap)
-            val endDateTap = view.findViewById<TextView>(R.id.endDateTap)
+            val startLbl = view.findViewById<TextView>(R.id.startDateLabel)
+            val endLbl   = view.findViewById<TextView>(R.id.endDateLabel)
+            val startTap = view.findViewById<TextView>(R.id.startDateTap)
+            val endTap   = view.findViewById<TextView>(R.id.endDateTap)
 
             if (startDate == null) startDate = Calendar.getInstance().time
-            if (endDate == null) endDate = Calendar.getInstance().time
+            if (endDate   == null) endDate   = Calendar.getInstance().time
 
-            startDateLabel.text = "Start Date: ${sdf.format(startDate!!)}"
-            endDateLabel.text = "End Date: ${sdf.format(endDate!!)}"
+            startLbl.text = "Start Date: ${sdf.format(startDate!!)}"
+            endLbl.text   = "End Date: ${sdf.format(endDate!!)}"
 
-            // Show date picker when start date field is tapped
-            startDateTap.setOnClickListener {
+            startTap.setOnClickListener {
                 pickDate { date ->
                     startDate = date
-                    startDateLabel.text = "Start Date: ${sdf.format(date)}"
+                    startLbl.text = "Start Date: ${sdf.format(date)}"
                 }
             }
-
-            endDateTap.setOnClickListener {
+            endTap.setOnClickListener {
                 pickDate { date ->
                     endDate = date
-                    endDateLabel.text = "End Date: ${sdf.format(date)}"
+                    endLbl.text   = "End Date: ${sdf.format(date)}"
                 }
             }
 
-            // Show filter dialog with  multi choice category selection
             AlertDialog.Builder(this@TransactionHistory)
                 .setTitle("Filter")
                 .setView(view)
                 .setMultiChoiceItems(names, checked) { _, i, isChecked ->
-                    val id = nameToId[names[i]]
-                    if (id != null) {
+                    nameToId[names[i]]?.let { id ->
                         if (isChecked) selectedCategories += id else selectedCategories -= id
                     }
                 }
@@ -278,7 +297,7 @@ class TransactionHistory : BaseActivity() {
                 .setNeutralButton("Reset") { _, _ ->
                     selectedCategories.clear()
                     startDate = null
-                    endDate = null
+                    endDate   = null
                     filteredTransactions = allTransactions
                     renderTransactions(formatter, conversionRate)
                 }
@@ -286,34 +305,31 @@ class TransactionHistory : BaseActivity() {
         }
     }
 
-    // Applies category and date filters to the transactions
     private fun applyFilter() {
         filteredTransactions = allTransactions.filter { tx ->
-            val catOk = selectedCategories.isEmpty() || selectedCategories.contains(tx.categoryId)
-            val date = sdf.parse(sdf.format(Date(tx.date)))!!
+            val catOk  = selectedCategories.isEmpty() || selectedCategories.contains(tx.categoryId)
+            val date   = sdf.parse(sdf.format(Date(tx.date)))!!
             val dateOk = (startDate?.let { !date.before(it) } ?: true) &&
-                    (endDate?.let { !date.after(it) } ?: true)
+                    (endDate?.let   { !date.after(it) }  ?: true)
             catOk && dateOk
         }
         renderTransactions(formatter, conversionRate)
     }
 
-    // Opens date picker and returns the selected date through a callback (GeekforGeeks, 2022)
     private fun pickDate(callback: (Date) -> Unit) {
-        val calendar = Calendar.getInstance()
-        val dpd = DatePickerDialog(this,
-            { _, year, month, day ->
-                calendar.set(year, month, day)
-                callback(calendar.time)
+        val cal = Calendar.getInstance()
+        DatePickerDialog(
+            this,
+            { _, y, m, d ->
+                cal.set(y, m, d)
+                callback(cal.time)
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        dpd.show()
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        ).show()
     }
 
-    // Shows a sorting dialog for transactions
     private fun showSortDialog() {
         val opts = arrayOf("Date ↓", "Date ↑", "Category A→Z", "Category Z→A")
         AlertDialog.Builder(this)
@@ -332,16 +348,16 @@ class TransactionHistory : BaseActivity() {
 
     override fun setActiveNavIcon(activeIcon: ImageView) {
         listOf(
-            R.id.nav_home to R.drawable.vec_home_inactive,
-            R.id.nav_wallet to R.drawable.vec_wallet_inactive,
+            R.id.nav_home    to R.drawable.vec_home_inactive,
+            R.id.nav_wallet  to R.drawable.vec_wallet_inactive,
             R.id.nav_reports to R.drawable.vec_reports_inactive,
             R.id.nav_profile to R.drawable.vec_profile_inactive
         ).forEach { (id, dr) ->
             findViewById<ImageView>(id).setImageResource(dr)
         }
         when (activeIcon.id) {
-            R.id.nav_home -> activeIcon.setImageResource(R.drawable.vec_home_active)
-            R.id.nav_wallet -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
+            R.id.nav_home    -> activeIcon.setImageResource(R.drawable.vec_home_active)
+            R.id.nav_wallet  -> activeIcon.setImageResource(R.drawable.vec_wallet_active)
             R.id.nav_reports -> activeIcon.setImageResource(R.drawable.vec_reports_active)
             R.id.nav_profile -> activeIcon.setImageResource(R.drawable.vec_profile_active)
         }
