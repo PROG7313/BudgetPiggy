@@ -57,34 +57,50 @@
 (REFERENCE LIST) 
 
 Ambitions, C., 2025. Kotlin Full Course | Kotlin For Beginners | Kotlin For Android KMP | Kotlin Tutorial 2025. [Online] 
+
 Available at: https://www.youtube.com/watch?v=8uEYI6lTGps&ab_channel=CodingAmbitions
+
 [Accessed 5 April 2025].
 
 Android, 2025. Android Platform. [Online] 
 Available at: https://developer.android.com/reference/android/package-summary?hl=en
+
 [Accessed 5 April 2025].
 
+
 CodingStuff, 2024. The Complete Beginner Guide for Room in Android 2024 | Local Database Tutorial for Android. [Online] 
+
 Available at: https://www.youtube.com/watch?v=r_UfOz3yaLg&ab_channel=CodingSTUFF
+
 [Accessed 10 April 2025].
 
 Developers, 2025. Develop a UI with Views. [Online] 
+
 Available at: https://developer.android.com/studio/write/layout-editor
+
 [Accessed 7 April 2025].
 
 Developers, 2025. Use Kotlin coroutines with lifecycle-aware components. [Online] 
+
 Available at: https://developer.android.com/topic/libraries/architecture/coroutines
+
 [Accessed 6 April 2025].
 
 Gaur, H., 2025. Master Encrypted Room Database in Android | Secure Your App's Data. [Online] 
+
 Available at: https://www.youtube.com/watch?v=PmxiYt1dR5s&ab_channel=HimanshuGaur
+
 [Accessed 6 April 2025].
 
 GeeksforGeeks, 2022. Dynamic Spinner in Android. [Online] 
+
 Available at: https://www.geeksforgeeks.org/dynamic-spinner-in-android/
+
 [Accessed 10 April 2025].
 
 tech, l., 2023. Android Studio User Interface - Layout and XML. [Online] 
+
 Available at: https://www.youtube.com/watch?v=kn_7H8v4Emo&ab_channel=larntech
+
 [Accessed 5 April 2025].
 
