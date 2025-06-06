@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNavBar"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:paddingHorizontal="16dp">
+
+    <!-- Home Icon -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/nav_home"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/vec_home_inactive"
+            android:contentDescription="@string/home" />
+    </LinearLayout>
+
+    <!-- Wallet Icon -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/nav_wallet"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/vec_wallet_inactive"
+            android:contentDescription="@string/wallet" />
+    </LinearLayout>
+
+    <!-- Reports Icon -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/nav_reports"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/vec_reports_inactive"
+            android:contentDescription="@string/reports" />
+    </LinearLayout>
+
+    <!-- Profile Icon -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/nav_profile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/vec_profile_inactive"
+            android:contentDescription="@string/profile" />
+    </LinearLayout>
+</LinearLayout>

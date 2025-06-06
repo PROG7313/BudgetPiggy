@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="34dp"
+    android:viewportWidth="40"
+    android:viewportHeight="34">
+
+  <!-- Bell Body -->
+  <path
+      android:pathData="M18.667,15.901C18.667,14.071 17.964,12.316 16.714,11.021C15.464,9.727 13.768,9 12,9C10.232,9 8.536,9.727 7.286,11.021C6.036,12.316 5.333,14.071 5.333,15.901C5.333,23.953 2,26.253 2,26.253H22C22,26.253 18.667,23.953 18.667,15.901Z"
+      android:strokeLineJoin="round"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#DC9D10"
+      android:strokeLineCap="round" />
+
+  <!-- Bell Ringer -->
+  <path
+      android:pathData="M13.922,30.854C13.727,31.202 13.446,31.492 13.109,31.693C12.772,31.894 12.389,32 12,32C11.611,32 11.228,31.894 10.891,31.693C10.554,31.492 10.273,31.202 10.078,30.854"
+      android:strokeLineJoin="round"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#DC9D10"
+      android:strokeLineCap="round" />
+
+  <!-- Dot / Notification Circle (optional) -->
+  <path
+      android:pathData="M19.751,10.329C19.751,11.057 19.183,11.632 18.5,11.631C17.818,11.631 17.25,11.055 17.251,10.327C17.251,9.599 17.819,9.024 18.502,9.025C19.184,9.025 19.752,9.601 19.751,10.329Z"
+      android:strokeWidth="0.5"
+      android:fillColor="#DC9D10"
+      android:strokeColor="#FFFFFF"/>
+</vector>
