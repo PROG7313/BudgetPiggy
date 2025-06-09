@@ -13,7 +13,7 @@
 ---
 
 ## 🎬 Video Demo
-▶️ [Watch our Demo](https://youtu.be/96Y0Juvut9k)
+▶️ [Watch our Demo](https://youtu.be/Kul3pZtZW9E)
 
 ---
 
@@ -41,7 +41,6 @@ By transforming mundane financial tasks into a gamified journey, we promote **fi
 | 🔄 **Transfers** | Move funds between accounts and categories |
 | 📈 **Streak Tracker** | Encourages daily check-ins and logging |
 
-> 📍 Backed by `Firebase` for a full experience, with  cloud DB sync.
 
 ---
 
@@ -58,7 +57,7 @@ By transforming mundane financial tasks into a gamified journey, we promote **fi
 
 1. 📈 **Graph Showing Timelines and Goals** – The Home Page includes a timeline-based visual representation of expenses and goal targets.
 2. 🧮 **Visual Goal Progression Bar** – A dynamic bar on the Home Page shows how the user is progressing toward monthly budget goals.
-3. ☁️ **Online Data Storage** – All data is synced and stored in **Firebase**, ensuring reliability and cloud backup.
+3. ☁️ **Online Data Storage** – Data is stored in **Firebase**.
 
 ---
 
