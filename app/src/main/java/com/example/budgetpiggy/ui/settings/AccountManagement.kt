@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -46,10 +47,10 @@ class AccountManagement : BaseActivity() {
     private var profileImagePath: String? = null
 
     private lateinit var profileImage: ImageView
-    private lateinit var firstNameEditText: EditText
-    private lateinit var lastNameEditText: EditText
     private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
+    private lateinit var emailTextView: TextView
+    private lateinit var fullNameEditText: EditText
+    private lateinit var fullNameTextView: TextView
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
 
@@ -120,28 +121,61 @@ class AccountManagement : BaseActivity() {
         }
 
         // Bind views
-        profileImage     = findViewById(R.id.profileImage)
-        firstNameEditText= findViewById(R.id.firstNameEditText)
-        lastNameEditText = findViewById(R.id.lastNameEditText)
-        emailEditText    = findViewById(R.id.emailEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        saveButton       = findViewById(R.id.saveButton)
-        deleteButton     = findViewById(R.id.deleteAccountButton)
+        fullNameEditText = findViewById(R.id.fullNameEditText)
+        fullNameTextView = findViewById(R.id.fullNameTextView)
+        emailEditText = findViewById(R.id.emailEditText)
+        emailTextView = findViewById(R.id.emailTextView)
+        saveButton = findViewById(R.id.saveButton)
+        profileImage = findViewById(R.id.profileImage)
+        deleteButton = findViewById(R.id.deleteAccountButton)
+
+        fullNameEditText.visibility = View.GONE
+        emailEditText.visibility = View.GONE
+        saveButton.visibility = View.GONE
 
         //  Load current user (CodingStuff, 2024).
         val userId = SessionManager.getUserId(this) ?: return
+        val firebaseId = SessionManager.getFirebaseUid(this) ?: return
+        Log.d("AccountManagement", "Using firebaseId: $firebaseId")
+
+        if (firebaseId.isNullOrEmpty()) {
+            runOnUiThread {
+                Toast.makeText(this@AccountManagement, "Firebase ID not found", Toast.LENGTH_LONG).show()
+            }
+            return
+        }
+
         lifecycleScope.launch {
             currentUser = withContext(Dispatchers.IO) {
                 userDao.getById(userId)!!
             }
 
-            // Populate text fields
-            firstNameEditText.setText(currentUser.firstName)
-            lastNameEditText.setText(currentUser.lastName)
-            emailEditText.setText(currentUser.email)
-            passwordEditText.hint = "••••••••••"
+            val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            firestore.collection("users").document(firebaseId).get()
+                .addOnSuccessListener { document ->
+                    Log.d("AccountManagement", "Firebase onSuccess called")
+                    if (document != null && document.exists()) {
+                        val fullName = document.getString("fullName")
+                        val email = document.getString("email")
+                        Log.d("AccountManagement", "Firebase fullName: $fullName, email: $email")
 
-            // Populate profile picture if stored locally
+                        if (!fullName.isNullOrEmpty() && !email.isNullOrEmpty()) {
+                            fullNameTextView.text = fullName
+                            emailTextView.text = email
+
+                        } else {
+                            Log.d("AccountManagement", "Document doesn't exist")
+                            Toast.makeText(this@AccountManagement, "User data missing in Firebase", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@AccountManagement, "User not found in Firebase", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this@AccountManagement, "Failed to load user from Firebase", Toast.LENGTH_SHORT).show()
+                }
+
+            // Profile image path from RoomDB
             currentUser.profilePictureLocalPath?.let { path ->
                 profileImage.setImageURI(path.toUri())
                 profileImagePath = path
@@ -151,38 +185,70 @@ class AccountManagement : BaseActivity() {
         //  Tapping the circle → choose or take photo
         profileImage.setOnClickListener { showProfileImageChooser() }
 
+        fullNameTextView.setOnClickListener {
+            fullNameTextView.visibility = View.GONE
+            fullNameEditText.visibility = View.VISIBLE
+            fullNameEditText.setText(fullNameTextView.text.toString())
+            saveButton.visibility = View.VISIBLE
+        }
+
+        emailTextView.setOnClickListener {
+            emailTextView.visibility = View.GONE
+            emailEditText.visibility = View.VISIBLE
+            emailEditText.setText(emailTextView.text.toString())
+            saveButton.visibility = View.VISIBLE
+        }
+
         //  Save updates
         saveButton.setOnClickListener {
-            val newFirst = firstNameEditText.text.toString().trim()
-            val newLast  = lastNameEditText.text.toString().trim()
+            val newFullname = fullNameEditText.text.toString().trim()
             val newEmail = emailEditText.text.toString().trim()
-            val newPwd   = passwordEditText.text.toString()
 
-            // Only re-hash if user entered something
-            val newHash = if (newPwd.isNotEmpty()) {
-                PasswordUtils.hashPassword(newPwd)
-            } else {
-                currentUser.passwordHash
-            }
 
             val updated = currentUser.copy(
-                firstName                = newFirst,
-                lastName                 = newLast,
-                email                    = newEmail,
-                passwordHash             = newHash,
-                profilePictureLocalPath  = profileImagePath
+                firstName               = newFullname,
+                email                   = newEmail,
+                profilePictureLocalPath = profileImagePath
             )
 
             lifecycleScope.launch(Dispatchers.IO) {
                 userDao.update(updated)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AccountManagement,
-                        "Profile saved", Toast.LENGTH_SHORT).show()
-                    currentUser = updated
-                    passwordEditText.setText("")
+
+                val fullName = newFullname
+                val firebaseId = SessionManager.getFirebaseUid(this@AccountManagement)
+
+                // Update Firebase as well
+                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                val firebaseData = mapOf(
+                    "fullName" to fullName,
+                    "email" to newEmail
+                )
+
+                firebaseId?.let {
+                    firestore.collection("users").document(it).update(firebaseData)
+                        .addOnSuccessListener {
+                            runOnUiThread {
+                                fullNameTextView.text = newFullname
+                                emailTextView.text = newEmail
+
+                                fullNameEditText.visibility = View.GONE
+                                emailEditText.visibility = View.GONE
+                                fullNameTextView.visibility = View.VISIBLE
+                                emailTextView.visibility = View.VISIBLE
+                                saveButton.visibility = View.GONE
+                                Toast.makeText(this@AccountManagement, "Profile saved", Toast.LENGTH_SHORT).show()
+                                currentUser = updated
+                            }
+                        }
+                        .addOnFailureListener {
+                            runOnUiThread {
+                                Toast.makeText(this@AccountManagement, "Saved locally but failed to update Firebase", Toast.LENGTH_LONG).show()
+                            }
+                        }
                 }
             }
         }
+
 
         //  Delete account (Android, 2025)
         deleteButton.setOnClickListener {
@@ -191,8 +257,25 @@ class AccountManagement : BaseActivity() {
                 .setMessage("This action cannot be undone. Are you sure?")
                 .setPositiveButton("Delete") { _, _ ->
                     lifecycleScope.launch(Dispatchers.IO) {
-                        //  remove user from database
+                        val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+                        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                        val firebaseUser = auth.currentUser
+                        val firebaseId = SessionManager.getFirebaseUid(this@AccountManagement)
+
+                        //  remove user from roomdb
                         userDao.delete(currentUser)
+                        // remove user from firebase
+                        if (firebaseId != null) {
+                            firestore.collection("users").document(firebaseId).delete()
+                        }
+                        firebaseUser?.delete()?.addOnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                // Re-auth may be needed if this fails
+                                runOnUiThread {
+                                    Toast.makeText(this@AccountManagement, "Failed to delete Firebase auth user. You may need to re-login.", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
 
                         //  clear all saved prefs so login state is reset
                         val prefs = getSharedPreferences("app_piggy_prefs", Context.MODE_PRIVATE)

@@ -53,13 +53,23 @@ object StreakTracker {
 object SessionManager {
     private const val PREFS_NAME  = "app_piggy_prefs"
     private const val KEY_USER_ID = "logged_in_user_id"
+    private const val KEY_FIREBASE_UID = "firebase_uid"
 
 
     fun saveUserId(context: Context, userId: String) {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit { putString(KEY_USER_ID, userId) }
+            .edit { putString(KEY_USER_ID, userId)}
+
     }
+
+    fun saveFirebaseId(context: Context, firebaseUid: String?) {
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit { putString(KEY_FIREBASE_UID, firebaseUid)}
+
+    }
+
 
     /** Anywhere you need the current user ID. */
     fun getUserId(context: Context): String? =
@@ -67,10 +77,16 @@ object SessionManager {
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getString(KEY_USER_ID, null)
 
+    fun getFirebaseUid(context: Context): String? {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_FIREBASE_UID, null)
+    }
+
     fun logout(context: Context) {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit { remove(KEY_USER_ID) }
+            .edit { remove(KEY_USER_ID)
+                    remove(KEY_FIREBASE_UID)}
     }
 }
 

@@ -57,73 +57,65 @@
                 android:background="@drawable/vec_profile_active"
                 android:contentDescription="@string/account_manage_profile" />
 
-            <!-- First Name -->
+
+
+            <!-- Full Name (Read-Only) -->
             <TextView
-                style="@style/Label"
+                android:id="@+id/fullNameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="First Name"
-                android:layout_marginBottom="4dp"/>
+                android:text="Full Name"
+                android:textSize="16sp"
+                android:padding="12dp"
+                android:background="@drawable/rounded_edit_text"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:textColor="@color/black"
+                android:drawableEnd="@drawable/icon_edit"
+                android:drawablePadding="8dp"/>
+
+            <!-- Editable Full Name (Hidden by default) -->
             <EditText
-                android:id="@+id/firstNameEditText"
+                android:id="@+id/fullNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/account_name_hint"
+                android:hint="Enter Full Name"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:visibility="gone" />
 
-            <!-- Last Name -->
+            <!-- Email (Read-Only) -->
             <TextView
-                style="@style/Label"
+                android:id="@+id/emailTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Last Name"
-                android:layout_marginBottom="4dp"/>
-            <EditText
-                android:id="@+id/lastNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/account_surname_hint"
-                android:background="@drawable/rounded_edit_text"
+                android:text="Email"
+                android:textSize="16sp"
                 android:padding="12dp"
+                android:background="@drawable/rounded_edit_text"
                 android:layout_marginBottom="12dp"
-                android:inputType="textPersonName" />
+                android:clickable="true"
+                android:focusable="true"
+                android:textColor="@color/black"
+                android:drawableEnd="@drawable/icon_edit"
+                android:drawablePadding="8dp"/>
 
-            <!-- Email Address -->
-            <TextView
-                style="@style/Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Email Address"
-                android:layout_marginBottom="4dp"/>
+            <!-- Editable Email (Hidden by default) -->
             <EditText
                 android:id="@+id/emailEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/account_email_hint"
+                android:hint="Enter Email"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:visibility="gone" />
 
-            <!-- Password -->
-            <TextView
-                style="@style/Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Password"
-                android:layout_marginBottom="4dp"/>
-            <EditText
-                android:id="@+id/passwordEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="••••••••"
-                android:background="@drawable/rounded_edit_text"
-                android:padding="12dp"
-                android:layout_marginBottom="24dp"
-                android:inputType="textPassword" />
+
 
             <!-- Save Changes Button -->
             <Button

@@ -153,9 +153,7 @@ class RegisterPage : BaseActivity() {
                             Toast.makeText(this, "Registration failed: $errorMessage", Toast.LENGTH_LONG).show()
                         }
                     }
-
-                    // Old RoomDB logic - now disabled
-                    /*
+                    // Old RoomDB logic
                     lifecycleScope.launch(Dispatchers.IO) {
                         val userDao = AppDatabase.getDatabase(this@RegisterPage).userDao()
                         val existingUser = userDao.getUserByEmail(email)
@@ -228,7 +226,6 @@ class RegisterPage : BaseActivity() {
                             finish()
                         }
                     }
-                    */
                 }
 
             loginRedirectText.setOnClickListener { v ->
@@ -248,71 +245,16 @@ class RegisterPage : BaseActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val firebaseUser = task.result?.user
-                    val uid = firebaseUser?.uid ?: return@addOnCompleteListener
+                    val uid = task.result?.user?.uid ?: return@addOnCompleteListener
                     val user = User(uid, fullName, email)
 
                     firestore.collection("users")
                         .document(uid)
                         .set(user)
                         .addOnSuccessListener {
-                            // 🔁 Continue with RoomDB reward + notification + redirect
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                try {
-                                    val prefs = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
-                                    val welcomeKey = "hasWelcomed_$uid"
-
-                                    if (!prefs.getBoolean(welcomeKey, false)) {
-                                        val db = AppDatabase.getDatabase(this@RegisterPage)
-                                        val rewardRepo = RewardRepository(
-                                            rewardDao = db.rewardDao(),
-                                            codeDao = db.rewardCodeDao(),
-                                            notifDao = db.notificationDao()
-                                        )
-
-                                        rewardRepo.unlockCode(userId = uid, code = "SIGNUP2025")
-
-                                        NotificationHelper.sendNotification(
-                                            context = this@RegisterPage,
-                                            title = "🎁 Reward Unlocked!",
-                                            message = "You just unlocked WELCOME BONUS reward!"
-                                        )
-
-                                        val welcomeNotif = NotificationEntity(
-                                            notificationId = UUID.randomUUID().toString(),
-                                            userId = uid,
-                                            message = "🎉 Welcome to Budget Piggy! Let’s get started.",
-                                            timestamp = System.currentTimeMillis(),
-                                            isRead = false,
-                                            iconUrl = "android.resource://${packageName}/${R.drawable.ic_welcome_bonus}",
-                                            rewardCodeId = null
-                                        )
-                                        db.notificationDao().insert(welcomeNotif)
-
-                                        prefs.edit().putBoolean(welcomeKey, true).apply()
-                                    }
-
-                                    // ✅ Save session & mark getting started
-                                    SessionManager.saveUserId(this@RegisterPage, uid)
-                                    Log.d("SessionManager", "✅ Saved userId: $uid")
-                                    prefs.edit {
-                                        putBoolean("needs_getting_started", true)
-                                    }
-
-                                    withContext(Dispatchers.Main) {
-                                        val intent = Intent(this@RegisterPage, SplashActivity::class.java).apply {
-                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        }
-                                        onResult(true, null)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                } catch (e: Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(this@RegisterPage, "Something went wrong: ${e.message}", Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            }
+                            // Save session
+                            SessionManager.saveFirebaseId(this@RegisterPage, uid)
+                            onResult(true, null)
                         }
                         .addOnFailureListener { e ->
                             onResult(false, e.message)
@@ -322,6 +264,6 @@ class RegisterPage : BaseActivity() {
                 }
             }
     }
-
 }
+
 
