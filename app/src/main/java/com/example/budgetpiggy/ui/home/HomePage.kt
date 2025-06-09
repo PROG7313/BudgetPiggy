@@ -34,6 +34,7 @@ import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+
 class HomePage : BaseActivity() {
 
     private lateinit var streakBadge: TextView

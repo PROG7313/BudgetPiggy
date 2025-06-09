@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -26,24 +27,24 @@ import androidx.core.content.edit
 import com.example.budgetpiggy.data.repository.RewardRepository
 import com.example.budgetpiggy.ui.core.BaseActivity
 import com.example.budgetpiggy.ui.notifications.NotificationHelper
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.example.budgetpiggy.data.entities.User
+import com.example.budgetpiggy.ui.home.HomePage
 
 class RegisterPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Modern edge to edge UI
         enableEdgeToEdge()
         setContentView(R.layout.register)
 
-        // handle system-bar insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.RegisterPage)) { v, insets ->
             val sb = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
 
-        // view references
         val backArrow = findViewById<ImageView>(R.id.backArrow)
         val firstNameEdit = findViewById<EditText>(R.id.firstNameEditText)
         val firstNameLabel = findViewById<TextView>(R.id.firstNameLabel)
@@ -57,7 +58,6 @@ class RegisterPage : BaseActivity() {
         val signUpButton = findViewById<Button>(R.id.signUpButton)
         val loginRedirectText = findViewById<TextView>(R.id.loginRedirectText)
 
-        // back arrow animation
         backArrow.setOnClickListener { v ->
             v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
                 .withEndAction {
@@ -66,7 +66,6 @@ class RegisterPage : BaseActivity() {
                 }.start()
         }
 
-        // toggle password visibility
         var isPwdVisible = false
         eyeIcon.setOnClickListener {
             isPwdVisible = !isPwdVisible
@@ -81,7 +80,6 @@ class RegisterPage : BaseActivity() {
             passwordEdit.setSelection(passwordEdit.text.length)
         }
 
-        // floating labels helper (Developers, 2025).
         fun setupFloatingLabel(editTxt: EditText, label: TextView, hint: String) {
             editTxt.setOnFocusChangeListener { _, focused ->
                 if (focused || editTxt.text.isNotEmpty()) {
@@ -117,25 +115,16 @@ class RegisterPage : BaseActivity() {
                     }
                 }
 
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
-
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
         }
 
-        // attach floating labels (Gaur, 2025).
         setupFloatingLabel(firstNameEdit, firstNameLabel, getString(R.string.first_name))
         setupFloatingLabel(lastNameEdit, lastNameLabel, getString(R.string.last_name))
         setupFloatingLabel(emailEdit, emailLabel, getString(R.string.email_address))
         setupFloatingLabel(passwordEdit, passwordLabel, getString(R.string.password))
 
-        // signup button
         signUpButton.setOnClickListener { v ->
             v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
                 .withEndAction {
@@ -145,34 +134,33 @@ class RegisterPage : BaseActivity() {
                     val last = lastNameEdit.text.toString().trim()
                     val email = emailEdit.text.toString().trim()
                     val pwd = passwordEdit.text.toString()
+
                     if (pwd.length < 8 || !pwd.any { it.isDigit() } || !pwd.any { it.isUpperCase() }) {
                         Toast.makeText(this, "Password must be at least 8 characters, contain a digit and an uppercase letter.", Toast.LENGTH_LONG).show()
                         return@withEndAction
                     }
 
-                    if (first.isBlank() || last.isBlank() ||
-                        email.isBlank() || pwd.isBlank()
-                    ) {
-                        Toast.makeText(
-                            this,
-                            "Please fill in all fields",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    if (first.isBlank() || last.isBlank() || email.isBlank() || pwd.isBlank()) {
+                        Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                         return@withEndAction
                     }
 
-                    // (Developers, 2025).
+                    val fullName = "$first $last"
+
+                    // Firebase Registration
+                    registerUser(email, pwd, fullName) { success, errorMessage ->
+                        if (!success) {
+                            Toast.makeText(this, "Registration failed: $errorMessage", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    // Old RoomDB logic
                     lifecycleScope.launch(Dispatchers.IO) {
                         val userDao = AppDatabase.getDatabase(this@RegisterPage).userDao()
                         val existingUser = userDao.getUserByEmail(email)
 
                         if (existingUser != null) {
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    this@RegisterPage,
-                                    "An account with this email already exists.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(this@RegisterPage, "An account with this email already exists.", Toast.LENGTH_SHORT).show()
                             }
                             return@launch
                         }
@@ -188,7 +176,6 @@ class RegisterPage : BaseActivity() {
                             profilePictureLocalPath = null,
                             currency = "ZAR",
                             passwordHash = PasswordUtils.hashPassword(pwd)
-
                         )
                         userDao.insert(user)
 
@@ -199,61 +186,48 @@ class RegisterPage : BaseActivity() {
                             val db = AppDatabase.getDatabase(this@RegisterPage)
                             val rewardRepo = RewardRepository(
                                 rewardDao = db.rewardDao(),
-                                codeDao   = db.rewardCodeDao(),
-                                notifDao  = db.notificationDao()
+                                codeDao = db.rewardCodeDao(),
+                                notifDao = db.notificationDao()
                             )
 
-                            // Launch coroutine if not already inside one
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                // 1. Unlock reward (inserts Reward + Unlock notification)
-                                rewardRepo.unlockCode(userId = newUserId, code = "SIGNUP2025")
+                            rewardRepo.unlockCode(userId = newUserId, code = "SIGNUP2025")
 
-                                // 2. Send system notification
-                                NotificationHelper.sendNotification(
-                                    context = this@RegisterPage,
-                                    title = "🎁 Reward Unlocked!",
-                                    message = "You just unlocked WELCOME BONUS reward!"
-                                )
+                            NotificationHelper.sendNotification(
+                                context = this@RegisterPage,
+                                title = "🎁 Reward Unlocked!",
+                                message = "You just unlocked WELCOME BONUS reward!"
+                            )
 
-                            // 3. Insert soft welcome notification (optional)
-                                val welcomeNotif = NotificationEntity(
-                                    notificationId = UUID.randomUUID().toString(),
-                                    userId         = newUserId,
-                                    message        = "🎉 Welcome to Budget Piggy! Let’s get started.",
-                                    timestamp      = System.currentTimeMillis(),
-                                    isRead         = false,
-                                    iconUrl        = "android.resource://${packageName}/${R.drawable.ic_welcome_bonus}",
-                                    rewardCodeId   = null
-                                )
-                                db.notificationDao().insert(welcomeNotif)
+                            val welcomeNotif = NotificationEntity(
+                                notificationId = UUID.randomUUID().toString(),
+                                userId = newUserId,
+                                message = "🎉 Welcome to Budget Piggy! Let’s get started.",
+                                timestamp = System.currentTimeMillis(),
+                                isRead = false,
+                                iconUrl = "android.resource://${packageName}/${R.drawable.ic_welcome_bonus}",
+                                rewardCodeId = null
+                            )
+                            db.notificationDao().insert(welcomeNotif)
 
-
-                                // 3. Mark welcome complete
-                                prefs.edit().putBoolean(welcomeKey, true).apply()
-                            }
+                            prefs.edit().putBoolean(welcomeKey, true).apply()
                         }
 
-
-
-                        // persist the logged in user id to the shared preferences
                         SessionManager.saveUserId(this@RegisterPage, newUserId)
                         getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
                             .edit {
                                 putBoolean("needs_getting_started", true)
                             }
+
                         withContext(Dispatchers.Main) {
                             val intent = Intent(this@RegisterPage, SplashActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             }
                             startActivity(intent)
                             finish()
-
                         }
                     }
-
                 }
 
-            // login redirect
             loginRedirectText.setOnClickListener { v ->
                 v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25)
                     .withEndAction {
@@ -263,4 +237,33 @@ class RegisterPage : BaseActivity() {
             }
         }
     }
+
+    fun registerUser(email: String, password: String, fullName: String, onResult: (Boolean, String?) -> Unit) {
+        val auth = FirebaseAuth.getInstance()
+        val firestore = FirebaseFirestore.getInstance()
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val uid = task.result?.user?.uid ?: return@addOnCompleteListener
+                    val user = User(uid, fullName, email)
+
+                    firestore.collection("users")
+                        .document(uid)
+                        .set(user)
+                        .addOnSuccessListener {
+                            // Save session
+                            SessionManager.saveFirebaseId(this@RegisterPage, uid)
+                            onResult(true, null)
+                        }
+                        .addOnFailureListener { e ->
+                            onResult(false, e.message)
+                        }
+                } else {
+                    onResult(false, task.exception?.message)
+                }
+            }
+    }
 }
+
+

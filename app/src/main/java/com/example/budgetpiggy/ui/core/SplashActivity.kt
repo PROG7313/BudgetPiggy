@@ -28,6 +28,7 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("SplashActivity", "🚀 onCreate started")
 
         // 1. Notification channel
         NotificationHelper.createNotificationChannel(this)
@@ -68,6 +69,7 @@ class SplashActivity : AppCompatActivity() {
                 val seenOnboarding      = prefs.getBoolean("has_seen_onboarding", false)
                 val userId              = prefs.getString("logged_in_user_id", null)
                 val needsGettingStarted = prefs.getBoolean("needs_getting_started", false)
+                Log.d("Splash", "userId=$userId, needsGettingStarted=$needsGettingStarted")
 
                 when {
                     !seenOnboarding -> {
