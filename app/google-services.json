@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "323467763622",
+    "project_id": "budgetpiggy-dccef",
+    "storage_bucket": "budgetpiggy-dccef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323467763622:android:1ea46cf89c5fb5ae94b967",
+        "android_client_info": {
+          "package_name": "com.example.budgetpiggy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0SDrSkFNvw8vTTv6nC8xt9tGe7gC_WdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
