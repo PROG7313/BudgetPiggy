@@ -69,8 +69,6 @@ object SessionManager {
             .edit { putString(KEY_FIREBASE_UID, firebaseUid)}
 
     }
-
-
     /** Anywhere you need the current user ID. */
     fun getUserId(context: Context): String? =
         context

@@ -5,9 +5,7 @@
     android:id="@+id/accountManagementPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient_background"
-    android:focusableInTouchMode="true"
-    android:clickable="true">
+    android:background="@drawable/bg_gradient_background">
 
     <!-- Top Bar -->
     <include

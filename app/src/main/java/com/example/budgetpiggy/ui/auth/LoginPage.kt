@@ -92,17 +92,17 @@ class LoginPage : BaseActivity() {
         // Navigate to RegisterPage on sign-up click (Developers, 2025)
         signUpTextView.setOnClickListener { view ->
             view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25).withEndAction {
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
-                    startActivity(Intent(this, RegisterPage::class.java))
-                }.start()
+                view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                startActivity(Intent(this, RegisterPage::class.java))
+            }.start()
 
         }
 
         // Back arrow navigation and animation
         backArrow.setOnClickListener { view ->
             view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(25).withEndAction {
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
-                    onBackPressed()
+                view.animate().scaleX(1f).scaleY(1f).setDuration(25).start()
+                onBackPressed()
             }.start()
         }
 
@@ -134,12 +134,12 @@ class LoginPage : BaseActivity() {
                     }
                     editText.hint = ""
                 } else if (editText.text.isEmpty()) {
-                        label.animate()
-                            .alpha(0f)
-                            .setDuration(400)
-                            .withEndAction { label.visibility = View.GONE }
-                            .start()
-                        editText.hint = hintText
+                    label.animate()
+                        .alpha(0f)
+                        .setDuration(400)
+                        .withEndAction { label.visibility = View.GONE }
+                        .start()
+                    editText.hint = hintText
                 }
             }
 

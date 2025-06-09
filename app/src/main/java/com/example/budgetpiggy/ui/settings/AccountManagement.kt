@@ -37,6 +37,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import androidx.core.content.edit
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.tasks.await
 
 class AccountManagement : BaseActivity() {
 
@@ -132,53 +135,65 @@ class AccountManagement : BaseActivity() {
         fullNameEditText.visibility = View.GONE
         emailEditText.visibility = View.GONE
         saveButton.visibility = View.GONE
+        fullNameTextView.visibility = View.VISIBLE
+        emailTextView.visibility = View.VISIBLE
 
         //  Load current user (CodingStuff, 2024).
         val userId = SessionManager.getUserId(this) ?: return
-        val firebaseId = SessionManager.getFirebaseUid(this) ?: return
-        Log.d("AccountManagement", "Using firebaseId: $firebaseId")
-
-        if (firebaseId.isNullOrEmpty()) {
-            runOnUiThread {
-                Toast.makeText(this@AccountManagement, "Firebase ID not found", Toast.LENGTH_LONG).show()
-            }
+        if (userId == null) {
+            Toast.makeText(this, "User ID missing!", Toast.LENGTH_LONG).show()
             return
         }
 
         lifecycleScope.launch {
-            currentUser = withContext(Dispatchers.IO) {
-                userDao.getById(userId)!!
+            val userFromDb: UserEntity? = userDao.getById(userId)
+            if (userFromDb != null) {
+                currentUser = userFromDb
+                withContext(Dispatchers.Main) {
+                    fullNameTextView.text = currentUser.firstName
+                    emailTextView.text = currentUser.email
+                    profileImagePath = currentUser.profilePictureLocalPath
+                    // optionally load profileImage from path here
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@AccountManagement, "User not found locally", Toast.LENGTH_LONG).show()
+                }
             }
+        }
 
-            val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-            firestore.collection("users").document(firebaseId).get()
-                .addOnSuccessListener { document ->
-                    Log.d("AccountManagement", "Firebase onSuccess called")
-                    if (document != null && document.exists()) {
-                        val fullName = document.getString("fullName")
-                        val email = document.getString("email")
-                        Log.d("AccountManagement", "Firebase fullName: $fullName, email: $email")
 
-                        if (!fullName.isNullOrEmpty() && !email.isNullOrEmpty()) {
-                            fullNameTextView.text = fullName
-                            emailTextView.text = email
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_LONG).show()
+            return
+        }
+        val firebaseId = firebaseUser.uid
+        if (userId == null || firebaseId == null) {
+            Toast.makeText(this, "User ID or Firebase ID missing!", Toast.LENGTH_LONG).show()
+            return
+        }
 
-                        } else {
-                            Log.d("AccountManagement", "Document doesn't exist")
-                            Toast.makeText(this@AccountManagement, "User data missing in Firebase", Toast.LENGTH_SHORT).show()
-                        }
+
+        lifecycleScope.launch {
+            try {
+                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                val document = firestore.collection("users").document(firebaseId).get().await()
+                if (document.exists()) {
+                    val fullName = document.getString("fullName")
+                    val email = document.getString("email")
+                    if (!fullName.isNullOrEmpty() && !email.isNullOrEmpty()) {
+                        fullNameTextView.text = fullName
+                        emailTextView.text = email
                     } else {
-                        Toast.makeText(this@AccountManagement, "User not found in Firebase", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AccountManagement, "User data missing in Firebase", Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    Toast.makeText(this@AccountManagement, "User not found in Firebase", Toast.LENGTH_SHORT).show()
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this@AccountManagement, "Failed to load user from Firebase", Toast.LENGTH_SHORT).show()
-                }
-
-            // Profile image path from RoomDB
-            currentUser.profilePictureLocalPath?.let { path ->
-                profileImage.setImageURI(path.toUri())
-                profileImagePath = path
+            } catch (e: Exception) {
+                Toast.makeText(this@AccountManagement, "Failed to load user from Firebase: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("AccountManagement", "Firebase load failed", e)
             }
         }
 
@@ -201,50 +216,79 @@ class AccountManagement : BaseActivity() {
 
         //  Save updates
         saveButton.setOnClickListener {
-            val newFullname = fullNameEditText.text.toString().trim()
-            val newEmail = emailEditText.text.toString().trim()
+            val newFullname = if (fullNameEditText.visibility == View.VISIBLE) {
+                fullNameEditText.text.toString().trim()
+            } else {
+                fullNameTextView.text.toString()
+            }
 
+            val newEmail = if (emailEditText.visibility == View.VISIBLE) {
+                emailEditText.text.toString().trim()
+            } else {
+                emailTextView.text.toString()
+            }
+
+            if (!::currentUser.isInitialized) {
+                Toast.makeText(this, "User data is not loaded yet. Please try again.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            val firebaseId = firebaseUser?.uid
+
+            if (firebaseId == null) {
+                Toast.makeText(this, "Firebase user is not logged in.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val updated = currentUser.copy(
-                firstName               = newFullname,
-                email                   = newEmail,
-                profilePictureLocalPath = profileImagePath
+                firstName = newFullname,
+                email = newEmail,
+                profilePictureLocalPath = profileImagePath ?: currentUser.profilePictureLocalPath
             )
 
             lifecycleScope.launch(Dispatchers.IO) {
-                userDao.update(updated)
+                try {
+                    // Update local DB
+                    userDao.update(updated)
 
-                val fullName = newFullname
-                val firebaseId = SessionManager.getFirebaseUid(this@AccountManagement)
+                    // Update Firestore with set + merge
+                    val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    val firebaseData = mapOf(
+                        "fullName" to newFullname,
+                        "email" to newEmail
+                    )
+                    firestore.collection("users").document(firebaseId).set(firebaseData, com.google.firebase.firestore.SetOptions.merge()).await()
 
-                // Update Firebase as well
-                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                val firebaseData = mapOf(
-                    "fullName" to fullName,
-                    "email" to newEmail
-                )
-
-                firebaseId?.let {
-                    firestore.collection("users").document(it).update(firebaseData)
-                        .addOnSuccessListener {
-                            runOnUiThread {
-                                fullNameTextView.text = newFullname
-                                emailTextView.text = newEmail
-
-                                fullNameEditText.visibility = View.GONE
-                                emailEditText.visibility = View.GONE
-                                fullNameTextView.visibility = View.VISIBLE
-                                emailTextView.visibility = View.VISIBLE
-                                saveButton.visibility = View.GONE
-                                Toast.makeText(this@AccountManagement, "Profile saved", Toast.LENGTH_SHORT).show()
-                                currentUser = updated
+                    // Update Firebase Auth email (handle separately)
+                    if (firebaseUser.email != newEmail) {
+                        try {
+                            firebaseUser.updateEmail(newEmail).await()
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(this@AccountManagement, "Failed to update email in Firebase Auth. Please re-login.", Toast.LENGTH_LONG).show()
                             }
                         }
-                        .addOnFailureListener {
-                            runOnUiThread {
-                                Toast.makeText(this@AccountManagement, "Saved locally but failed to update Firebase", Toast.LENGTH_LONG).show()
-                            }
-                        }
+                    }
+
+                    // Update UI
+                    withContext(Dispatchers.Main) {
+                        fullNameTextView.text = newFullname
+                        emailTextView.text = newEmail
+
+                        fullNameEditText.visibility = View.GONE
+                        emailEditText.visibility = View.GONE
+                        fullNameTextView.visibility = View.VISIBLE
+                        emailTextView.visibility = View.VISIBLE
+                        saveButton.visibility = View.GONE
+
+                        Toast.makeText(this@AccountManagement, "Profile saved", Toast.LENGTH_SHORT).show()
+                        currentUser = updated
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@AccountManagement, "Failed to save profile: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
