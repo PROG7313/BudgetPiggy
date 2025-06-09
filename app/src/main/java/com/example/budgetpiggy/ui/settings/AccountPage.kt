@@ -3,12 +3,10 @@ package com.example.budgetpiggy.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
@@ -25,10 +23,8 @@ import com.example.budgetpiggy.ui.rewards.RewardsActivity
 import com.example.budgetpiggy.ui.transaction.TransactionHistory
 import com.example.budgetpiggy.ui.wallet.WalletPage
 import com.example.budgetpiggy.utils.SessionManager
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class AccountPage : BaseActivity() {
@@ -63,32 +59,23 @@ class AccountPage : BaseActivity() {
         ivAvatar    = findViewById(R.id.ivAvatar)
         tvUserName  = findViewById(R.id.tvUserName)
 
-
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_LONG).show()
-            return
-        }
-        val firebaseId = firebaseUser.uid
         // Load user from DB
-        lifecycleScope.launch {
-            try {
-                val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                val document = firestore.collection("users").document(firebaseId).get().await()
-                if (document.exists()) {
-                    val fullName = document.getString("fullName")
-                    val email = document.getString("email")
-                    if (!fullName.isNullOrEmpty() && !email.isNullOrEmpty()) {
-                        tvUserName.text = fullName
-                    } else {
-                        Toast.makeText(this@AccountPage, "User data missing in Firebase", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this@AccountPage , "User not found in Firebase", Toast.LENGTH_SHORT).show()
+        val userId = SessionManager.getUserId(this) ?: return
+        lifecycleScope.launch(Dispatchers.IO) {
+            val user = AppDatabase
+                .getDatabase(this@AccountPage)
+                .userDao()
+                .getById(userId)
+
+            withContext(Dispatchers.Main) {
+                tvUserName.text = user?.firstName ?: ""
+
+                // display profile picture
+                user?.profilePictureLocalPath?.let { path ->
+                    ivAvatar.setImageURI(path.toUri())
+                } ?: user?.profilePictureUrl?.let { url ->
+                    ivAvatar.setImageURI(url.toUri())
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@AccountPage, "Failed to load user from Firebase: ${e.message}", Toast.LENGTH_SHORT).show()
-                Log.e("AccountManagement", "Firebase load failed", e)
             }
         }
 

@@ -5,7 +5,9 @@
     android:id="@+id/accountManagementPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient_background">
+    android:background="@drawable/bg_gradient_background"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
 
     <!-- Top Bar -->
     <include
@@ -55,65 +57,73 @@
                 android:background="@drawable/vec_profile_active"
                 android:contentDescription="@string/account_manage_profile" />
 
-
-
-            <!-- Full Name (Read-Only) -->
+            <!-- First Name -->
             <TextView
-                android:id="@+id/fullNameTextView"
+                style="@style/Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Full Name"
-                android:textSize="16sp"
-                android:padding="12dp"
-                android:background="@drawable/rounded_edit_text"
-                android:layout_marginBottom="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:textColor="@color/black"
-                android:drawableEnd="@drawable/icon_edit"
-                android:drawablePadding="8dp"/>
-
-            <!-- Editable Full Name (Hidden by default) -->
+                android:text="First Name"
+                android:layout_marginBottom="4dp"/>
             <EditText
-                android:id="@+id/fullNameEditText"
+                android:id="@+id/firstNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Full Name"
+                android:hint="@string/account_name_hint"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"
-                android:inputType="textPersonName"
-                android:visibility="gone" />
+                android:inputType="textPersonName" />
 
-            <!-- Email (Read-Only) -->
+            <!-- Last Name -->
             <TextView
-                android:id="@+id/emailTextView"
+                style="@style/Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Email"
-                android:textSize="16sp"
-                android:padding="12dp"
+                android:text="Last Name"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/lastNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/account_surname_hint"
                 android:background="@drawable/rounded_edit_text"
+                android:padding="12dp"
                 android:layout_marginBottom="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:textColor="@color/black"
-                android:drawableEnd="@drawable/icon_edit"
-                android:drawablePadding="8dp"/>
+                android:inputType="textPersonName" />
 
-            <!-- Editable Email (Hidden by default) -->
+            <!-- Email Address -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email Address"
+                android:layout_marginBottom="4dp"/>
             <EditText
                 android:id="@+id/emailEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Email"
+                android:hint="@string/account_email_hint"
                 android:background="@drawable/rounded_edit_text"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"
-                android:inputType="textEmailAddress"
-                android:visibility="gone" />
+                android:inputType="textEmailAddress" />
 
-
+            <!-- Password -->
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="••••••••"
+                android:background="@drawable/rounded_edit_text"
+                android:padding="12dp"
+                android:layout_marginBottom="24dp"
+                android:inputType="textPassword" />
 
             <!-- Save Changes Button -->
             <Button
