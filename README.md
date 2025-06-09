@@ -1,4 +1,3 @@
-
 # 🐷 BUDGET PIGGY  
 ### PROG7313 POE 🎓 – Personal Budgeting Reinvented
 
@@ -43,6 +42,23 @@ By transforming mundane financial tasks into a gamified journey, we promote **fi
 | 📈 **Streak Tracker** | Encourages daily check-ins and logging |
 
 > 📍 Backed by `Firebase` for a full experience, with  cloud DB sync.
+
+---
+
+## 💎 Own Features
+
+| Feature | Description |
+|--------|-------------|
+| 🔥 **Active Streaks & Smart Notifications** | Tracks user streaks and sends helpful reminders based on usage patterns and budget goals. Encourages consistent engagement. |
+| 🌍 **Live Currency Conversion** | Users can view all values in their preferred currency using real-time exchange rates for accurate tracking. |
+
+---
+
+## 🧱 Core Features
+
+1. 📈 **Graph Showing Timelines and Goals** – The Home Page includes a timeline-based visual representation of expenses and goal targets.
+2. 🧮 **Visual Goal Progression Bar** – A dynamic bar on the Home Page shows how the user is progressing toward monthly budget goals.
+3. ☁️ **Online Data Storage** – All data is synced and stored in **Firebase**, ensuring reliability and cloud backup.
 
 ---
 
@@ -91,7 +107,6 @@ By transforming mundane financial tasks into a gamified journey, we promote **fi
 - Built UI/UX prototypes in Figma
 - Developed backend logic and integrated APIs
 - Implemented testing & documentation phases
-
 
 ### ✅ GitHub & GitHub Actions
 - 🔄 Version control using GitHub
@@ -164,9 +179,9 @@ Available at: https://www.youtube.com/watch?v=kn_7H8v4Emo&ab_channel=larntech
 
 ## 🚀 Future Enhancements
 
-- AI-driven budget suggestions
-- Shared budgeting across users
-- Kotlin Multiplatform support
+- AI-driven budget suggestions  
+- Shared budgeting across users  
+- Kotlin Multiplatform support  
 
 ---
 
@@ -176,4 +191,3 @@ We welcome stars ⭐, forks 🍴, and feedback 💬!
 Please open an issue or contact a team member for support.
 
 ---
-
