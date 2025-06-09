@@ -35,10 +35,12 @@ class TransferFunds : BaseActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.transfer_funds)
+        // Hide unwanted UI elements
         findViewById<ImageView>(R.id.piggyIcon).visibility = View.GONE
         findViewById<TextView>(R.id.greetingText).visibility = View.GONE
         findViewById<ImageView>(R.id.streakIcon).visibility = View.GONE
 
+        // Set page title
         val pageTitle = findViewById<TextView>(R.id.pageTitle)
         pageTitle.visibility = View.VISIBLE
         pageTitle.text = getString(R.string.transfer_funds)
@@ -49,7 +51,6 @@ class TransferFunds : BaseActivity() {
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
-
 
         //  Top bar
         findViewById<ImageView>(R.id.backArrow)
@@ -64,7 +65,7 @@ class TransferFunds : BaseActivity() {
         val btnTransfer = findViewById<Button>(R.id.btnTransferFunds)
         val btnTxn = findViewById<Button>(R.id.btnMakeTransaction)
 
-        var navigating = false // guard to prevent double tap
+        var navigating = false // guard to prevent double tap (CodeStuff, 2024)
 
         btnTxn.setOnClickListener {
             if (navigating) return@setOnClickListener
@@ -81,8 +82,6 @@ class TransferFunds : BaseActivity() {
         }
 
 
-
-
         // Amount → system keyboard
         val amountInput = findViewById<EditText>(R.id.amountInput)
         amountInput.setOnFocusChangeListener { v, has ->
@@ -92,7 +91,7 @@ class TransferFunds : BaseActivity() {
             }
         }
 
-        //  Sub-mode selector
+        //  Sub-mode selector (Android, 2025)
         val btnModeAccount  = findViewById<Button>(R.id.btnModeAccount)
         val btnModeCategory = findViewById<Button>(R.id.btnModeCategory)
         val groupAccToAcc   = findViewById<LinearLayout>(R.id.groupAccountToAccount)
@@ -112,9 +111,11 @@ class TransferFunds : BaseActivity() {
             groupAccToCat.visibility = View.VISIBLE
         }
 
+        // Spinners to select accounts
         val spinnerFromAcc = findViewById<Spinner>(R.id.spinnerFromAccountAcc)
         val spinnerToAcc = findViewById<Spinner>(R.id.spinnerToAccountAcc)
         val spinnerFromCat = findViewById<Spinner>(R.id.spinnerFromAccountCat)
+        // Load user accounts and bind to spinners
         lifecycleScope.launch {
             val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
                 .getString("logged_in_user_id", null) ?: return@launch
@@ -153,7 +154,7 @@ class TransferFunds : BaseActivity() {
 
         }
 
-//  Populate categories dynamically
+        //  Populate categories dynamically
         val catContainer = findViewById<LinearLayout>(R.id.categoryToList)
 
         lifecycleScope.launch {
@@ -194,7 +195,6 @@ class TransferFunds : BaseActivity() {
             }
         }
 
-        //  Confirm
         findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             val amountStr = findViewById<EditText>(R.id.amountInput).text.toString()
             val amount = amountStr.toDoubleOrNull()
@@ -207,7 +207,7 @@ class TransferFunds : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val db = AppDatabase.getDatabase(this@TransferFunds)
                 val accountDao = db.accountDao()
-                val transactionDao = db.transactionDao()
+                val transferDao = db.transferDao()
                 val categoryDao = db.categoryDao()
 
                 val userId = getSharedPreferences("app_piggy_prefs", MODE_PRIVATE)
@@ -216,7 +216,6 @@ class TransferFunds : BaseActivity() {
                 val now = System.currentTimeMillis()
 
                 if (isAccountToAccountMode) {
-                    // --- Account → Account ---
                     val fromAccount = selectedFromAccountId?.let { accountDao.getById(it) }
                     val toAccount = selectedToAccountId?.let { accountDao.getById(it) }
 
@@ -234,44 +233,20 @@ class TransferFunds : BaseActivity() {
                         return@launch
                     }
 
+                    accountDao.updateBalance(fromAccount.accountId, fromAccount.balance - amount)
+                    accountDao.updateBalance(toAccount.accountId, toAccount.balance + amount)
+                    accountDao.updateInitialBalance(toAccount.accountId, toAccount.initialBalance + amount)
 
-                    val change = amount // already guaranteed > 0
-
-                    val fromNewBal = fromAccount.balance - change
-                    accountDao.updateBalance(fromAccount.accountId, fromNewBal)
-
-
-                    val toNewBal   = toAccount.balance + change
-                    val toNewTotal = toAccount.initialBalance + change
-
-                    accountDao.updateBalance(toAccount.accountId, toNewBal)
-                    accountDao.updateInitialBalance(toAccount.accountId, toNewTotal)
-
-
-                    transactionDao.insert(
-                        TransactionEntity(
-                            transactionId = UUID.randomUUID().toString(),
-                            userId        = userId,
-                            accountId     = fromAccount.accountId,
-                            categoryId    = null,
-                            amount        = -change,
-                            description   = "Transfer to ${toAccount.accountName}",
-                            date          = now,
-                            receiptImageUrl  = null,
-                            receiptLocalPath = null
-                        )
-                    )
-                    transactionDao.insert(
-                        TransactionEntity(
-                            transactionId = UUID.randomUUID().toString(),
-                            userId        = userId,
-                            accountId     = toAccount.accountId,
-                            categoryId    = null,
-                            amount        = change,
-                            description   = "Transfer from ${fromAccount.accountName}",
-                            date          = now,
-                            receiptImageUrl  = null,
-                            receiptLocalPath = null
+                    transferDao.insert(
+                        com.example.budgetpiggy.data.entities.TransferEntity(
+                            transferId = UUID.randomUUID().toString(),
+                            userId = userId,
+                            fromAccountId = fromAccount.accountId,
+                            toAccountId = toAccount.accountId,
+                            fromCategoryId = null,
+                            toCategoryId = null,
+                            amount = amount,
+                            date = now
                         )
                     )
                 } else {
@@ -292,24 +267,19 @@ class TransferFunds : BaseActivity() {
                         return@launch
                     }
 
-                    // Subtract from account balance
                     accountDao.updateBalance(fromAccount.accountId, fromAccount.balance - amount)
-
-                    // Add to category budget
                     categoryDao.addToBudget(category.categoryId, amount)
 
-                    // Log allocation transaction
-                    transactionDao.insert(
-                        TransactionEntity(
-                            transactionId = UUID.randomUUID().toString(),
+                    transferDao.insert(
+                        com.example.budgetpiggy.data.entities.TransferEntity(
+                            transferId = UUID.randomUUID().toString(),
                             userId = userId,
-                            accountId = fromAccount.accountId,
-                            categoryId = category.categoryId,
-                            amount = -amount,
-                            description = "Allocated to category: ${category.categoryName}",
-                            date = now,
-                            receiptImageUrl = null,
-                            receiptLocalPath = null
+                            fromAccountId = fromAccount.accountId,
+                            toAccountId = null,
+                            fromCategoryId = null,
+                            toCategoryId = category.categoryId,
+                            amount = amount,
+                            date = now
                         )
                     )
                 }
@@ -320,8 +290,6 @@ class TransferFunds : BaseActivity() {
                 }
             }
         }
-
-
 
 
 

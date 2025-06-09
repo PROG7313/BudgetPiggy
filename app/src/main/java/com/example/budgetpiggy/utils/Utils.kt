@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import androidx.core.content.edit
+import me.leolin.shortcutbadger.ShortcutBadger
 
 fun updateNotificationBadge(view: View, count: Int) {
     val badge = view.findViewById<TextView>(R.id.notificationBadge)
@@ -52,23 +53,55 @@ object StreakTracker {
 object SessionManager {
     private const val PREFS_NAME  = "app_piggy_prefs"
     private const val KEY_USER_ID = "logged_in_user_id"
+    private const val KEY_FIREBASE_UID = "firebase_uid"
 
 
     fun saveUserId(context: Context, userId: String) {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit { putString(KEY_USER_ID, userId) }
+            .edit { putString(KEY_USER_ID, userId)}
+
     }
 
+    fun saveFirebaseId(context: Context, firebaseUid: String?) {
+        context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit { putString(KEY_FIREBASE_UID, firebaseUid)}
+
+    }
     /** Anywhere you need the current user ID. */
     fun getUserId(context: Context): String? =
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             .getString(KEY_USER_ID, null)
 
+    fun getFirebaseUid(context: Context): String? {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_FIREBASE_UID, null)
+    }
+
     fun logout(context: Context) {
         context
             .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit { remove(KEY_USER_ID) }
+            .edit { remove(KEY_USER_ID)
+                    remove(KEY_FIREBASE_UID)}
+    }
+}
+
+object BadgeManager {
+    private const val PREF_NAME = "badgePrefs"
+    private const val BADGE_COUNT_KEY = "badgeCount"
+
+    fun incrementBadge(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val newCount = prefs.getInt(BADGE_COUNT_KEY, 0) + 1
+        prefs.edit().putInt(BADGE_COUNT_KEY, newCount).apply()
+        ShortcutBadger.applyCount(context, newCount)
+    }
+
+    fun clearBadge(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putInt(BADGE_COUNT_KEY, 0).apply()
+        ShortcutBadger.removeCount(context)
     }
 }

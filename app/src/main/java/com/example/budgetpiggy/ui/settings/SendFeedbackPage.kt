@@ -16,6 +16,8 @@ import com.example.budgetpiggy.ui.home.HomePage
 import com.example.budgetpiggy.ui.notifications.Notification
 import com.example.budgetpiggy.ui.reports.ReportsPage
 import com.example.budgetpiggy.ui.wallet.WalletPage
+import android.app.AlertDialog
+import android.widget.Toast
 
 class SendFeedbackPage : BaseActivity() {
 
@@ -29,6 +31,7 @@ class SendFeedbackPage : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.send_feedback)
 
+        // Handle padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.sendFeedbackPage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -40,8 +43,7 @@ class SendFeedbackPage : BaseActivity() {
         findViewById<ImageView>(R.id.streakIcon)?.visibility = View.GONE
         findViewById<TextView>(R.id.greetingText)?.visibility = View.GONE
 
-
-        // Show and set the title to "Wallet"
+        // Show and set the title to "Send Feedback"
         findViewById<TextView>(R.id.pageTitle).apply {
             visibility = View.VISIBLE
             text = getString(R.string.send_feedback)
@@ -53,7 +55,6 @@ class SendFeedbackPage : BaseActivity() {
         publishButton = findViewById(R.id.btnPublishFeedback)
         introText = findViewById(R.id.Intro)
         infoText = findViewById(R.id.tvInfo)
-
 
         findViewById<ImageView>(R.id.bellIcon)
             .setOnClickListener { v: View ->
@@ -103,5 +104,34 @@ class SendFeedbackPage : BaseActivity() {
             // Already in AccountPage
             setActiveNavIcon(v as ImageView)
         }
+
+        // Submit feedback button
+        publishButton.setOnClickListener {
+            val feedbackText = feedbackEditText.text.toString().trim()
+            val rating = ratingBar.rating
+
+            if (feedbackText.isEmpty()) {
+                feedbackEditText.error = "Please enter your feedback"
+                feedbackEditText.requestFocus()
+            } else if (rating == 0f) {
+                Toast.makeText(this, "Please provide a rating", Toast.LENGTH_SHORT).show()
+            } else {
+                showThankYouDialog()
+                feedbackEditText.text.clear()
+                ratingBar.rating = 4f
+            }
+        }
+    }
+    // Show thank you box and clear fields
+    private fun showThankYouDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.thank_you_dialog, null)
+        val dialog = AlertDialog.Builder(this).setView(dialogView).create()
+
+        dialogView.findViewById<Button>(R.id.okButton).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 }

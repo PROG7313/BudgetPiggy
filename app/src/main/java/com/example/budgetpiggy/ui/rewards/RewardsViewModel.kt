@@ -7,21 +7,26 @@ import com.example.budgetpiggy.data.entities.RewardCodeEntity
 import com.example.budgetpiggy.data.entities.RewardEntity
 import com.example.budgetpiggy.data.repository.RewardRepository
 
+// Manages reward related data and logic
 class RewardsViewModel(
     private val repo: RewardRepository,
     private val userId: String
 ) : ViewModel() {
 
+    // LiveData holding the list of rewards and their unlocked status (Android, 2025).
     private val _rewards = MutableLiveData<List<Pair<RewardCodeEntity, Boolean>>>()
     val rewards: LiveData<List<Pair<RewardCodeEntity, Boolean>>> = _rewards
 
+    // LiveData for tracking the result of confirmation actions
     private val _result = MutableLiveData<Result<Unit>>()
     val result: LiveData<Result<Unit>> = _result
 
+    // Auto fetch rewards when ViewModel is createds
     init {
         refresh()
     }
 
+    // Fetch reward codes and check which ones the user has unlocked
     fun refresh() = viewModelScope.launch {
         val codes = repo.allCodes().first()
         val unlocked = repo.userRewards(userId)
@@ -32,7 +37,7 @@ class RewardsViewModel(
         _rewards.postValue(unlockedOnly.map { it to true })
     }
 
-
+    // Unlock a reward with code confirmation
     fun confirm(code: String) = viewModelScope.launch {
         val result = repo.unlockCode(userId, code.trim())
         _result.postValue(result)
@@ -40,6 +45,7 @@ class RewardsViewModel(
     }
 }
 
+// Factory to provide Rewards with required constructor parameters (CodingStuff, 2024).
 class RewardsViewModelFactory(
     private val repo: RewardRepository,
     private val userId: String

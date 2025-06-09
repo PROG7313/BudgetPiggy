@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp") // Using KSP instead of KAPT
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -75,4 +76,12 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(kotlin("test"))
+
+    implementation("me.leolin:ShortcutBadger:1.1.22@aar")
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-auth:22.3.1")
 }
